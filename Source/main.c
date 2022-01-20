@@ -1,59 +1,87 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
-                    "mode \t \n"
-                    "outfile \t file to output into\n"
-                    "infile \t file to read input from\n";
+                    "\tmode\t\tinteger from 0-5 specifying mode to run\n"
+                    "\toutfile\t\tfile to write output to instead od stdout\n"
+                    "\tinfile\t\tfile to read input from\n";
+
+const char *version = "My restriced C compiler\n"
+                      "\tAuthor: Chris Johannsen\n"
+                      "\tEmail: cgjohann@iastate.edu\n"
+                      "\tVersion: 0.1\n"
+                      "\tDate: 1-19-2021\n";
 
 int main(int argc, char **argv)
 {
-    int mode = -1;
-    char *outfile;
+  int mode = -1;
+  FILE *outfile = stdout;
 
-    // Extensible way to loop over CLI options
-    while((c = getopt(argc, argv, "012345oh")) != -1) {
-      switch(c) {
-        case '0': {
-            mode = 0;
-            break;
+  if(argc < 2) {
+    fprintf(stderr, "%s", usage);
+    exit(1);
+  }
+
+  // Extensible way to loop over CLI options
+  char c;
+  while((c = getopt(argc, argv, "012345oh")) != -1) {
+    switch(c) {
+      case '0': {
+        mode = 0;
+        break;
+      }
+      case '1': {
+        mode = 1;
+        break;
+      }
+      case '2': {
+        mode = 2;
+        break;
+      }
+      case '3': {
+        mode = 3;
+        break;
+      }
+      case '4': {
+        mode = 4;
+        break;
+      }
+      case '5': {
+        mode = 5;
+        break;
+      }
+      case 'o': {
+        outfile = fopen(argv[optind], "w");
+        if(outfile == NULL) {
+          fprintf(stderr, "Could not open output file %s\n", argv[optind]);
+          exit(1);
         }
-        case '1': {
-            mode = 1;
-            break;
-        }
-        case '2': {
-            mode = 2;
-            break;
-        }
-        case '3': {
-            mode = 3;
-            break;
-        }
-        case '4': {
-            mode = 4;
-            break;
-        }
-        case '5': {
-            mode = 5;
-            break;
-        }
-        case 'o': {
-            printf("TODO");
-            return 1;
-        }
-        case 'h': {
-          fprintf(stderr, "%s", usage);
-          return 1;
-        }
-        case '?': {
-          fprintf(stderr, "Unknown option %x", optopt);
-          return 1;
-        }
-        default: {
-          return 1; // something went wrong with getopt
-        }
+        optind++;
+        break;
+      }
+      case 'h': {
+        fprintf(stderr, "%s", usage);
+        exit(1);
+      }
+      case '?': {
+        fprintf(stderr, "\n%s", usage);
+        exit(1);
+      }
+      default: {
+        exit(1); // something went wrong with getopt
       }
     }
+  }
 
+  if(mode < 0) {
+    fprintf(stderr, "Mode not specified\n\n%s", usage);
+    exit(1);
+  }
+
+  if(mode == 0) {
+    fprintf(outfile, "%s", version);
+    exit(0);
+  }
 
 }

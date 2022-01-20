@@ -265,3 +265,6 @@ Lex and Yacc Autogen files:
 *.yy.c
 *.tab.c
 *.tab.h
+
+bin/
+target/

@@ -8,10 +8,10 @@ const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
                     "\tinfile\t\tfile to read input from\n";
 
 const char *version = "My restriced C compiler\n"
-                      "\tAuthor: Chris Johannsen\n"
-                      "\tEmail: cgjohann@iastate.edu\n"
                       "\tVersion: 0.1\n"
-                      "\tDate: 1-19-2021\n";
+                      "\tDate: 1-19-2021\n"
+                      "\tAuthor: Chris Johannsen\n"
+                      "\tEmail: cgjohann@iastate.edu\n";
 
 int main(int argc, char **argv)
 {

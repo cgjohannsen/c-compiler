@@ -16,6 +16,10 @@ To build just the docs, run
     
     make developers
 
+To clean up all output files, run
+
+    make clean
+
 ## Features
 
 ### Mode 0

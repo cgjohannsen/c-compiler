@@ -7,11 +7,11 @@ const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
                     "\toutfile\t\tfile to write output to instead od stdout\n"
                     "\tinfile\t\tfile to read input from\n";
 
-const char *version = "My restriced C compiler\n"
-                      "\tVersion: 0.1\n"
-                      "\tDate: 1-19-2021\n"
+const char *version = "My C compiler\n"
                       "\tAuthor: Chris Johannsen\n"
-                      "\tEmail: cgjohann@iastate.edu\n";
+                      "\tEmail: cgjohann@iastate.edu\n"
+                      "\tVersion: 0.1\n"
+                      "\tDate: 1-19-2021\n";
 
 int main(int argc, char **argv)
 {
@@ -54,8 +54,8 @@ int main(int argc, char **argv)
       case 'o': {
         outfile = fopen(argv[optind], "w");
         if(outfile == NULL) {
-          fprintf(stderr, "Could not open output file %s\n", argv[optind]);
-          exit(1);
+          fprintf(stderr, "Could not open output file %s, writing to stdout\n", argv[optind]);
+          outfile = stdout;
         }
         optind++;
         break;

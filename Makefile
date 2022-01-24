@@ -8,4 +8,5 @@ developers: Documentation/developers.tex
 
 .PHONY: clean
 clean: 
-	rm mycc Documentation/*.aux Documentation/*.log Documentation/*.pdf
+	@echo CLEAN
+	@rm -rf mycc Documentation/*.aux Documentation/*.log Documentation/*.pdf

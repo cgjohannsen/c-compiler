@@ -3,7 +3,7 @@
 \usepackage{graphicx}
 \usepackage[margin=1in]{geometry}
 
-\linespread{2}
+\linespread{1.6}
 
 \title{Basic C Compiler Developers Guide}
 \author{Chris Johannsen}
@@ -15,6 +15,60 @@
 
 \section{Introduction}
 
-Here's some content
+This document provides information on my C compiler. We only implement a subset of the language which will be defined as the document is developed.
+
+\section{Building}
+
+To build the both the documentation and compiler use the Makefile provided in the \verb|compiler/| directory and run:
+
+\begin{verbatim}
+    make
+\end{verbatim}
+
+\noindent To build just the documentation run:
+
+\begin{verbatim}
+    make developers
+\end{verbatim}
+
+\noindent To build just the compiler run:
+
+\begin{verbatim}
+    make mycc
+\end{verbatim}
+
+\noindent To clean all output files run:
+
+\begin{verbatim}
+    make clean
+\end{verbatim}
+
+\section{Usage}
+
+\begin{verbatim}
+Usage: mycc -mode [-o outfile] [-h] infile
+    mode        integer from 0-5 specifying mode to run
+    outfile     file to write output to instead od stdout
+    infile      file to read input from
+\end{verbatim}
+
+\section{Modes}
+
+In this section we describe the features of the various modes the compiler can be run in.
+
+\subsection{Mode 0}
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Usage and version information can be printed
+    \item Output can be printed to a specified file
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+We use \verb|getopt| to parse input arguments. If no mode is specified, the program prints usage information and exits. Ff mode 0 is specified, the program prints version information. Otherwise the program prints nothing if any other mode is spceified. 
+
+When run in this mode we ignore the input file; whether one is specified or not.
 
 \end{document}

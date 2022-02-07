@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "parse/lexer.h"
+
 const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
                     "\tmode\t\tinteger from 0-5 specifying mode to run\n"
                     "\toutfile\t\tfile to write output to instead od stdout\n"
@@ -83,5 +85,24 @@ int main(int argc, char **argv)
     fprintf(outfile, "%s", version);
     exit(0);
   }
+
+  if(optind >= argc) {
+    fprintf(stderr, "No input file provided\n\n%s", usage);
+    exit(1);
+  }
+
+  // TODO 
+  // error checking
+  char *infilename = argv[optind];
+  FILE *infile = fopen(infilename,"r");
+
+  printf("\a");
+
+  if(mode == 1) {
+    tokenize(infile,outfile,infilename);
+    exit(0);
+  }
+
+  fclose(infile);
 
 }

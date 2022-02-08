@@ -94,15 +94,10 @@ int main(int argc, char **argv)
   // TODO 
   // error checking
   char *infilename = argv[optind];
-  FILE *infile = fopen(infilename,"r");
-
-  printf("\a");
 
   if(mode == 1) {
-    tokenize(infile,outfile,infilename);
+    tokenize(infilename, outfile);
     exit(0);
   }
-
-  fclose(infile);
 
 }

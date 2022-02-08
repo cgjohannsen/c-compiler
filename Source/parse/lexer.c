@@ -3,116 +3,125 @@
 #include <stdlib.h>
 
 #include "../util/hash.h"
+#include "../util/io.h"
 #include "lexer.h"
 
-// global variables
-char buffer[BUFFER_SIZE];
-int cur = 0;
-int line_num = 1;
+/* GLOBALS */
+char *infilename;
+int line_num;
 
+/* HELPER FUNCTIONS */
 
-void print_token(FILE *outfile, token_t tok) {
+/*
+ *
+ */
+void 
+print_token(FILE *outfile, token_t tok) 
+{
     fprintf(outfile,"File %s Line %*d Token %*d Text %s\n", 
         tok.filename, 5, tok.line_num, 3, tok.type, tok.text);
 }
 
-void print_lexer_error(token_t *tok, char *msg) {
-    fprintf(stderr, "Lexer error in file %s line %d near text %s\n\t%s",
-        tok->filename, tok->line_num, tok->text, msg);
-}
-
-void refill_buffer(FILE *infile) {
-    int bytes_read = fread(buffer,1,BUFFER_SIZE,infile);
-    
-    if(ferror(infile))
-        fprintf(stderr,"error while reading file\n");
-    
-    if(feof(infile)) 
-        buffer[bytes_read-1] = 0;
-    
-    cur = 0;
-}
-
-token_t init_token(char *filename, int line_num) {
+token_t 
+init_token() 
+{
     token_t tok = {
         .text_len = 0,
-        .filename = filename,
-        .line_num = line_num,
-        .is_comment = 0
+        .filename = infilename,
+        .line_num = line_num
     };
     return tok;
 }
 
-void iterate_cur(FILE *infile) {
-    cur++;
-    if(cur >= BUFFER_SIZE) 
-        refill_buffer(infile);
-    printf("char: %c\n",buffer[cur]);
-    if(buffer[cur] == '\n') 
-        line_num++;
-}
-
-// appends buffer[cur] to text of tok then iterates cur
-// return 1 if token length too long to append c
-// return 0 otherwise
-int append_cur(FILE *infile, token_t *tok) { 
-
-    if(tok->text_len >= MAX_LEXEME_SIZE) 
+/*
+ * 
+ */
+int 
+append_char(char *cur, token_t *tok) 
+{
+    if(tok->text_len >= MAX_LEXEME_SIZE) {
+        // TODO -- check for max string len
         return 1;
+    }
 
-    tok->text[tok->text_len] = buffer[cur]; 
+    tok->text[tok->text_len] = *cur; 
     tok->text_len++;
 
-    iterate_cur(infile);
+    cur++;
 
     return 0;
 }
 
-int consume_c_comment(FILE *infile) {
-    iterate_cur(infile);
+// forward declaration
+int consume(char *, token_t *);
 
-    if(buffer[cur] == '*') {
-        iterate_cur(infile);
-        if(buffer[cur] == '/') {
-            iterate_cur(infile);
+int 
+consume_c_comment(char *cur, token_t *tok) 
+{
+    cur++;
+
+    if(*cur == 0) { // check if *cur is EOF
+        print_msg(LEXER_ERR, infilename, line_num, ' ', "Unclosed comment.");
+        return 0;
+    }
+
+    if(*cur == '\n') { // keep track of line numbers
+        line_num++;
+    }
+
+    if(*cur == '*') {
+        cur++;
+
+        if(*cur == 0) { // check if *cur is EOF
+            print_msg(LEXER_ERR, infilename, line_num, ' ', "Unclosed comment.");
             return 0;
+        }
+
+        if(*cur == '/') { // end of comment -- reenter consume
+            cur++;
+            return consume(cur, tok);
         }
     }
 
-    consume_c_comment(infile);
+    consume_c_comment(cur, tok);
 }
 
-int consume_cpp_comment(FILE *infile) {
-    iterate_cur(infile);
+/*
+ *
+ */
+int 
+consume_cpp_comment(char *cur, token_t *tok) 
+{
+    cur++;
 
-    if(buffer[cur] == '\n') {
-        iterate_cur(infile);
-        return 0;
+    if(*cur == '\n') {
+        line_num++;
+        cur++;
+        return consume(cur, tok);
     }
 
-    consume_cpp_comment(infile);
+    consume_cpp_comment(cur, tok);
 }
 
+/*
+ *
+ */
+int 
+consume_slash(char *cur, token_t *tok) 
+{
+    append_char(cur, tok);
 
-int consume_slash(FILE *infile, token_t *tok) {
-
-    append_cur(infile,tok);
-
-    if(buffer[cur] == '*') {
-        tok->is_comment = 1;
-        consume_c_comment(infile);
-        return 0;
+    if(*cur == '*') {
+        return consume_c_comment(cur, tok);
     }
 
-    if(buffer[cur] == '/') {
-        tok->is_comment = 1;
-        consume_cpp_comment(infile);
-        return 0;
+    if(*cur == '/') {
+        return consume_cpp_comment(cur, tok);
     }
 
-    if(buffer[cur] == '=') {
+    if(*cur == '=') {
         tok->type = SLASHASSIGN;
-        append_cur(infile,tok);
+        append_char(cur, tok);
         return 0;
     }
 
@@ -120,265 +129,358 @@ int consume_slash(FILE *infile, token_t *tok) {
     return 0;    
 }
 
-int consume_digit(FILE *infile, token_t *tok) {
-    // append digit to lexeme
-    append_cur(infile,tok);
-
-    if(isdigit(buffer[cur])) {
-        // digit followed by digit -- keep consuming
-        return consume_digit(infile,tok);
+/*
+ *
+ */
+int 
+consume_digit(char *cur, token_t *tok) 
+{
+    if(tok->text_len == MAX_LEXEME_SIZE) {
+        print_msg(LEXER_WRN, infilename, line_num, *cur, "Max lexeme length reached, truncating."); // TODO
     }
 
-    if(buffer[cur] == '.') {
-        // token already seen as real -- stop
-        if(tok->type == REAL_LIT)
+    append_char(cur, tok);
+
+    if(isdigit(*cur)) {
+        // digit followed by digit -- keep consuming
+        return consume_digit(cur, tok);
+    }
+
+    if(*cur == '.') {
+        // token already seen as real -- error
+        if(tok->type == REAL_LIT) {
+            print_msg(LEXER_ERR, infilename, line_num, *cur, "Too many '.'");
             return 0;
+        }
 
         // token is a real -- consume '.' and rest of digits
         tok->type = REAL_LIT;
-        append_cur(infile,tok);
-        return consume_digit(infile,tok);
+        append_char(cur, tok);
+        return consume_digit(cur, tok);
     }
     
     if(tok->type != REAL_LIT) tok->type = INT_LIT;
     return 0;
 }
 
-int consume_alpha(FILE *infile, token_t *tok) {
-    tok->type = IDENT;
-    append_cur(infile,tok);
-
-    if(isalpha(buffer[cur]) || isdigit(buffer[cur]) || buffer[cur] == '_') {
-        consume_alpha(infile,tok);
+int 
+consume_alpha(char *cur, token_t *tok) 
+{
+    if(tok->text_len == MAX_LEXEME_SIZE) {
+        print_msg(LEXER_WRN, infilename, line_num, *cur, "Max lexeme length reached, truncating.");
     }
 
+    append_char(cur, tok);
+
+    // if *cur is a letter, digit, or _: is valid identifier char
+    if(isalpha(*cur) || isdigit(*cur) || *cur == '_') {
+        consume_alpha(cur, tok);
+    }
+
+    tok->type = IDENT;
     return 0;
 }
 
-int consume_string(FILE *infile, token_t *tok) {
-    append_cur(infile,tok);
-
-    if(buffer[cur] == '\\') {
-        append_cur(infile,tok);
-        switch(buffer[cur]) {
-            case 'a':
-            case 'b':
-            case 'n':
-            case 'r':
-            case 't':
-            case '\\':
-            case '"': append_cur(infile,tok);
-            default: break; // TODO -- error
-        }
+int 
+consume_string(char *cur, token_t *tok) 
+{
+    if(tok->text_len == MAX_STR_SIZE) {
+        print_msg(LEXER_WRN, infilename, line_num, *cur, "Max string length reached, truncating.");
     }
 
-    if(buffer[cur] == '"') {
+    if(tok->text_len < MAX_STR_SIZE) { // only append to tok if less than max string length
+        append_char(cur, tok);
+        
+        if(*cur == '\\') {  // check if cur is escape char
+            append_char(cur, tok); 
+        
+            switch(*cur) {
+                case 'a':
+                case 'b':
+                case 'n':
+                case 'r':
+                case 't':
+                case '\\':
+                case '"': append_char(cur, tok);
+                default:
+                {
+                    print_msg(LEXER_ERR, infilename, line_num, *cur, "Unexpected escape symbol");
+                    return 0;
+                }
+            }
+        }
+    } else { // else if tok is past max string length, iterate cur
+        cur++;
+    }
+
+    if(*cur == '"') {
         tok->type = STR_LIT;
-        append_cur(infile,tok);
+        append_char(cur, tok);
         return 0;
     }
 
-    consume_string(infile,tok);
+    consume_string(cur, tok);
 }
 
-int consume(FILE *infile, token_t *tok) {
+int 
+consume(char *cur, token_t *tok) 
+{
+    // keep track of line numbers
+    if(*cur == '\n') {
+        line_num++;
+    }
 
-    if(isspace(buffer[cur])) {
-        iterate_cur(infile);
+    // if *cur is whitespace, skip char
+    if(isspace(*cur)) {
+        cur++;
         return 1;
     }
 
-    switch(buffer[cur]) {
-        case 0: tok->type = END; return 0;
+    switch(*cur) {
+        case 0:
+        {
+            tok->type = END; 
+            return 0;
+        }    
         case ',':
+        {
             tok->type = COMMA;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '.':
+        {
             tok->type = DOT;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case ';':
+        {
             tok->type = SEMI;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }   
         case '(':
+        {
             tok->type = LPAR;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case ')':
+        {
             tok->type = RPAR;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '[':
+        {    
             tok->type = LBRAK;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case ']':
+        {    
             tok->type = RBRAK;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '{':
+        {    
             tok->type = LBRACE;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '}':
+        {
             tok->type = RBRACE;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '>':
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = GEQ;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = GT;
             return 0;
+        }
         case '<':
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = LEQ;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = LT;
             return 0;
+        }
         case '=': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = EQ;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = ASSIGN;
             return 0;
+        }
         case '+': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = PLUSASSIGN;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
-            if(buffer[cur] == '+') {
+            if(*cur == '+') {
                 tok->type = INCR;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = PLUS;
             return 0;
+        }
         case '-': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = MINUSASSIGN;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
-            if(buffer[cur] == '-') {
+            if(*cur == '-') {
                 tok->type = DECR;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = MINUS;
             return 0;
+        }
         case '*': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = STARASSIGN;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = STAR;
             return 0;
+        }
         case '%': 
+        {
             tok->type = MOD;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
-        case ':': 
+        }
+        case ':':
+        { 
             tok->type = COLON;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '?':
+        {
             tok->type = QUEST;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '~': 
+        {
             tok->type = TILDE;
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         case '|': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '|') {
+        {
+            append_char(cur, tok);
+            if(*cur == '|') {
                 tok->type = DPIPE;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = PIPE;
             return 0;
+        }
         case '&': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '&') {
+        {
+            append_char(cur, tok);
+            if(*cur == '&') {
                 tok->type = DAMP;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = PIPE;
             return 0;
+        }
         case '!': 
-            append_cur(infile,tok);
-            if(buffer[cur] == '=') {
+        {
+            append_char(cur, tok);
+            if(*cur == '=') {
                 tok->type = NEQ;
-                append_cur(infile,tok);
+                append_char(cur, tok);
                 return 0;
             }
             tok->type = BANG;
             return 0;
-        case '/': return consume_slash(infile,tok);
-        case '"': return consume_string(infile,tok);
+        }
+        case '/': return consume_slash(cur, tok);
+        case '"': return consume_string(cur, tok);
         case '\'': 
+        {
             tok->type = CHAR_LIT;
-            append_cur(infile,tok);
-            if(buffer[cur] == '\\') {
-                append_cur(infile,tok);
-                switch(buffer[cur]) {
+            append_char(cur, tok);
+            if(*cur == '\\') {
+                append_char(cur, tok);
+                switch(*cur) {
                     case 'a':
                     case 'b':
                     case 'n':
                     case 'r':
                     case 't':
                     case '\\':
-                    case '"': append_cur(infile,tok);
-                    default: break; // TODO -- error
+                    case '"': append_char(cur, tok);
+                    default: 
+                    {
+                        print_msg(LEXER_ERR, infilename, line_num, *cur, "Unexpected escape symbol");
+                    }
                 }
             }
-            append_cur(infile,tok);
-            if(buffer[cur] != '\'') {
+            append_char(cur, tok);
+            if(*cur != '\'') {
                 fprintf(stderr,"error, unexpected lexeme\n");
                 return 0;
             }
-            append_cur(infile,tok);
+            append_char(cur, tok);
             return 0;
+        }
         default:
-            if(isdigit(buffer[cur])) {
-                return consume_digit(infile, tok);
-            } else if(isalpha(buffer[cur]) || buffer[cur] == '_') {
-                return consume_alpha(infile, tok);
+        {
+            if(isdigit(*cur)) {
+                return consume_digit(cur, tok);
+            } else if(isalpha(*cur) || *cur == '_') {
+                return consume_alpha(cur, tok);
             } else {
-                append_cur(infile,tok);
-                print_lexer_error(tok,"Unexpected symbol, ignoring.");
+                append_char(cur, tok);
+                print_msg(LEXER_ERR, infilename, line_num, *cur, "Unexpected symbol, ignoring.");
             }
-
+        }
     }
 
-    
-
     return 0;
-
 }
 
-// tok must be of type IDENT
-void keyword_check(token_t *tok) {
-
+/*
+ *
+ */
+void 
+keyword_check(token_t *tok) 
+{
     uint64_t h = hash(tok->value.s);
 
     switch(h) {
@@ -439,14 +541,15 @@ void keyword_check(token_t *tok) {
 
 }
 
+/*
+ *
+ */
+token_t 
+next_token(char *cur) 
+{
+    token_t tok = init_token();
 
-token_t next_token(FILE *infile, char *infilename) {
-    
-    token_t tok = init_token(infilename,line_num); // TODO -- implement
-
-    while(consume(infile,&tok));
-
-    if(tok.is_comment) return tok;
+    while(consume(cur, &tok));
 
     switch(tok.type) {
         case CHAR_LIT:  tok.value.c = *(tok.text); break;
@@ -460,13 +563,44 @@ token_t next_token(FILE *infile, char *infilename) {
     return tok;
 }
 
+/*
+ *  Must call free(buffer) after calling
+ */
+char *
+init_tokenizer(char *filename)
+{
+    char *buffer;
 
+    // initialize globals
+    infilename = filename;
+    line_num = 1;
 
-void tokenize(FILE *infile, FILE *outfile, char *infilename) {
-    token_t tok;
-    refill_buffer(infile);
-    do {
-        tok = next_token(infile,infilename);
-        if(!tok.is_comment) print_token(outfile,tok);
-    } while(tok.type != END || tok.is_comment);
+    buffer = read_file(filename);
+    return buffer;
 }
+
+
+/*
+ *
+ */
+void 
+tokenize(char *filename, FILE *outfile) 
+{
+    char *buffer, *cur;
+    token_t tok;
+
+    // remember to call free(buffer) !!!
+    buffer = init_tokenizer(filename);
+    cur = buffer; // set cur to beginning of buffer
+
+    tok = next_token(cur);
+
+    while(tok.type != END) {
+        tok = next_token(cur);
+        print_token(outfile,tok);
+    }
+
+    free(buffer);
+}
+
+

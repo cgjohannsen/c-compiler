@@ -24,24 +24,25 @@
 #define CASE_HASH       6385108193
 #define DEFAULT_HASH    229463065711754
 
-typedef union tokenvalue {
+typedef union tokenvalue 
+{
     uint8_t c;
     uint32_t i;
     double d;
     char *s;
 } tokenvalue_t;
 
-typedef struct token {
+typedef struct token 
+{
     tokentype_t type;
     char text[MAX_LEXEME_SIZE];
     int text_len;
     tokenvalue_t value;
     uint32_t line_num;
     char *filename;
-    int is_comment;
 } token_t;
 
-token_t next_token(FILE *, char *);
-void tokenize(FILE *, FILE *, char *);
+token_t next_token(char *);
+void tokenize(char *, FILE *);
 
 #endif

@@ -1,7 +1,8 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
-typedef enum tokentype {
+typedef enum tokentype 
+{
     END     = 0,
     COMMA   = ',',
     DOT     = '.',

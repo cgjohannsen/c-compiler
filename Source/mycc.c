@@ -91,8 +91,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  // TODO 
-  // error checking
   char *infilename = argv[optind];
 
   if(mode == 1) {

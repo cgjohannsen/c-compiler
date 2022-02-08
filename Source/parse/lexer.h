@@ -35,14 +35,17 @@ typedef union tokenvalue
 typedef struct token 
 {
     tokentype_t type;
-    char text[MAX_LEXEME_SIZE];
-    int text_len;
+    char *text;
+    int text_size;
+    int text_max_size;
     tokenvalue_t value;
     uint32_t line_num;
     char *filename;
 } token_t;
 
-token_t next_token(char *);
+int consume(char *, int *, token_t *);
+token_t next_token(char *, int *);
+void destroy_token(token_t *tok);
 void tokenize(char *, FILE *);
 
 #endif

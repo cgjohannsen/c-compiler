@@ -35,17 +35,22 @@ typedef union tokenvalue
 typedef struct token 
 {
     tokentype_t type;
-    char *text;
+    char text[MAX_LEXEME_SIZE];
     int text_size;
-    int text_max_size;
     tokenvalue_t value;
-    uint32_t line_num;
+    int line_num;
     char *filename;
 } token_t;
 
-int consume(char *, int *, token_t *);
-token_t next_token(char *, int *);
-void destroy_token(token_t *tok);
+typedef struct lexer {
+    char *filename;
+    char *buffer;
+    char *cur;
+    int line_num;
+} lexer_t;
+
+int consume(lexer_t *, token_t *);
+token_t next_token(lexer_t *);
 void tokenize(char *, FILE *);
 
 #endif

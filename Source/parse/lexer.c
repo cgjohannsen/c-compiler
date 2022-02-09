@@ -438,29 +438,42 @@ consume(lexer_t *lex, token_t *tok)
         case '\'': 
         {
             tok->type = CHAR_LIT;
-            append_char(lex, tok);
-            if(*(lex->cur) == '\\') {
-                append_char(lex, tok);
-                switch(*(lex->cur)) {
+            if(*(lex->cur+1) == '\\') {
+                switch(*(lex->cur+2)) {
                     case 'a':
                     case 'b':
                     case 'n':
                     case 'r':
                     case 't':
-                    case '\\': append_char(lex, tok);
+                    case '\\':
+                    {
+                        // consume entire lexeme here (of form '\a')
+                        append_char(lex, tok);
+                        append_char(lex, tok);
+                        append_char(lex, tok);
+                        append_char(lex, tok);
+                        return 0;
+                    }
                     default: 
                     {
-                        print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected escape symbol");
+                        print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur+2), "Unexpected escape symbol, ignoring.");
+                        lex->cur = lex->cur + 4; // skip garbage characters
+                        return consume(lex, tok);
                     }
                 }
-                return 0;
             }
-            append_char(lex, tok);
-            if(*(lex->cur) != '\'') {
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol");
-                return 0;
+            
+            if(*(lex->cur+2) != '\'') {
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol, ignoring.");
+                lex->cur = lex->cur + 3; // skip garbage characters
+                return consume(lex, tok);
             }
+
+            // consume entire lexeme (of form 'c')
             append_char(lex, tok);
+            append_char(lex, tok);
+            append_char(lex, tok);
+
             return 0;
         }
         default:

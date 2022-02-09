@@ -268,3 +268,6 @@ Lex and Yacc Autogen files:
 
 bin/
 target/
+
+mycc
+out

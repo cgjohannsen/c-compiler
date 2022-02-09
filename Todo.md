@@ -1,0 +1,5 @@
+- [x] Allow for longer text length for strings i.e. make lexeme text dynamically allocated
+- [x] Allow for arbitrary length input file i.e. buffer input
+- [ ] Implement hex numbers (i.e. 0x252)
+- [ ] Implement octal numbers (i.e. 02348)
+- [ ] Implement real literals (i.e. 2.45e2)

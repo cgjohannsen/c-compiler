@@ -20,10 +20,13 @@ token_t
 init_token(char *filename, int line_num) 
 {
     token_t tok = {
+        .text = (char *) malloc((sizeof(char) * DEFAULT_TEXT_SIZE) + 1), // allocate 4 chars to start
         .text_size = 0,
+        .text_max_size = DEFAULT_TEXT_SIZE,
         .filename = filename,
         .line_num = line_num
     };
+    tok.text[0] = '\0';
     return tok;
 }
 
@@ -33,7 +36,13 @@ init_token(char *filename, int line_num)
 int 
 append_char(lexer_t *lex, token_t *tok) 
 {
+    if(tok->text_size == tok->text_max_size) {
+        tok->text = realloc(tok->text, (tok->text_max_size << 1) + 1);
+        tok->text_max_size = tok->text_max_size << 1;
+    }
+
     tok->text[tok->text_size] = *(lex->cur); 
+    tok->text[tok->text_size + 1] = '\0'; // update end of str 
     tok->text_size++;
 
     (lex->cur)++;
@@ -134,6 +143,9 @@ consume_digit(lexer_t *lex, token_t *tok)
 
     if(tok->text_size < MAX_LEXEME_SIZE) {
         append_char(lex, tok); // append to text only if less than max lexeme size
+    } else {
+        tok->text_size++;
+        (lex->cur)++; // otherwise just iterate cur
     }
 
     if(isdigit(*(lex->cur))) {
@@ -170,6 +182,9 @@ consume_alpha(lexer_t *lex, token_t *tok)
 
     if(tok->text_size < MAX_LEXEME_SIZE) {
         append_char(lex, tok); // append to text only if less than max lexeme size
+    } else {
+        tok->text_size++;
+        (lex->cur)++; // otherwise just iterate cur
     }
 
     // if *cur is a letter, digit, or _: is valid identifier char
@@ -213,6 +228,7 @@ consume_string(lexer_t *lex, token_t *tok)
             }
         }
     } else { // else if tok is past max string length, iterate cur
+        tok->text_size++;
         (lex->cur)++;
     }
 

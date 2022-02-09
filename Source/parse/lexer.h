@@ -6,9 +6,10 @@
 
 #include "tokens.h"
 
-#define MAX_LEXEME_SIZE 64
-#define MAX_STR_SIZE    1024
-#define BUFFER_SIZE     2048
+#define MAX_LEXEME_SIZE     64
+#define MAX_STR_SIZE        1024
+#define BUFFER_SIZE         2048
+#define DEFAULT_TEXT_SIZE   4
 
 #define CONST_HASH      210709068620
 #define STRUCT_HASH     6954031505834
@@ -35,8 +36,9 @@ typedef union tokenvalue
 typedef struct token 
 {
     tokentype_t type;
-    char text[MAX_LEXEME_SIZE];
+    char *text;
     int text_size;
+    int text_max_size;
     tokenvalue_t value;
     int line_num;
     char *filename;

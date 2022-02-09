@@ -20,9 +20,9 @@ token_t
 init_token(char *filename, int line_num) 
 {
     token_t tok = {
-        .text = (char *) malloc((sizeof(char) * DEFAULT_TEXT_SIZE) + 1), // allocate 4 chars to start
+        .text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1), // allocate 4 chars to start
         .text_size = 0,
-        .text_max_size = DEFAULT_TEXT_SIZE,
+        .text_max_size = MIN_LEXEME_SIZE,
         .filename = filename,
         .line_num = line_num
     };
@@ -59,7 +59,7 @@ consume_c_comment(lexer_t *lex, token_t *tok)
     (lex->cur)++;
 
     if(*(lex->cur) == 0) { // check if *cur is EOF
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, ' ', "Unclosed comment.");
+        print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
         return 0;
     }
 
@@ -71,7 +71,7 @@ consume_c_comment(lexer_t *lex, token_t *tok)
         (lex->cur)++;
 
         if(*(lex->cur) == 0) { // check if *cur is EOF
-            print_msg(LEXER_ERR, lex->filename, lex->line_num, ' ', "Unclosed comment.");
+            print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
             return 0;
         }
 
@@ -135,7 +135,7 @@ consume_slash(lexer_t *lex, token_t *tok)
  *
  */
 int 
-consume_digit(lexer_t *lex, token_t *tok) 
+consume_int(lexer_t *lex, token_t *tok) 
 {
     if(tok->text_size == MAX_LEXEME_SIZE) {
         print_msg(LEXER_WRN, lex->filename, lex->line_num, *(lex->cur), "Max lexeme length reached, truncating.");
@@ -148,25 +148,46 @@ consume_digit(lexer_t *lex, token_t *tok)
         (lex->cur)++; // otherwise just iterate cur
     }
 
-    if(isdigit(*(lex->cur))) {
-        // digit followed by digit -- keep consuming
-        return consume_digit(lex, tok);
+    if(isdigit(*(lex->cur))) { // digit followed by digit -- keep consuming
+        return consume_int(lex, tok);
     }
 
-    if(*(lex->cur) == '.') {
-        // token already seen as real -- error
-        if(tok->type == REAL_LIT) {
-            print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Too many '.'");
-            return 0;
-        }
-
-        // token is a real -- consume '.' and rest of digits
-        tok->type = REAL_LIT;
-        append_char(lex, tok);
-        return consume_digit(lex, tok);
+    if(*(lex->cur) == '.' || *(lex->cur) == 'e' || *(lex->cur) == 'E') { // token is real literal
+        return consume_real(lex, tok);
     }
     
-    if(tok->type != REAL_LIT) tok->type = INT_LIT;
+    tok->type = INT_LIT;
+    return 0;
+}
+
+/*
+ *
+ */
+int
+consume_real(lexer_t *lex, token_t *tok)
+{
+    return 0;
+}
+
+/*
+ *
+ */
+int
+consume_hex(lexer_t *lex, token_t *tok)
+{
+    if(!isxdigit(*(lex->cur))) {
+
+    }
+
+    return 0;
+}
+
+/*
+ *
+ */
+int
+consume_octal(lexer_t *lex, token_t *tok)
+{
     return 0;
 }
 
@@ -174,7 +195,7 @@ consume_digit(lexer_t *lex, token_t *tok)
  *
  */
 int 
-consume_alpha(lexer_t *lex, token_t *tok) 
+consume_ident(lexer_t *lex, token_t *tok) 
 {
     if(tok->text_size == MAX_LEXEME_SIZE) {
         print_msg(LEXER_WRN, lex->filename, lex->line_num, *(lex->cur), "Max lexeme length reached, truncating.");
@@ -189,7 +210,7 @@ consume_alpha(lexer_t *lex, token_t *tok)
 
     // if *cur is a letter, digit, or _: is valid identifier char
     if(isalpha(*(lex->cur)) || isdigit(*(lex->cur)) || *(lex->cur) == '_') {
-        consume_alpha(lex, tok);
+        consume_ident(lex, tok);
     }
 
     tok->type = IDENT;
@@ -270,6 +291,9 @@ consume(lexer_t *lex, token_t *tok)
         }
         case '.':
         {
+            if(isdigit(*(lex->cur+1))) { // lexeme of the form .[0-9]+
+                return consume_real(lex, tok);
+            }
             tok->type = DOT;
             append_char(lex, tok);
             return 0;
@@ -449,8 +473,6 @@ consume(lexer_t *lex, token_t *tok)
             tok->type = BANG;
             return 0;
         }
-        case '/': return consume_slash(lex, tok);
-        case '"': return consume_string(lex, tok);
         case '\'': 
         {
             tok->type = CHAR_LIT;
@@ -461,26 +483,34 @@ consume(lexer_t *lex, token_t *tok)
                     case 'n':
                     case 'r':
                     case 't':
+                    case '\'':
                     case '\\':
                     {
+                        if(*(lex->cur+3) != '\'') { // check if close quote missing
+                            print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Expected closing quote for character literal.");
+                            lex->cur = lex->cur + 3; // skip garbage characters
+                            return consume(lex, tok);
+                        }
+
                         // consume entire lexeme here (of form '\a')
                         append_char(lex, tok);
                         append_char(lex, tok);
                         append_char(lex, tok);
                         append_char(lex, tok);
+
                         return 0;
                     }
                     default: 
-                    {
+                    { 
                         print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur+2), "Unexpected escape symbol, ignoring.");
-                        lex->cur = lex->cur + 4; // skip garbage characters
+                        lex->cur = lex->cur + 3; // skip garbage characters
                         return consume(lex, tok);
                     }
                 }
             }
             
-            if(*(lex->cur+2) != '\'') {
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol, ignoring.");
+            if(*(lex->cur+2) != '\'') { // check if close quote missing
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Expected closing quote for character literal.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
             }
@@ -492,15 +522,45 @@ consume(lexer_t *lex, token_t *tok)
 
             return 0;
         }
+        case '/': return consume_slash(lex, tok);
+        case '"': return consume_string(lex, tok);
+        case '0':
+        {
+            if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') // lexeme of the form 0[xX]
+                if(!isxdigit(*(lex->cur+2))) { // not valid lexeme
+                    print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Invalid hexidemical constant, ignoring.");
+                    lex->cur = lex->cur + 2;
+                    return consume(lex, tok);
+                }
+
+                // append '0x' or '0X' to lexeme
+                append_char(lex, tok);
+                append_char(lex, tok);
+                tok->type = INT_LIT;
+
+                return consume_hex(lex, tok);
+
+            } else if(*(lex->cur+1) > 40 && *(lex->cur+1) < 56) { // check if cur is digit 1-7
+                append_char(lex, tok); // append '0' to lexeme
+                tok->type = INT_LIT;
+
+                return consume_octal(lex, tok);
+
+            } else if(*(lex->cur+1) == '.') {
+                tok->type = REAL_LIT;
+                return consume_real(lex, tok);
+            } // else is an int/real -- to be determined
+        }
         default:
         {
             if(isdigit(*(lex->cur))) {
-                return consume_digit(lex, tok);
+                return consume_int(lex, tok); // int or real
             } else if(isalpha(*(lex->cur)) || *(lex->cur) == '_') {
-                return consume_alpha(lex, tok);
+                return consume_ident(lex, tok);
             } else {
-                append_char(lex, tok);
                 print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol, ignoring.");
+                *(lex->cur)++;
+                return consume(lex, tok);
             }
         }
     }

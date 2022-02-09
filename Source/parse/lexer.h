@@ -6,10 +6,10 @@
 
 #include "tokens.h"
 
-#define MAX_LEXEME_SIZE     64
-#define MAX_STR_SIZE        1024
-#define BUFFER_SIZE         2048
-#define DEFAULT_TEXT_SIZE   4
+#define MAX_LEXEME_SIZE   64
+#define MIN_LEXEME_SIZE   4
+#define MAX_STR_SIZE      1024
+#define BUFFER_SIZE       2048
 
 #define CONST_HASH      210709068620
 #define STRUCT_HASH     6954031505834

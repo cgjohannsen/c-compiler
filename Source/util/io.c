@@ -39,13 +39,14 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *msg)
 
 
 /*
- * Opens filename, returns buffer of entire file. Must free the buffer that's returned after 
- * calling read_file. If filename is bigger than MAX_FILE_SIZE, return NULL.
- * Also replaces last element of buffer with 0 so that we know when to stop reading from file.
+ * Opens filename, returns buffer of entire file. Must free the buffer that's 
+ * returned after calling read_file. If filename is bigger than MAX_FILE_SIZE, 
+ * return NULL. Also replaces last element of buffer with 0 so that we know 
+ * when to stop reading from file.
  *
  * filename: file to open and return contents of
  *
- * returns: pointer to buffer that holds filename contents
+ * return: pointer to buffer that holds filename contents
  */
 char *
 read_file(char *filename)

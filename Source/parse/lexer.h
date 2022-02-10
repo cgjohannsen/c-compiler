@@ -11,6 +11,11 @@
 #define MAX_STR_SIZE      1024
 #define BUFFER_SIZE       2048
 
+#define VOID_HASH       6385805911
+#define CHAR_HASH       6385115235
+#define INT_HASH        193495088
+#define FLOAT_HASH      210712519067
+
 #define CONST_HASH      210709068620
 #define STRUCT_HASH     6954031505834
 #define FOR_HASH        193491852

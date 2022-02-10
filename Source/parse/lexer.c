@@ -8,6 +8,7 @@
 
 /*
  * Determines if input is a valid octal character i.e. [0-7]
+ * Sister function to those in ctype.h (i.e. isdigit(), isalpha(), etc.)
  *
  * c: character to check
  *
@@ -417,7 +418,8 @@ consume_string(lexer_t *lex, token_t *tok)
             case '"': append_char(lex, tok); break;
             default:
             {
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected escape symbol");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), 
+                    "Unexpected escape symbol");
                 return 0;
             }
         }
@@ -428,7 +430,13 @@ consume_string(lexer_t *lex, token_t *tok)
         return 0;
     }
 
-    consume_string(lex, tok);
+    if(!isprint(*(lex->cur))) { // cur is not printable -- not valid for string
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+            "Invalid symbol inside string literal, ignoring.");
+        *(lex->cur)++; // skip invalid character
+    }
+
+    return consume_string(lex, tok);
 }
 
 /*
@@ -619,7 +627,9 @@ consume(lexer_t *lex, token_t *tok)
                     case '\\':
                     {
                         if(*(lex->cur+3) != '\'') { // check if close quote missing
-                            print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Expected closing quote for character literal.");
+                            print_msg(LEXER_ERR, lex->filename, lex->line_num, 
+                                *(lex->cur), "Expected closing quote for" 
+                                             "character literal.");
                             lex->cur = lex->cur + 3; // skip garbage characters
                             return consume(lex, tok);
                         }
@@ -634,15 +644,32 @@ consume(lexer_t *lex, token_t *tok)
                     }
                     default: 
                     { 
-                        print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur+2), "Unexpected escape symbol, ignoring.");
+                        print_msg(LEXER_ERR, lex->filename, lex->line_num, 
+                            *(lex->cur+2), "Unexpected escape symbol, "
+                                           "ignoring.");
                         lex->cur = lex->cur + 3; // skip garbage characters
                         return consume(lex, tok);
                     }
                 }
             }
+
+            if(*(lex->cur+1) == '\'') { // empty char i.e. '' -- error
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                    "Empty character literal, ignoring.");
+                lex->cur = lex->cur + 2; // skip garbage characters
+                return consume(lex, tok);
+            }
+
+            if(!isprint(*(lex->cur+1))) { // invalid character literal
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                    "Invalid character literal, ignoring.");
+                lex->cur = lex->cur + 3; // skip garbage characters
+                return consume(lex, tok);
+            }
             
             if(*(lex->cur+2) != '\'') { // check if close quote missing
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Expected closing quote for character literal.");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                    "Expected closing quote for character literal.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
             }
@@ -658,9 +685,10 @@ consume(lexer_t *lex, token_t *tok)
             tok->type = STR_LIT; 
             return consume_string(lex, tok);
         case '0':
-            if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') { // lexeme of the form 0[xX]
+            if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') { // form 0[xX]
                 if(!isxdigit(*(lex->cur+2))) { // not valid lexeme
-                    print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Invalid hexidemical constant, ignoring.");
+                    print_msg(LEXER_ERR, lex->filename, lex->line_num, 
+                        *(lex->cur), "Invalid hexidemical constant, ignoring.");
                     lex->cur = lex->cur + 2;
                     return consume(lex, tok);
                 }

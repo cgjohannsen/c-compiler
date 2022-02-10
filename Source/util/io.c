@@ -4,7 +4,16 @@
 #include "io.h"
 
 /*
+ * Prints the content of the message to stderr along with filename, line number,
+ * and optional character if relevant.
  *
+ * code:     type of message i.e. warning/error and from what part of compiler
+ * filename: name of relevant file
+ * line_num: line number of relevant file
+ * c:        relevant character (optional)
+ * msg:      message to print
+ *
+ * return: void
  */
 void 
 print_msg(msgcode_t code, char *filename, int line_num, char c, char *msg)
@@ -37,16 +46,14 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *msg)
     }
 }
 
-
 /*
- * Opens filename, returns buffer of entire file. Must free the buffer that's 
- * returned after calling read_file. If filename is bigger than MAX_FILE_SIZE, 
- * return NULL. Also replaces last element of buffer with 0 so that we know 
- * when to stop reading from file.
+ * Opens filename, returns file ptr to said file. Prints error if file was not 
+ * opened successfully
  *
- * filename: file to open and return contents of
+ * filename: file to open and return file ptr to
  *
  * return: pointer to buffer that holds filename contents
+ *         NULL if file failed to open
  */
 FILE *
 open_file(char *filename)
@@ -105,7 +112,13 @@ open_file(char *filename)
 }
 
 /*
+ * Reads the contents of the file at fp into the buffer. Places the value 0 at
+ * the EOF character.
  *
+ * fp:     file ptr to file to read from
+ * buffer: buffer to fill
+ *
+ * return: 1
  */
 int
 refill_buffer(FILE *fp, char *buffer)

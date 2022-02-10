@@ -19,7 +19,7 @@ int
 isoctal(int c)
 {
     int digit = c - '0';
-    return (c >= 0 && c <= 7);
+    return (digit >= 0 && digit <= 7);
 }
 
 /*
@@ -36,15 +36,17 @@ int
 is_valid_size(lexer_t *lex, token_t *tok)
 {
     if(tok->type == STR_LIT) {
-        if(tok->text_size == MAX_STR_SIZE) { // only print once per excess char
-            print_msg(LEXER_WRN, lex->filename, lex->line_num, *(lex->cur), "Max string length reached, truncating.");
+        if(tok->text_size == MAX_STR_SIZE) { // only print once token
+            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, 
+                "Max string length reached, truncating.");
         }
         if(tok->text_size >= MAX_STR_SIZE) {
             return 0;
         }
     } else {
-        if(tok->text_size == MAX_LEXEME_SIZE) { // only print once per excess char
-            print_msg(LEXER_WRN, lex->filename, lex->line_num, *(lex->cur), "Max lexeme length reached, truncating.");
+        if(tok->text_size == MAX_LEXEME_SIZE) { // only print once token
+            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, 
+                "Max lexeme length reached, truncating.");
         }
         if(tok->text_size >= MAX_LEXEME_SIZE) {
             return 0;
@@ -65,7 +67,7 @@ is_valid_size(lexer_t *lex, token_t *tok)
 int
 iterate_cur(lexer_t *lex)
 {
-    if(lex->cur > lex->buffer + BUFFER_SIZE) { // end of buffer
+    if(lex->cur == lex->buffer + BUFFER_SIZE - 1) { // end of buffer
         refill_buffer(lex->file, lex->buffer);
         lex->cur = lex->buffer; // set cur back to beginning of buffer
     } else { // otherwise, just iterate
@@ -83,8 +85,8 @@ iterate_cur(lexer_t *lex)
  * lex: relevant lexer
  * tok: token to append the current char to
  *
- * return:  0 if token not of valid size
- *          1 otherwise
+ * return:  1 on success
+ *          0 otherwise
  */
 int 
 append_char(lexer_t *lex, token_t *tok) 
@@ -100,7 +102,7 @@ append_char(lexer_t *lex, token_t *tok)
         tok->text_max_size = tok->text_max_size << 1;
     }
 
-    tok->text[tok->text_size] = *(lex->cur); 
+    tok->text[tok->text_size] = *lex->cur; 
     tok->text[tok->text_size + 1] = '\0'; // update end of str 
     tok->text_size++;
 
@@ -125,24 +127,24 @@ consume_c_comment(lexer_t *lex, token_t *tok)
 {
     iterate_cur(lex);
 
-    if(*(lex->cur) == 0) { // check if *cur is EOF
+    if(*lex->cur == 0) { // check if *cur is EOF
         print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
         return 0;
     }
 
-    if(*(lex->cur) == '\n') { // keep track of line numbers
+    if(*lex->cur == '\n') { // keep track of line numbers
         (lex->line_num)++;
     }
 
-    if(*(lex->cur) == '*') {
+    if(*lex->cur == '*') {
         iterate_cur(lex);
 
-        if(*(lex->cur) == 0) { // check if *cur is EOF
+        if(*lex->cur == 0) { // check if *cur is EOF
             print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
             return 0;
         }
 
-        if(*(lex->cur) == '/') { // end of comment -- reenter consume
+        if(*lex->cur == '/') { // end of comment -- reenter consume
             iterate_cur(lex);
             tok->line_num = lex->line_num; // update token line num
             return consume(lex, tok);
@@ -166,7 +168,7 @@ consume_cpp_comment(lexer_t *lex, token_t *tok)
 {
     iterate_cur(lex);
 
-    if(*(lex->cur) == '\n') {
+    if(*lex->cur == '\n') {
         iterate_cur(lex);
         (lex->line_num)++;
         tok->line_num = lex->line_num; // update token line num
@@ -214,8 +216,6 @@ consume_slash(lexer_t *lex, token_t *tok)
  * Consumes the exponent portion of a REAL_LIT (i.e. following 'e'). All chars 
  * should be digits. 
  *
- * TODO: implement hex exp
- *
  * lex: relevant lexer
  * tok: token to be generated 
  *
@@ -226,8 +226,13 @@ consume_real_exp(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
  
-    if(isdigit(*(lex->cur))) {
+    if(isdigit(*lex->cur)) {
         return consume_real_exp(lex, tok);
+    }
+
+    if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+            "Invalid character as part of real literal.");
     }
 
     return 0;
@@ -236,8 +241,6 @@ consume_real_exp(lexer_t *lex, token_t *tok)
 /*
  * Consumes the fractional portion of a REAL_LIT (i.e. following '.'). 
  * Characters following this can be exp-type chars or digits.
- *
- * TODO: implement hex
  *
  * lex: relevant lexer
  * tok: token to be generated 
@@ -249,18 +252,20 @@ consume_real_frac(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
 
-    if(isdigit(*(lex->cur))) {
+    if(isdigit(*lex->cur)) {
         return consume_real_frac(lex, tok);
     }
 
-    if(*(lex->cur) == 'e' || *(lex->cur) == 'E') { // token is real w exp part
-        append_char(lex, tok); // append 'e'
-
+    if(*lex->cur == 'e' || *lex->cur == 'E') { // token is real w exp part
         if(*(lex->cur+1) == '-' || *(lex->cur+1) == '+') {
             append_char(lex, tok); // append optional '-', '+'
         }
-
         return consume_real_exp(lex, tok);
+    }
+
+    if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+            "Invalid character as part of real literal.");
     }
 
     return 0;
@@ -278,42 +283,43 @@ consume_real_frac(lexer_t *lex, token_t *tok)
 int 
 consume_int(lexer_t *lex, token_t *tok) 
 {
-    append_char(lex, tok);
+    int status = 1;
 
-    if(isdigit(*(lex->cur))) { // digit followed by digit -- keep consuming
+    status = append_char(lex, tok);
+
+    if(isdigit(*lex->cur)) { // digit followed by digit -- keep consuming
         return consume_int(lex, tok);
     }
 
-    if(*(lex->cur) == '.') { // token is REAL_LIT w frac part
-        if(append_char(lex, tok)) { // token is REAL_LIT only if of valid size
+    if(*lex->cur == '.') { // token is REAL_LIT w frac part
+        if(status) { // check if truncated before '.'
             tok->type = REAL_LIT;
         }
         return consume_real_frac(lex, tok);
     }
     
-    if(*(lex->cur) == 'e' || *(lex->cur) == 'E') { // token is REAL_LIT w exp part
-        if(append_char(lex, tok)) { // token is REAL_LIT only if of valid size
+    if(*lex->cur == 'e' || *lex->cur == 'E') { // token is REAL_LIT w exp
+        if(status) { // check if truncated before any of 'e', 'E'
             tok->type = REAL_LIT;
         }
-
-        if(*(lex->cur) == '-' || *(lex->cur) == '+') {
+        if(*(lex->cur+1) == '-' || *(lex->cur+1) == '+') {
             append_char(lex, tok);
         }
-
-        // TODO
-        // tricky case of when we truncate right after 'e', '-', '+'
-        // need to handle so that atof doesn't crash later
-
         return consume_real_exp(lex, tok);
+    }
+
+    if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+            "Invalid character as part of integer literal.");
     }
     
     tok->type = INT_LIT;
     return 0;
 }
 
-
 /*
- * Consumes a hexidecimal literal. Once a non-hex character is found, returns.
+ * Consumes a hexidecimal literal. If a non-hex alphanumeric character is found,
+ * prints an error. 
  *
  * lex: relevant lexer
  * tok: token to be generated
@@ -325,15 +331,21 @@ consume_hex(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
 
-    if(isxdigit(*(lex->cur))) {
+    if(isxdigit(*lex->cur)) {
         return consume_hex(lex, tok);
+    }
+
+    if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+            "Invalid character as part of hexadecimal literal.");
     }
 
     return 0;
 }
 
 /*
- * Consumes an octal literal. Once a non-octal character is found, returns.
+ * Consumes an octal literal. If a non-octal alphanumeric character is found,
+ * prints an error. 
  *
  * lex: relevant lexer
  * tok: token to be generated
@@ -345,8 +357,13 @@ consume_octal(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
 
-    if(isoctal(*(lex->cur))) {
+    if(isoctal(*lex->cur)) {
         return consume_octal(lex, tok);
+    }
+
+    if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+            "Invalid character as part of octal literal.");
     }
 
     return 0;
@@ -367,7 +384,7 @@ consume_ident(lexer_t *lex, token_t *tok)
     append_char(lex, tok);
 
     // if *cur is a letter, digit, or _: is valid identifier char
-    if(isalpha(*(lex->cur)) || isdigit(*(lex->cur)) || *(lex->cur) == '_') {
+    if(isalnum(*lex->cur) || *lex->cur == '_') {
         consume_ident(lex, tok);
     }
 
@@ -390,10 +407,10 @@ consume_string(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
 
-    if(*(lex->cur) == '\\') {  // check if cur is escape char
+    if(*lex->cur == '\\') {  // check if cur is escape char
         append_char(lex, tok); 
     
-        switch(*(lex->cur)) {
+        switch(*lex->cur) {
             case 'a':
             case 'b':
             case 'n':
@@ -403,20 +420,20 @@ consume_string(lexer_t *lex, token_t *tok)
             case '"': append_char(lex, tok); break;
             default:
             {
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), 
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
                     "Unexpected escape symbol");
                 return 0;
             }
         }
     }
 
-    if(*(lex->cur) == '"') {
+    if(*lex->cur == '"') {
         append_char(lex, tok);
         return 0;
     }
 
-    if(!isprint(*(lex->cur))) { // cur is not printable -- not valid for string
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+    if(!isprint(*lex->cur)) { // cur is not printable -- not valid for string
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
             "Invalid symbol inside string literal, ignoring.");
         iterate_cur(lex); // skip invalid character
     }
@@ -440,8 +457,8 @@ consume_string(lexer_t *lex, token_t *tok)
 int 
 consume(lexer_t *lex, token_t *tok) 
 {
-    if(isspace(*(lex->cur))) { // if current char is whitespace, skip
-        if(*(lex->cur) == '\n') { // keep track of line numbers
+    if(isspace(*lex->cur)) { // if current char is whitespace, skip
+        if(*lex->cur == '\n') { // keep track of line numbers
             (lex->line_num)++;
             tok->line_num = lex->line_num; // update token line num
         }
@@ -449,7 +466,7 @@ consume(lexer_t *lex, token_t *tok)
         return consume(lex, tok);
     }
 
-    switch(*(lex->cur)) {
+    switch(*lex->cur) {
         case 0:
             tok->type = END; 
             break;
@@ -494,7 +511,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '>':
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = GEQ;
                 append_char(lex, tok);
                 break;
@@ -503,7 +520,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '<':
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = LEQ;
                 append_char(lex, tok);
                 break;
@@ -512,7 +529,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '=': 
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = EQ;
                 append_char(lex, tok);
                 break;
@@ -521,12 +538,12 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '+': 
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = PLUSASSIGN;
                 append_char(lex, tok);
                 break;
             }
-            if(*(lex->cur) == '+') {
+            if(*lex->cur == '+') {
                 tok->type = INCR;
                 append_char(lex, tok);
                 break;
@@ -535,12 +552,12 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '-': 
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = MINUSASSIGN;
                 append_char(lex, tok);
                 break;
             }
-            if(*(lex->cur) == '-') {
+            if(*lex->cur == '-') {
                 tok->type = DECR;
                 append_char(lex, tok);
                 break;
@@ -549,7 +566,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '*': 
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = STARASSIGN;
                 append_char(lex, tok);
                 break;
@@ -574,7 +591,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '|': 
             append_char(lex, tok);
-            if(*(lex->cur) == '|') {
+            if(*lex->cur == '|') {
                 tok->type = DPIPE;
                 append_char(lex, tok);
                 break;
@@ -583,7 +600,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '&': 
             append_char(lex, tok);
-            if(*(lex->cur) == '&') {
+            if(*lex->cur == '&') {
                 tok->type = DAMP;
                 append_char(lex, tok);
                 break;
@@ -592,7 +609,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '!': 
             append_char(lex, tok);
-            if(*(lex->cur) == '=') {
+            if(*lex->cur == '=') {
                 tok->type = NEQ;
                 append_char(lex, tok);
                 break;
@@ -613,7 +630,7 @@ consume(lexer_t *lex, token_t *tok)
                     {
                         if(*(lex->cur+3) != '\'') { // check if close quote missing
                             print_msg(LEXER_ERR, lex->filename, lex->line_num, 
-                                *(lex->cur), "Expected closing quote for" 
+                                *lex->cur, "Expected closing quote for" 
                                              "character literal.");
                             lex->cur = lex->cur + 3; // skip garbage characters
                             return consume(lex, tok);
@@ -639,21 +656,21 @@ consume(lexer_t *lex, token_t *tok)
             }
 
             if(*(lex->cur+1) == '\'') { // empty char i.e. '' -- error
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
                     "Empty character literal, ignoring.");
                 lex->cur = lex->cur + 2; // skip garbage characters
                 return consume(lex, tok);
             }
 
             if(!isprint(*(lex->cur+1))) { // invalid character literal
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
                     "Invalid character literal, ignoring.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
             }
             
             if(*(lex->cur+2) != '\'') { // check if close quote missing
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
                     "Expected closing quote for character literal.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
@@ -673,7 +690,7 @@ consume(lexer_t *lex, token_t *tok)
             if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') { // form 0[xX]
                 if(!isxdigit(*(lex->cur+2))) { // not valid lexeme
                     print_msg(LEXER_ERR, lex->filename, lex->line_num, 
-                        *(lex->cur), "Invalid hexidemical constant, ignoring.");
+                        *lex->cur, "Invalid hexademical constant, ignoring.");
                     lex->cur = lex->cur + 2;
                     return consume(lex, tok);
                 }
@@ -686,7 +703,7 @@ consume(lexer_t *lex, token_t *tok)
                 return consume_hex(lex, tok);
             } 
             
-            if(isoctal(*(lex->cur))) { // check if cur is digit 1-7
+            if(isoctal(*(lex->cur+1))) { // check if next char is digit 1-7
                 append_char(lex, tok); // append '0' to lexeme
                 tok->type = INT_LIT;
 
@@ -704,12 +721,13 @@ consume(lexer_t *lex, token_t *tok)
 
             // else is an int/real -- fall through to default case
         default:
-            if(isdigit(*(lex->cur))) {
+            if(isdigit(*lex->cur)) {
                 return consume_int(lex, tok); // int or real
-            } else if(isalpha(*(lex->cur)) || *(lex->cur) == '_') {
+            } else if(isalpha(*lex->cur) || *lex->cur == '_') {
                 return consume_ident(lex, tok);
             } else {
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol, ignoring.");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "Unexpected symbol, ignoring.");
                 iterate_cur(lex);
                 return consume(lex, tok);
             }
@@ -824,7 +842,6 @@ keyword_check(token_t *tok)
 
 }
 
-
 /*
  * Prints token to screen in the form seen in function
  * 
@@ -878,7 +895,6 @@ free_token(token_t *tok)
     return 1;
 }
 
-
 /*
  * Generates the next token according to the current state of the lexer.
  * At a high level, this function calls consume() to generate the token then
@@ -892,8 +908,6 @@ token_t
 next_token(lexer_t *lex) 
 {
     token_t tok = init_token(lex->filename, lex->line_num);
-
-    fprintf(stderr, "%c\n", *lex->cur);
 
     consume(lex, &tok);
 

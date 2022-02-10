@@ -23,43 +23,6 @@ isoctal(int c)
 }
 
 /*
- * Prints token to screen in the form seen in function
- * 
- * outfile: file pointer to print the output to
- * tok:     token to print relevant contents of
- *
- * return:  void
- */
-void 
-print_token(FILE *outfile, token_t *tok) 
-{
-    fprintf(outfile,"File %s Line %*d Token %*d Text %s\n", 
-        tok->filename, 5, tok->line_num, 3, tok->type, tok->text);
-}
-
-/*
- * Initializes values of a token_t struct and returns said token_t
- *
- * filename: name of file currently being processed 
- * line_num: current line number within file being processed
- *
- * return: an initilialized token_t struct
- */
-token_t 
-init_token(char *filename, int line_num) 
-{
-    token_t tok = {
-        .text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1), // allocate 4 chars to start
-        .text_size = 0,
-        .text_max_size = MIN_LEXEME_SIZE,
-        .filename = filename,
-        .line_num = line_num
-    };
-    tok.text[0] = '\0';
-    return tok;
-}
-
-/*
  * Checks if token is of valid size i.e. under the max of the token's type. If 
  * it is already equal to max size, warns user that lexeme is being truncated.
  *
@@ -70,7 +33,7 @@ init_token(char *filename, int line_num)
  *          1 otherwise
  */
 int
-valid_size(lexer_t *lex, token_t *tok)
+is_valid_size(lexer_t *lex, token_t *tok)
 {
     if(tok->type == STR_LIT) {
         if(tok->text_size == MAX_STR_SIZE) { // only print once per excess char
@@ -92,6 +55,28 @@ valid_size(lexer_t *lex, token_t *tok)
 }
 
 /*
+ * Iterates the current character pointer of the lexer. Most importantly, checks
+ * if the buffer needs to be refilled and if so, refills it.
+ *
+ * lex: lexer under use
+ *
+ * return: 1
+ */
+int
+iterate_cur(lexer_t *lex)
+{
+    if(lex->cur > lex->buffer + BUFFER_SIZE) { // end of buffer
+        refill_buffer(lex->file, lex->buffer);
+        lex->cur = lex->buffer; // set cur back to beginning of buffer
+    } else { // otherwise, just iterate
+        (lex->cur)++; 
+    }
+
+    return 1;
+}
+
+
+/*
  * Appends the current char to the input token if the token has available size. 
  * Also resizes the size of the text for the token if necesary
  *
@@ -104,9 +89,9 @@ valid_size(lexer_t *lex, token_t *tok)
 int 
 append_char(lexer_t *lex, token_t *tok) 
 {
-    if(!valid_size(lex, tok)) { // tok above max size -- just iterate cur
+    if(!is_valid_size(lex, tok)) { // tok above max size -- just iterate cur
         tok->text_size++;
-        (lex->cur)++;
+        iterate_cur(lex);
         return 0;
     }
     
@@ -119,7 +104,7 @@ append_char(lexer_t *lex, token_t *tok)
     tok->text[tok->text_size + 1] = '\0'; // update end of str 
     tok->text_size++;
 
-    (lex->cur)++;
+    iterate_cur(lex);
 
     return 1;
 }
@@ -138,7 +123,7 @@ append_char(lexer_t *lex, token_t *tok)
 int 
 consume_c_comment(lexer_t *lex, token_t *tok) 
 {
-    (lex->cur)++;
+    iterate_cur(lex);
 
     if(*(lex->cur) == 0) { // check if *cur is EOF
         print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
@@ -150,7 +135,7 @@ consume_c_comment(lexer_t *lex, token_t *tok)
     }
 
     if(*(lex->cur) == '*') {
-        (lex->cur)++;
+        iterate_cur(lex);
 
         if(*(lex->cur) == 0) { // check if *cur is EOF
             print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
@@ -158,7 +143,7 @@ consume_c_comment(lexer_t *lex, token_t *tok)
         }
 
         if(*(lex->cur) == '/') { // end of comment -- reenter consume
-            (lex->cur)++;
+            iterate_cur(lex);
             tok->line_num = lex->line_num; // update token line num
             return consume(lex, tok);
         }
@@ -179,10 +164,10 @@ consume_c_comment(lexer_t *lex, token_t *tok)
 int 
 consume_cpp_comment(lexer_t *lex, token_t *tok) 
 {
-    (lex->cur)++;
+    iterate_cur(lex);
 
     if(*(lex->cur) == '\n') {
-        (lex->cur)++;
+        iterate_cur(lex);
         (lex->line_num)++;
         tok->line_num = lex->line_num; // update token line num
         return consume(lex, tok);
@@ -204,12 +189,12 @@ int
 consume_slash(lexer_t *lex, token_t *tok) 
 {
     if(*(lex->cur+1) == '*') {
-        (lex->cur)++;
+        iterate_cur(lex);
         return consume_c_comment(lex, tok);
     }
 
     if(*(lex->cur+1) == '/') {
-        (lex->cur)++;
+        iterate_cur(lex);
         return consume_cpp_comment(lex, tok);
     }
 
@@ -433,7 +418,7 @@ consume_string(lexer_t *lex, token_t *tok)
     if(!isprint(*(lex->cur))) { // cur is not printable -- not valid for string
         print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur),
             "Invalid symbol inside string literal, ignoring.");
-        *(lex->cur)++; // skip invalid character
+        iterate_cur(lex); // skip invalid character
     }
 
     return consume_string(lex, tok);
@@ -460,7 +445,7 @@ consume(lexer_t *lex, token_t *tok)
             (lex->line_num)++;
             tok->line_num = lex->line_num; // update token line num
         }
-        (lex->cur)++;
+        iterate_cur(lex);
         return consume(lex, tok);
     }
 
@@ -725,7 +710,7 @@ consume(lexer_t *lex, token_t *tok)
                 return consume_ident(lex, tok);
             } else {
                 print_msg(LEXER_ERR, lex->filename, lex->line_num, *(lex->cur), "Unexpected symbol, ignoring.");
-                *(lex->cur)++;
+                iterate_cur(lex);
                 return consume(lex, tok);
             }
     }
@@ -839,6 +824,61 @@ keyword_check(token_t *tok)
 
 }
 
+
+/*
+ * Prints token to screen in the form seen in function
+ * 
+ * outfile: file pointer to print the output to
+ * tok:     token to print relevant contents of
+ *
+ * return:  void
+ */
+void 
+print_token(FILE *outfile, token_t *tok) 
+{
+    fprintf(outfile,"File %s Line %*d Token %*d Text %s\n", 
+        tok->filename, 5, tok->line_num, 3, tok->type, tok->text);
+}
+
+/*
+ * Initializes values of a token_t struct and returns said token_t. Must call 
+ * free_token subsequently to free text memory.
+ *
+ * filename: name of file currently being processed 
+ * line_num: current line number within file being processed
+ *
+ * return: an initilialized token_t struct
+ */
+token_t
+init_token(char *filename, int line_num) 
+{
+    token_t tok = {
+        // allocate 4 chars to start
+        .text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1), 
+        .text_size = 0,
+        .text_max_size = MIN_LEXEME_SIZE,
+        .filename = filename,
+        .line_num = line_num
+    };
+    tok.text[0] = '\0';
+    return tok;
+}
+
+/*
+ * Frees the memory used for the text attribute of the token.
+ *
+ * tok: token to be freed
+ *
+ * return: 1
+ */
+int
+free_token(token_t *tok)
+{
+    free(tok->text);
+    return 1;
+}
+
+
 /*
  * Generates the next token according to the current state of the lexer.
  * At a high level, this function calls consume() to generate the token then
@@ -852,6 +892,8 @@ token_t
 next_token(lexer_t *lex) 
 {
     token_t tok = init_token(lex->filename, lex->line_num);
+
+    fprintf(stderr, "%c\n", *lex->cur);
 
     consume(lex, &tok);
 
@@ -869,26 +911,9 @@ next_token(lexer_t *lex)
 
 
 /*
- * Frees the dynamically allocated array for the input buffer. Must be called 
- * after a call to init_lexer.
- *
- * lex: lexer currently under use
- *
- * return: void
- */
-void
-free_lexer(lexer_t *lex)
-{
-    free(lex->buffer);
-}
-
-
-/*
  * Initializes and returns a lexer structure that starts at the begnning of
  * the file "filename". Opens the input file and reads data into buffer.
  *
- * Note: Must call free_lexer after calling
- * 
  * filename: name of input file
  *
  * return: a lexer initialized to the beginning of the input file
@@ -896,14 +921,16 @@ free_lexer(lexer_t *lex)
 lexer_t
 init_lexer(char *filename)
 {
-    char *buf = read_file(filename);
+    FILE *fp = open_file(filename);
 
     lexer_t lex = {
         .filename = filename,
-        .buffer = buf,
-        .cur = buf, // initialize cur to start of buffer
+        .file = fp,
         .line_num = 1
     };
+
+    // fill buffer
+    refill_buffer(lex.file, lex.buffer);
 
     return lex;
 }
@@ -924,16 +951,16 @@ tokenize(char *filename, FILE *outfile)
     lexer_t lex;
     token_t tok;
 
-    // remember to call free(buffer) !!!
     lex = init_lexer(filename);
+    lex.cur = lex.buffer; // set cur to beginning of buffer
 
     tok = next_token(&lex);
     while(tok.type != END) { // get tokens until EOF
         print_token(outfile, &tok);
+        free_token(&tok);
         tok = next_token(&lex);
     }
-
-    free_lexer(&lex);
+    free_token(&tok);
 }
 
 

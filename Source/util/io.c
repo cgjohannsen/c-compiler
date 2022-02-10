@@ -48,9 +48,20 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *msg)
  *
  * return: pointer to buffer that holds filename contents
  */
-char *
-read_file(char *filename)
+FILE *
+open_file(char *filename)
 {
+    FILE *fp;
+
+    fp = fopen(filename, "r");
+    if(fp == NULL) {
+        print_msg(FILE_ERR, filename, 0, 0, "Could not open file");
+        return NULL;
+    }
+
+    return fp;
+
+    /*
     FILE *fp;
     long file_size;
     char *buffer;
@@ -62,7 +73,7 @@ read_file(char *filename)
         return NULL;
     }
 
-    /* get file size */
+    // get file size
     fseek (fp, 0, SEEK_END);
     file_size = ftell(fp);
     rewind(fp);
@@ -72,23 +83,40 @@ read_file(char *filename)
         return NULL;
     }
 
-    /* allocate memory to contain the whole file + '\0' at end of buffer */
-    buffer = (char*) malloc((sizeof(char)*file_size)+1);
+    // allocate memory to contain the whole file + '\0' at end of buffer    buffer = (char*) malloc((sizeof(char)*file_size)+1);
     if (buffer == NULL) {
         print_msg(FILE_ERR, filename, 0, 0, "Could not allocate memory for file");
         return NULL;
     }
 
-    /* copy the file into the buffer */
+    // copy the file into the buffer
     bytes_read = fread(buffer, 1, file_size, fp);
     if (bytes_read != file_size) {
         print_msg(FILE_ERR, filename, 0, 0, "Could not read entire file contents");
         return NULL;
     }
 
-    /* set last char of buffer to 0 */
+    // set last char of buffer to 0
     buffer[file_size] = 0;
 
     fclose(fp);
     return buffer;
+    */
+}
+
+/*
+ *
+ */
+int
+refill_buffer(FILE *fp, char *buffer)
+{
+    size_t bytes_read;
+
+    bytes_read = fread(buffer, sizeof(char), BUFFER_SIZE, fp);
+
+    if(bytes_read != BUFFER_SIZE) { // EOF in buffer now
+        buffer[bytes_read] = 0; // set EOF char to 0
+    }
+
+    return 1;
 }

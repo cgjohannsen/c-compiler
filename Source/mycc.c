@@ -13,7 +13,7 @@ const char *version = "My C compiler\n"
                       "\tAuthor: Chris Johannsen\n"
                       "\tEmail: cgjohann@iastate.edu\n"
                       "\tVersion: 0.1\n"
-                      "\tDate: 1-19-2021\n";
+                      "\tDate: 2-9-2022\n";
 
 int main(int argc, char **argv)
 {

@@ -4,12 +4,13 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "../util/io.h"
+
 #include "tokens.h"
 
 #define MAX_LEXEME_SIZE   64
 #define MIN_LEXEME_SIZE   4
 #define MAX_STR_SIZE      1024
-#define BUFFER_SIZE       2048
 
 #define VOID_HASH       6385805911
 #define CHAR_HASH       6385115235
@@ -47,11 +48,13 @@ typedef struct token
     tokenvalue_t value;
     int line_num;
     char *filename;
+    FILE *file;
 } token_t;
 
 typedef struct lexer {
     char *filename;
-    char *buffer;
+    FILE *file;
+    char buffer[BUFFER_SIZE];
     char *cur;
     int line_num;
 } lexer_t;

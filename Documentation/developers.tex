@@ -3,7 +3,7 @@
 \usepackage{graphicx}
 \usepackage[margin=1in]{geometry}
 
-\linespread{1.6}
+\linespread{1}
 
 \title{Basic C Compiler Developers Guide}
 \author{Chris Johannsen}
@@ -58,6 +58,8 @@ In this section we describe the features of the various modes the compiler can b
 
 \subsection{Mode 0}
 
+This is the most restricted mode and simply prints version information.
+
 \subsubsection{Features}
 
 \begin{itemize}
@@ -67,11 +69,13 @@ In this section we describe the features of the various modes the compiler can b
 
 \subsubsection{Implementation Details}
 
-We use \verb|getopt| to parse input arguments. If no mode is specified, the program prints usage information and exits. Ff mode 0 is specified, the program prints version information. Otherwise the program prints nothing if any other mode is spceified. 
+We use \verb|getopt| to parse input arguments. If no mode is specified, the program prints usage information and exits. If mode 0 is specified, the program prints version information. Otherwise the program prints nothing if any other mode is spceified. 
 
 When run in this mode we ignore the input file; whether one is specified or not.
 
 \subsection{Mode 1}
+
+This mode corresponds to the lexer and outputs a stream of tokens of the input file.
 
 \subsubsection{Features}
 
@@ -82,6 +86,27 @@ When run in this mode we ignore the input file; whether one is specified or not.
 
 \subsubsection{Implementation Details}
 
+\textbf{Relevant Files:}
 
+\begin{itemize}
+    \item \verb|parse/lexer.c|: Implements the lexer and all its glory.
+    \item \verb|util/io.c|: Implements IO operations such as safely opening a file and filling a buffer.
+    \item \verb|util/hash.c|: Implements a basic string hash function used to match keywords.
+\end{itemize}
+
+\noindent \textbf{Relevant Data Structures:}
+
+\begin{itemize}
+    \item \verb|lexer|: Stores data relating to a file being tokenized. This includes the filename, and file pointer to the open file, a buffer, and the current character being considered in the buffer.
+    \item \verb|token|: Stores all the data relating to the token. See the struct definition for specifics.
+\end{itemize}
+
+\noindent \textbf{Working Description:} The lexer works by calling the \verb|next_token| function. The \verb|lexer| structure is the data structure that stores the current state of the lexer i.e. the current file, buffer, and place in the buffer. To print the complete stream of tokens, we call \verb|next_token| until it returns the \verb|END| token, at which point we return.
+
+From an architecural perspective, the \verb|next_token| function works by calling the \verb|consume| function that either 1) consumes tokens of a fixed length or 2) dispatches to another function to consume a token of variable length. We then track the current state of the lexer depending on the function/switch case we are inside and the current character being considered. 
+
+For comments, we simply iterate the pointer associated of the current position in the buffer until we reach the end of the comment.
+
+We categorize keywords last i.e., all keywords are matched as identifiers and then checked to see if they are a specific keyword. We do this by hard-coding the hash values for each keyword and comparing the hash of the token being considered. If there is a match, we then confirm they are in fact the same by using \verb|strcmp| and then update its type.
 
 \end{document}

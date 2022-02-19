@@ -1,0 +1,157 @@
+Git URL: https://git.ece.iastate.edu/cgjohann/compiler
+Grade date: 02/18
+Grader: Richard Jiles rdjiles@iastate.edu
+
+5/5 pts   README.txt / README.md
+  Instructions to build compiler and documentation are given.
+  Should also indicate which features are implemented for part 1.
+
+15/15 pts  developers.pdf
+
+10/10 pts  Ease of building
+
+5/5 pts  Check that the compiler works in mode 0
+
+5/5 pts  -o switch
+	Use the -o option for Check.sh to test this
+
+
+Basic lexer
+------------------------------------------------------------
+10/10 pts	Correct line numbers and output format.
+
+        test files: lineno1.c, lineno2.c
+
+15/15 pts	Keywords, types, identifiers.
+
+        test files: keywords_01.c ... keywords_15.c
+		
+		0 pass = 0 points
+		1 pass = 3 points
+		2 pass = 6 points
+		3 pass = 7.5 points
+		4 pass = 9 points
+		5 pass = 10 points
+		6 pass = 10.8 points
+		7 pass = 11.4 points
+		8 pass = 12.1 points
+		9 pass = 12.6 points
+		10 pass = 13.1 points
+		11 pass = 13.5 points
+		12 pass = 13.9 points
+		13 pass = 14.3 points
+		14 pass = 14.6 points
+		15 pass = 15 points
+
+11.4/12 pts	Integer, real, string, character literals.
+
+        test files: literals_01.c ... literals_12.c
+		
+		0 pass = 0 points
+		1 pass = 4 points
+		2 pass = 6.1 points
+		3 pass = 7.4 points
+		4 pass = 8.4 points
+		5 pass = 9.2 points
+		6 pass = 9.7 points
+		7 pass = 10.3 points
+		8 pass = 10.6 points
+		9 pass = 11.1 points
+		10 pass = 11.4 points
+		11 pass = 11.7 points
+		12 pass = 12 points
+
+2/2  pts	Error for invalid characters.
+
+        test files: invalid1.c, invalid2.c
+		
+		0 pass = 0 points
+		1 pass = 1.6 points
+		2 pass = 2 points
+
+5.2/6  pts	Comments.
+
+        test files: comments_1.c ... comments_6.c
+		
+		0 pass = 0 points
+		1 pass = 2.5 points
+		2 pass = 3.9 points
+		3 pass = 4.6 points
+		4 pass = 5.2 points
+		5 pass = 5.7 points
+		6 pass = 6 points
+
+14.6/15 pts	Symbols.
+
+        test files: symbols_01.c ... symbols_15.c
+		
+		0 pass = 0 points
+		1 pass = 3 points
+		2 pass = 6 points
+		3 pass = 7.5 points
+		4 pass = 9 points
+		5 pass = 10 points
+		6 pass = 10.8 points
+		7 pass = 11.4 points
+		8 pass = 12.1 points
+		9 pass = 12.6 points
+		10 pass = 13.1 points
+		11 pass = 13.5 points
+		12 pass = 13.9 points
+		13 pass = 14.3 points
+		14 pass = 14.6 points
+		15 pass = 15 points
+		
+
+Extra credit (compare against extra credit output)
+------------------------------------------------------------
+
+4/4  pts	Char literals with escapes
+
+        test files: ex_char1.c ... ex_char4.c
+		
+		0 pass = 0 points
+		1 pass = 2.2 points
+		2 pass = 3.1 points
+		3 pass = 3.7 points
+		4 pass = 4 points
+
+3.7/4  pts	Octal, Decimal, Hexadecimal integer literals
+
+        test files: ex_int1.c ... ex_int4.c
+		
+		0 pass = 0 points
+		1 pass = 2.2 points
+		2 pass = 3.1 points
+		3 pass = 3.7 points
+		4 pass = 4 points
+
+3.1/4  pts	Real literals with exponents
+
+        test files: ex_real1.c ... ex_real4.c
+		
+		0 pass = 0 points
+		1 pass = 2.2 points
+		2 pass = 3.1 points
+		3 pass = 3.7 points
+		4 pass = 4 points
+
+3.1/4  pts	String literals with escapes
+
+        test files:	ex_str1.c ... ex_str4.c
+		
+		0 pass = 0 points
+		1 pass = 2.2 points
+		2 pass = 3.1 points
+		3 pass = 3.7 points
+		4 pass = 4 points
+
+3.7/4  pts	Truncated lexemes
+
+        test files: ex_trunc1.c ... ex_trunc4.c
+		
+		0 pass = 0 points
+		1 pass = 2.2 points
+		2 pass = 3.1 points
+		3 pass = 3.7 points
+		4 pass = 4 points

@@ -1,15 +1,12 @@
-program : var_decl
-        | fun_decl
-        | fun_def
-        ;
+program : (var_dec | fun_decl | fun_def)* EOF ;
 
 var_decl : 'const'? Type Ident ('[' Integer ']')? (',' Ident ('[' Integer ']')?)+ ';' ;
 
 fun_proto : fun_decl ';' ;
 
-fun_decl : Type Ident '(' param (',' param)* ')'
+fun_decl : Type Ident '(' fun_param (',' fun_param)* ')'
 
-param : Type Ident ('[]')?
+fun_param : Type Ident ('[]')?
 
 fun_def : fun_decl '{' (var_decl | statement)* '}' ;
 
@@ -24,7 +21,7 @@ statement : ';'
           | do-statement
           ;
 
-statement-block : '{' expr* '}'
+statement-block : '{' statement* '}'
 
 if-statement : 'if' '(' expr ')' (statement-block | statement ';') ('else' (statement-block | statement ';'))? ;
 
@@ -34,7 +31,7 @@ while-statement : 'while' '(' expr ')' (statement-block | statement ';') ;
 
 do-statement : 'do' (statement-block | statement ';') 'while' '(' expr ')' ';' ;
 
-expr : literal
+expr : Integer ;
 
 
 

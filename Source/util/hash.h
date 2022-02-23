@@ -8,6 +8,6 @@ typedef struct item {
     uint64_t value;
 } item_t;
 
-uint64_t hash(unsigned char *str);
+uint64_t hash(char *str);
 
 #endif

@@ -266,9 +266,9 @@ Lex and Yacc Autogen files:
 *.tab.c
 *.tab.h
 
-bin/
-target/
-
 mycc
 out
 toy.c
+
+Target/
+Bin/

@@ -10,7 +10,7 @@
 
 typedef struct lexer {
     char *filename;
-    FILE *file;
+    FILE *infile;
     char buffer[BUFFER_SIZE];
     char *cur_char;
     token_t cur_tok;

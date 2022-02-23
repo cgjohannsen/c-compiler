@@ -68,7 +68,7 @@ int
 iterate_cur_char(lexer_t *lex)
 {
     if(lex->cur_char == lex->buffer + BUFFER_SIZE - 1) { // end of buffer
-        refill_buffer(lex->file, lex->buffer);
+        refill_buffer(lex->infile, lex->buffer);
         lex->cur_char = lex->buffer; // set cur_char back to beginning of buffer
     } else { // otherwise, just iterate
         (lex->cur_char)++; 
@@ -887,7 +887,7 @@ init_lexer(char *filename)
 
     lexer_t lex = {
         .filename = filename,
-        .file = fp,
+        .infile = fp,
         .line_num = 1
     };
 
@@ -925,6 +925,7 @@ tokenize(char *filename, FILE *outfile)
         tok = &lex.cur_tok;
     }
     free_token(tok);
+    fclose(lex->infile);
 }
 
 

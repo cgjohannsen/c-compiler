@@ -12,13 +12,12 @@ typedef struct lexer {
     char *filename;
     FILE *infile;
     char buffer[BUFFER_SIZE];
-    char *cur_char;
-    token_t cur_tok;
+    char *cur;
     int line_num;
 } lexer_t;
 
 int consume(lexer_t *, token_t *);
-void next_token(lexer_t *);
+token_t next_token(lexer_t *);
 lexer_t init_lexer(char *);
 void tokenize(char *, FILE *);
 

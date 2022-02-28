@@ -5,8 +5,10 @@
 #include "ast.h"
 
 typedef struct parser {
-    lexer_t lex;
-    ast_t ast;
+    lexer_t *lex;
+    ast_t *ast;
+    token_t *cur, *next;
+    int status;
 } parser_t;
 
 void parse(char *, FILE *);

@@ -24,33 +24,29 @@ print_token(FILE *outfile, token_t *tok)
  * filename: name of file currently being processed 
  * line_num: current line number within file being processed
  *
- * return: an initilialized token_t struct
+ * return: void
  */
-token_t
-init_token(char *filename, int line_num) 
+void 
+init_token(char *filename, int line_num, token_t *tok) 
 {
-    token_t tok = {
-        // allocate 4 chars to start
-        .text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1), 
-        .text_size = 0,
-        .text_max_size = MIN_LEXEME_SIZE,
-        .filename = filename,
-        .line_num = line_num
-    };
-    tok.text[0] = '\0';
-    return tok;
+    // allocate 4 chars to start
+    tok->text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1);
+    tok->text[0] = '\0';
+    tok->text_size = 0;
+    tok->text_max_size = MIN_LEXEME_SIZE;
+    tok->filename = filename;
+    tok->line_num = line_num;
 }
 
 /*
- * Frees the memory used for the text attribute of the token.
+ * Frees the memory used for the token.
  *
  * tok: token to be freed
  *
- * return: 1
+ * return: void
  */
-int
+void
 free_token(token_t *tok)
 {
     free(tok->text);
-    return 1;
 }

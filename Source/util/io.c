@@ -11,12 +11,14 @@
  * filename: name of relevant file
  * line_num: line number of relevant file
  * c:        relevant character (optional)
+ * s:        relevant text (optional)
  * msg:      message to print
  *
  * return: void
  */
 void 
-print_msg(msgcode_t code, char *filename, int line_num, char c, char *msg)
+print_msg(msgcode_t code, char *filename, int line_num, char c, char *s, 
+    char *msg)
 {
     switch(code) {
         case FILE_ERR:
@@ -67,7 +69,7 @@ open_file(char *filename)
 
     fp = fopen(filename, "r");
     if(fp == NULL) {
-        print_msg(FILE_ERR, filename, 0, 0, "Could not open file");
+        print_msg(FILE_ERR, filename, 0, 0, "", "Could not open file");
         return NULL;
     }
 

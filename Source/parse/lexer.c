@@ -37,7 +37,7 @@ is_valid_size(lexer_t *lex, token_t *tok)
 {
     if(tok->type == STR_LIT) {
         if(tok->text_size == MAX_STR_SIZE) { // only print once token
-            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, 
+            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, "",
                 "Max string length reached, truncating.");
         }
         if(tok->text_size >= MAX_STR_SIZE) {
@@ -45,7 +45,7 @@ is_valid_size(lexer_t *lex, token_t *tok)
         }
     } else {
         if(tok->text_size == MAX_LEXEME_SIZE) { // only print once token
-            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, 
+            print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, "", 
                 "Max lexeme length reached, truncating.");
         }
         if(tok->text_size >= MAX_LEXEME_SIZE) {
@@ -128,7 +128,8 @@ consume_c_comment(lexer_t *lex, token_t *tok)
     iterate_cur(lex);
 
     if(*lex->cur == 0) { // check if *cur is EOF
-        print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
+        print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "", 
+            "Unclosed comment.");
         return 0;
     }
 
@@ -140,7 +141,8 @@ consume_c_comment(lexer_t *lex, token_t *tok)
         iterate_cur(lex);
 
         if(*lex->cur == 0) { // check if *cur is EOF
-            print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "Unclosed comment.");
+            print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "",         
+                "Unclosed comment.");
             return 0;
         }
 
@@ -231,7 +233,7 @@ consume_real_exp(lexer_t *lex, token_t *tok)
     }
 
     if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "", 
             "Invalid character as part of real literal.");
     }
 
@@ -264,7 +266,7 @@ consume_real_frac(lexer_t *lex, token_t *tok)
     }
 
     if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "", 
             "Invalid character as part of real literal.");
     }
 
@@ -309,7 +311,7 @@ consume_int(lexer_t *lex, token_t *tok)
     }
 
     if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "", 
             "Invalid character as part of integer literal.");
     }
     
@@ -336,7 +338,7 @@ consume_hex(lexer_t *lex, token_t *tok)
     }
 
     if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "", 
             "Invalid character as part of hexadecimal literal.");
     }
 
@@ -362,7 +364,7 @@ consume_octal(lexer_t *lex, token_t *tok)
     }
 
     if(isalnum(*lex->cur) || *lex->cur == '_') { // check if invalid char
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "", 
             "Invalid character as part of octal literal.");
     }
 
@@ -421,7 +423,7 @@ consume_string(lexer_t *lex, token_t *tok)
             default:
             {
                 print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
-                    "Unexpected escape symbol");
+                    "", "Unexpected escape symbol");
                 return 0;
             }
         }
@@ -433,7 +435,7 @@ consume_string(lexer_t *lex, token_t *tok)
     }
 
     if(!isprint(*lex->cur)) { // cur is not printable -- not valid for string
-        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "",
             "Invalid symbol inside string literal, ignoring.");
         iterate_cur(lex); // skip invalid character
     }
@@ -630,8 +632,8 @@ consume(lexer_t *lex, token_t *tok)
                     {
                         if(*(lex->cur+3) != '\'') { // check if close quote missing
                             print_msg(LEXER_ERR, lex->filename, lex->line_num, 
-                                *lex->cur, "Expected closing quote for" 
-                                             "character literal.");
+                                *lex->cur, "", "Expected closing quote for " 
+                                               "character literal.");
                             lex->cur = lex->cur + 3; // skip garbage characters
                             return consume(lex, tok);
                         }
@@ -647,8 +649,8 @@ consume(lexer_t *lex, token_t *tok)
                     default: 
                     { 
                         print_msg(LEXER_ERR, lex->filename, lex->line_num, 
-                            *(lex->cur+2), "Unexpected escape symbol, "
-                                           "ignoring.");
+                            *(lex->cur+2), "", "Unexpected escape symbol, "
+                                               "ignoring.");
                         lex->cur = lex->cur + 3; // skip garbage characters
                         return consume(lex, tok);
                     }
@@ -656,22 +658,22 @@ consume(lexer_t *lex, token_t *tok)
             }
 
             if(*(lex->cur+1) == '\'') { // empty char i.e. '' -- error
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
-                    "Empty character literal, ignoring.");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "", "Empty character literal, ignoring.");
                 lex->cur = lex->cur + 2; // skip garbage characters
                 return consume(lex, tok);
             }
 
             if(!isprint(*(lex->cur+1))) { // invalid character literal
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
-                    "Invalid character literal, ignoring.");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "", "Invalid character literal, ignoring.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
             }
             
             if(*(lex->cur+2) != '\'') { // check if close quote missing
-                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur,
-                    "Expected closing quote for character literal.");
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "", "Expected closing quote for character literal.");
                 lex->cur = lex->cur + 3; // skip garbage characters
                 return consume(lex, tok);
             }
@@ -690,7 +692,8 @@ consume(lexer_t *lex, token_t *tok)
             if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') { // form 0[xX]
                 if(!isxdigit(*(lex->cur+2))) { // not valid lexeme
                     print_msg(LEXER_ERR, lex->filename, lex->line_num, 
-                        *lex->cur, "Invalid hexademical constant, ignoring.");
+                        *lex->cur, "", 
+                        "Invalid hexademical constant, ignoring.");
                     lex->cur = lex->cur + 2;
                     return consume(lex, tok);
                 }
@@ -727,7 +730,7 @@ consume(lexer_t *lex, token_t *tok)
                 return consume_ident(lex, tok);
             } else {
                 print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
-                    "Unexpected symbol, ignoring.");
+                    "", "Unexpected symbol, ignoring.");
                 iterate_cur(lex);
                 return consume(lex, tok);
             }
@@ -850,25 +853,23 @@ keyword_check(token_t *tok)
  *
  * lex: lexer currently under use
  *
- * return: next token based on the current lexer state
+ * return: void
  */
-token_t 
-next_token(lexer_t *lex) 
+void
+next_token(lexer_t *lex, token_t *tok) 
 {
-    token_t tok = init_token(lex->filename, lex->line_num);
+    init_token(lex->filename, lex->line_num, tok);
 
-    consume(lex, &tok);
+    consume(lex, tok);
 
-    switch(tok.type) {
-        case CHAR_LIT:  tok.value.c = *(tok.text); break;
-        case INT_LIT:   tok.value.i = atoi(tok.text); break;
-        case REAL_LIT:  tok.value.d = atof(tok.text); break;
-        case STR_LIT:   tok.value.s = tok.text; break;
-        case IDENT:     tok.value.s = tok.text; keyword_check(&tok); break;
+    switch(tok->type) {
+        case CHAR_LIT:  tok->value.c = *(tok->text); break;
+        case INT_LIT:   tok->value.i = atoi(tok->text); break;
+        case REAL_LIT:  tok->value.d = atof(tok->text); break;
+        case STR_LIT:   tok->value.s = tok->text; break;
+        case IDENT:     tok->value.s = tok->text; keyword_check(tok); break;
         default: break;
     }
-
-    return tok;
 }
 
 
@@ -878,23 +879,21 @@ next_token(lexer_t *lex)
  *
  * filename: name of input file
  *
- * return: a lexer initialized to the beginning of the input file
+ * return: void
  */
-lexer_t
-init_lexer(char *filename)
+void
+init_lexer(char *filename, lexer_t *lex)
 {
     FILE *fp = open_file(filename);
 
-    lexer_t lex = {
-        .filename = filename,
-        .infile = fp,
-        .line_num = 1
-    };
+    lex->filename = filename;
+    lex->infile = fp;
+    lex->line_num = 1;
 
     // fill buffer
-    refill_buffer(lex.file, lex.buffer);
+    refill_buffer(lex->infile, lex->buffer);
 
-    return lex;
+    lex->cur = lex->buffer; // set cur to beginning of buffer
 }
 
 
@@ -911,19 +910,18 @@ void
 tokenize(char *filename, FILE *outfile) 
 {
     lexer_t lex;
-    token_t *tok;
+    token_t tok;
 
-    lex = init_lexer(filename);
-    lex.cur = lex.buffer; // set cur to beginning of buffer
+    init_lexer(filename, &lex);
 
-    tok = next_token(&lex);
-    while(tok->type != END) { // get tokens until EOF
-        print_token(outfile, tok);
-        free_token(tok);
-        tok = next_token(&lex);
+    next_token(&lex, &tok);
+    while(tok.type != END) { // get tokens until EOF
+        print_token(outfile, &tok);
+        free_token(&tok);
+        next_token(&lex, &tok);
     }
-    free_token(tok);
-    fclose(lex->infile);
+    free_token(&tok);
+    fclose(lex.infile);
 }
 
 

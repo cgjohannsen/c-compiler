@@ -119,8 +119,8 @@ typedef struct token
 } token_t;
 
 void print_token(FILE *, token_t *);
-token_t init_token(char *, int); 
-int free_token(token_t *);
+void init_token(char *, int, token_t *); 
+void free_token(token_t *);
 
 #endif
 

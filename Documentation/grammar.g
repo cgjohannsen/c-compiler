@@ -1,6 +1,8 @@
-program : (var_dec | fun_decl | fun_def)* EOF ;
+program : statement* EOF ;
 
-var_decl : 'const'? Type Ident ('[' Integer ']')? (',' Ident ('[' Integer ']')?)+ ';' ;
+statement : (var_dec | fun_decl | fun_def) ;
+
+var_decl : 'const'? Type Ident ('[' Integer ']')? (',' Ident ('[' Integer ']')?)* ';' ;
 
 fun_proto : fun_decl ';' ;
 

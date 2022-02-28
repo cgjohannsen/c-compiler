@@ -14,7 +14,7 @@ typedef enum msgcode {
     PARSER_WRN
 } msgcode_t;
 
-void print_msg(msgcode_t, char *, int, char, char *);
+void print_msg(msgcode_t, char *, int, char, char *, char *);
 FILE *open_file(char *);
 int refill_buffer(FILE *, char *);
 

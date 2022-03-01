@@ -14,8 +14,6 @@ update_parser(parser_t *parser)
     tmp = parser->next;
     next_token(&parser->lex, &parser->next);
     parser->cur = tmp;
-
-    print_token(stderr,&parser->cur);
 }  
 
 
@@ -769,7 +767,6 @@ parse_global(parser_t *parser)
 void 
 parse_program(parser_t *parser)
 {
-    print_token(stderr,&parser->cur);
     while(parser->cur.type != END && parser->status > 0) {
         parse_global(parser);
     }

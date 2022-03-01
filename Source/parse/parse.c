@@ -74,7 +74,7 @@ parse_varlist(parser_t *parser)
 {
     if(parser->cur.type == IDENT) {
         update_parser(parser);
-        if(parser->cur.type == LBRAK) {
+        if(parser->cur.type == LBRAK) { // array
             update_parser(parser);
             if(parser->cur.type == INT_LIT) {
                 update_parser(parser);
@@ -94,6 +94,9 @@ parse_varlist(parser_t *parser)
                 parser->status = 0;
                 return;
             }
+        } else if(parser->cur.type == ASSIGN) { // initialization
+            update_parser(parser);
+            parse_expr(parser);
         }
         if(parser->cur.type == COMMA) {
             update_parser(parser);

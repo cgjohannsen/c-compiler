@@ -495,6 +495,10 @@ parse_statement(parser_t *parser)
 void
 parse_fundecl(parser_t *parser)
 {
+    if(parser->status == 0) {
+        return;
+    }
+
     if(parser->cur.type == RBRACE) {
         update_parser(parser);
         return;

@@ -1,6 +1,37 @@
-
-
 #include "token.h"
+
+
+int 
+is_unaryop(tokentype_t type)
+{
+    return type == MINUS || type == BANG || type == TILDE;
+}
+
+
+int 
+is_binaryop(tokentype_t type)
+{
+    return type == EQ || type == NEQ || type == GT || type == GEQ || 
+        type == LT || type == LEQ || type == PLUS || type == MINUS || 
+        type == STAR || type == SLASH || type == MOD || type == PIPE ||
+        type == AMP || type == DPIPE || type == DAMP;
+}
+
+int 
+is_literal(tokentype_t type)
+{
+    return type == CHAR_LIT || type == INT_LIT || type == REAL_LIT ||
+        type == STR_LIT;
+}
+
+int 
+is_assignop(tokentype_t type)
+{
+    return type == ASSIGN || type == PLUSASSIGN || type == MINUSASSIGN ||
+        type == STARASSIGN || type == SLASHASSIGN;
+}
+
+
 
 /*
  * Prints token to screen in the form seen in function

@@ -29,20 +29,20 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
         break;
         case LEXER_ERR:
         {
-            fprintf(stderr, "Lexer error in file %s line %d near text" 
+            fprintf(stderr, "Lexer error in file %s line %d near text " 
                 "%c\n\t%s\n", filename, line_num, c, msg);
         }
         break;
         case LEXER_WRN:
         {
-            fprintf(stderr, "Lexer warning in file %s line %d near text" 
+            fprintf(stderr, "Lexer warning in file %s line %d near text " 
                 "%c\n\t%s\n", filename, line_num, c, msg);
         }
         break;
         case PARSER_ERR:
         {
-            fprintf(stderr, "Parser error in file %s line %d near text" 
-                "%c\n\t%s\n", filename, line_num, c, msg);
+            fprintf(stderr, "Parser error in file %s line %d near text " 
+                "%s\n\t%s\n", filename, line_num, s, msg);
         }
         break;
         default:

@@ -1,0 +1,50 @@
+\subsection{Mode 2}
+\label{sec:mode-2}
+
+This mode corresponds to the parser and reports if the input file has valid syntax.
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Parses the input file and reports if file has valid syntax
+    \item Reports first syntax error in the file (at a minimum)
+    \item Supports variable initialization
+    \item Supports structs
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+\textbf{Relevant Files:}
+
+\begin{itemize}
+    \item \verb|parse/parse.c|: Implements the parser. Uses the lexer and token
+    structures as seen in Sec \ref{sec:mode-1}.
+\end{itemize}
+
+\noindent \textbf{Relevant Data Structures:}
+
+\begin{itemize}
+    \item \verb|parser|: Stores data relevant to the file being parsed. Relevant
+    data includes the lexer (as in Sec~\ref{sec:mode-1}), current and next
+    tokens in the input stream, and the abstract syntax tree (to be
+    implemented).
+\end{itemize}
+
+\noindent \textbf{Working Description:} The parser is a top-down
+recursive-descent parser. As such, we attempt to implement the grammar defined
+in the \verb|grammar.g| file as close as possible (with some exceptions due to
+implementation ease). In general, most non-terminals have a function associated
+with them that we use to parse. The grammar lends itself to only needing
+one-lookahead at most (which is seldom used).
+
+The parser essentially works in a while loop, attempting to match the input
+against each of the top-level rules (i.e., a variable declaration, function
+prototype, or function definition). If a token is found that does not match the
+expected next token, the parser reports an error and returns from the respective
+function. The utlity of being recursive descent meamns that exiting in case of
+error requires only a simple call to \verb|return|. 
+
+If the parser makes it through the entire token input stream without an error,
+it reports back to the user that the input file is syntactically correct.
+
+The abstract syntax tree is not yet implemented, but will be for future modes.

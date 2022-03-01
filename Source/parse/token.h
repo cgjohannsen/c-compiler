@@ -122,6 +122,7 @@ int is_unaryop(tokentype_t);
 int is_binaryop(tokentype_t);
 int is_literal(tokentype_t);
 int is_assignop(tokentype_t);
+int is_typeorqualifier(tokentype_t);
 
 void print_token(FILE *, token_t *);
 void init_token(char *, int, token_t *); 

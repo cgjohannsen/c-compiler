@@ -37,3 +37,9 @@ To clean up all output files, run
 
 - tokenizes an input file
 - outputs stream of tokens to output file
+
+### Mode 3
+
+- parses an input and reports if file has valid syntax
+- supports variable initialization, constant, user-defined structs, and struct
+  member selection

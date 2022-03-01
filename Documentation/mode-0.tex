@@ -1,0 +1,16 @@
+\subsection{Mode 0}
+
+This is the most restricted mode and simply prints version information.
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Usage and version information can be printed
+    \item Output can be printed to a specified file
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+We use \verb|getopt| to parse input arguments. If no mode is specified, the program prints usage information and exits. If mode 0 is specified, the program prints version information. Otherwise the program prints nothing if any other mode is spceified. 
+
+When run in this mode we ignore the input file; whether one is specified or not.

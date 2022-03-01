@@ -1,16 +1,25 @@
 program : global* EOF
 
-global : (var-decl | fun-decl | fun_def)
+global : (var-decl | type-decl | fun-decl | fun_def)
 
-var-decl : 'const'? Type l-value-int var-list ';'
+var-decl : type var-list ';'
 
-var-list : (',' l-value-int )*
+var-list : Ident '[' Integer ']' (',' var-list)?
+         | Ident '=' expr (',' var-list)?
+         | Ident (',' var-list)?
 
-fun-proto : fun_decl ';'
+type-decl : 'struct' Ident '{' var-decl-no-init '}' ';'
 
-fun-decl : Type Ident '(' param-list ')'
+var-decl-no-init : type var-list-no-init ';'
 
-param-list : ( Type Ident '[]'? )*
+var-list-no-init : Ident '[' Integer ']' (',' var-list)?
+                 | Ident (',' var-list)?
+
+fun-proto : fun-decl ';'
+
+fun-decl : type Ident '(' param-list ')'
+
+param-list : ( type Ident '[]'? )*
 
 fun-def : fun-decl '{' (var-decl | statement)* '}'
 
@@ -39,11 +48,6 @@ while-statement : 'while' '(' expr ')' (statement-block | statement)
 
 do-statement : 'do' (statement-block | statement) 'while' '(' expr ')' ';'
 
-
-
-
-
-
 expr : term exprP
 
 exprP : BinaryOp expr
@@ -59,21 +63,23 @@ term : literal
      | '++' l-value 
      | '--' l-value 
      | UnaryOp expr 
-     | '(' Type ')' expr 
+     | '(' type ')' expr 
      | '(' expr ')' 
-
 
 args-list : expr (',' expr)+
           | expr
           | __emptystring__
 
-
-l-value : Ident ('[' expr ']')
-l-value-int : Ident ('[' Integer ']')
+l-value : Ident ('[' expr ']')? ('.' l-value)?
 
 literal : Integer | Char | Float | String
 
-Type : 'const'? ( 'void' | 'char' | 'int' | 'float' )
+type : 'const'? TypeName
+     | TypeName 'const'? 
+     | 'const'? 'struct' Ident
+     | 'struct' Ident 'const'?
+
+TypeName : 'void' | 'char' | 'int' | 'float'
 
 Integer : as-defined-in-lexer
 Real : as-defined-in-lexer

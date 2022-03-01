@@ -31,6 +31,12 @@ is_assignop(tokentype_t type)
         type == STARASSIGN || type == SLASHASSIGN;
 }
 
+int 
+is_typeorqualifier(tokentype_t type)
+{
+    return type == CONST || type == STRUCT || type == TYPE;
+}
+
 
 
 /*

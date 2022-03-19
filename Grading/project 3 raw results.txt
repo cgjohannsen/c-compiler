@@ -1,0 +1,1278 @@
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh
+Usage: ./Check_3.sh executable [options] infile infile ...
+Run compiler executable, in mode 3, on specified input files
+and compare with expected output files.
+Any infile without corresponding output files will be skipped
+Options:
+  -d:   detailed output (default)
+  -gb:  generate non-extra credit output files
+  -ge:  generate extra credit output files
+  -o:   use -o instead of stdout to collect output
+  -s:   summary output (opposite of -d)
+  -t N: set timeout to N seconds (default is 30)
+        0 seconds uses no timeout
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d global*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+global1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+global2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+global3.c in mode 3
+    Basic Implementation Comparison: First  error  matches
+global4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file global4.c line 11 near text ;
+        |       Expected identifier
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file global4.c line 13 near text ;
+        |       Expected identifier
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file global4.c line 13 near text ;
+        |       Expected identifier
+        ---------------------------------------------------------
+global5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file global5.c line 5 near text ,
+        |       Expected identifier
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file global5.c line 6 near text ,
+        |       Expected identifier or type declaration.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file global5.c line 6 near text ,
+        |       Expected identifier or type declaration.
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d funcproto*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+funcproto1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+funcproto2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+funcproto3.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 7 near text ,
+        |       Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 8 near text ,
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 8 near text ,
+        |       Expected type name.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 7 near text ,
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 8 near text ,
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcproto3.c line 8 near text ,
+        |       Expected type name.
+        ---------------------------------------------------------
+funcproto4.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto4.c line 11 near text )
+        |       Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto4.c line 11 near text )
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+funcproto5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 10 near text b
+        |       Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 11 near text b
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 11 near text b
+        |       Expected type name.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 10 near text b
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 11 near text b
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcproto5.c line 11 near text b
+        |       Expected type name.
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d funcbody*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+funcbody1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+funcbody2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+funcbody3.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 25 near text {
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 26 near text {
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 26 near text {
+        |       Expected type name 1.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 25 near text {
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 26 near text {
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcbody3.c line 26 near text {
+        |       Expected type name 1.
+        ---------------------------------------------------------
+funcbody4.c in mode 3
+    Basic Implementation Comparison: First error line+text
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody4.c line 11 near text (
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody4.c line 11 near text (
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcbody4.c line 11 near text (
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First  error  matches
+funcbody5.c in mode 3
+    Basic Implementation Comparison: First error line+text
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody5.c line 11 near text (
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file funcbody5.c line 11 near text (
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file funcbody5.c line 11 near text (
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First  error  matches
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d loop*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+loop1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+loop2.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop2.c line 8 near text ;
+        |       Expected ')'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file loop2.c line 9 near text ;
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file loop2.c line 9 near text ;
+        |       Expected ';'
+        ---------------------------------------------------------
+loop3.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 20 near text }
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 21 near text }
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 21 near text }
+        |       Expected type name 1.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 20 near text }
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 21 near text }
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file loop3.c line 21 near text }
+        |       Expected type name 1.
+        ---------------------------------------------------------
+loop4.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+loop5.c in mode 3
+    Basic Implementation Comparison: First error same line
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 25 near end of file
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 25 near text
+        |       Expected '}' before end of file.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 25 near text
+        |       Expected '}' before end of file.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 20
+        |       Unmatched '{'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 25 near text
+        |       Expected '}' before end of file.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file loop5.c line 25 near text
+        |       Expected '}' before end of file.
+        ---------------------------------------------------------
+loop6.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+loop7.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop7.c line 7 near text )
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file loop7.c line 7 near text )
+        |       term expected
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+loop8.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+loop9.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+loopA.c in mode 3
+    Basic Implementation Comparison: First  error  matches
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d ite*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+ite1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+ite2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+ite3.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 51 near text else
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 52 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 52 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 51 near text else
+        |       term expected
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 52 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file ite3.c line 52 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+ite4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file ite4.c line 8 near text x
+        |       Expected '('
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file ite4.c line 9 near text x
+        |       Expected '('
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file ite4.c line 9 near text x
+        |       Expected '('
+        ---------------------------------------------------------
+ite5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 14 near text else
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 15 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 15 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 14 near text else
+        |       term expected
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 15 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file ite5.c line 15 near text else
+        |       Expected ';'
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d stmt*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+stmt1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+stmt2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+stmt3.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+stmt4.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+stmt5.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d exprs*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+exprs1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs3.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs4.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs5.c in mode 3
+    Basic Implementation Comparison: First  error  matches
+exprs6.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs7.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+exprs8.c in mode 3
+    Basic Implementation Comparison: Output  is  different
+        | 1d0
+        | < File exprs8.c is syntactically correct.
+        Complete error stream given (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file exprs8.c line 8 near text (
+        |       Expected ')'
+        | Parser error in file exprs8.c line 8 near text (
+        |       Expected ';'
+        ---------------------------------------------------------
+exprs9.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file exprs9.c line 42 near text +
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file exprs9.c line 42 near text +
+        |       term expected
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+exprsA.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file exprsA.c line 22 near text ;
+        |       Expected ')'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file exprsA.c line 24 near text ;
+        |       Expected ')'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file exprsA.c line 24 near text ;
+        |       Expected ')'
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d assign*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+assign1.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+assign2.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+assign3.c in mode 3
+    Basic Implementation Comparison: Output OK;  no errors
+assign4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file assign4.c line 13 near text ++
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file assign4.c line 14 near text ++
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file assign4.c line 14 near text ++
+        |       Expected ';'
+        ---------------------------------------------------------
+assign5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file assign5.c line 12 near text +=
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file assign5.c line 13 near text +=
+        |       Expected ';'
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file assign5.c line 13 near text +=
+        |       Expected ';'
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$
+
+
+
+
+
+
+
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d xc_init*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+xc_init1.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init1.c line 3 near text =
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_init2.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init2.c line 4 near text =
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_init3.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init3.c line 4 near text =
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_init4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 2 near text =
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 4 near text =
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 4 near text =
+        |       Expected type name.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error line+text
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 4 near text =
+        |       Expected ','
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 4 near text =
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 4 near text =
+        |       Expected type name.
+        ---------------------------------------------------------
+xc_init5.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init5.c line 2 near text =
+        |       Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init5.c line 10 near text ,
+        |       term expected
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d xc_const*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+xc_const1.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const1.c line 2 near text const
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_const2.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const2.c line 2 near text const
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_const3.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const3.c line 2 near text const
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_const4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const4.c line 2 near text const
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const4.c line 8 near text const
+        |       Expected identifier
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_const4.c line 8 near text const
+        |       Expected identifier
+        | Parser error in file xc_const4.c line 8 near text const
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First  error  matches
+xc_const5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 7 near text const
+        |       Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 8 near text a
+        |       Expected type or 'struct'.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 8 near text a
+        |       Expected type or 'struct'.
+        | Parser error in file xc_const5.c line 11 near text const
+        |       Expected type or 'struct'.
+        | Parser error in file xc_const5.c line 11 near text const
+        |       Expected identifier.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error line+text
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 8 near text a
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 8 near text a
+        |       Expected type or 'struct'.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 8 near text a
+        |       Expected type or 'struct'.
+        | Parser error in file xc_const5.c line 11 near text const
+        |       Expected type or 'struct'.
+        | Parser error in file xc_const5.c line 11 near text const
+        |       Expected identifier.
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d xc_struct*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+xc_struct1.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct1.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_struct2.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct2.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct2.c line 23 near text {
+        |       Expected identifier
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct2.c line 23 near text {
+        |       Expected identifier
+        | Parser error in file xc_struct2.c line 23 near text {
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output  is  different
+        | 1d0
+        | < File xc_struct2.c is syntactically correct.
+        Complete error stream given (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file xc_struct2.c line 23 near text {
+        |       Expected identifier
+        | Parser error in file xc_struct2.c line 23 near text {
+        |       Expected ';'
+        ---------------------------------------------------------
+xc_struct3.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct3.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_struct4.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct4.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_struct5.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct5.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_struct6.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct6.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_struct7.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 8 near text pair
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 8 near text pair
+        |       Expected type name 1.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error line+text
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 8 near text pair
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 8 near text pair
+        |       Expected type name 1.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 8 near text pair
+        |       Expected type name 1.
+        ---------------------------------------------------------
+xc_struct8.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct8.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct8.c line 5 near text x
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct9.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 4 near text struct
+        |       Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 10 near text int
+        |       Expected ';'.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 10 near text int
+        |       Expected ';'.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 9 near text int
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 10 near text int
+        |       Expected ';'.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 10 near text int
+        |       Expected ';'.
+        ---------------------------------------------------------
+xc_structA.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 2 near text struct
+        |       Expected function or global declaration
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 18 near text thing
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 18 near text thing
+        |       Expected type name.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 17 near text thing
+        |       Expected type name
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 18 near text thing
+        |       Expected type name.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 18 near text thing
+        |       Expected type name.
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$ ./Check_3.sh "./mycc" -d xc_member*.c
+Running tests using compiler:
+  | My C compiler
+  |     Author: Chris Johannsen
+  |     Email: cgjohann@iastate.edu
+  |     Version: 0.1
+  |     Date: 2-9-2022
+
+----------------------------------------------------------------------
+xc_member1.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member1.c line 10 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_member2.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member2.c line 5 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_member3.c in mode 3
+    Basic Implementation Comparison: Did not find error(s)
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member3.c line 6 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: Output OK;  no errors
+xc_member4.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 9 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 11 near text ++
+        |       Expected identifier.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 11 near text ++
+        |       Expected identifier.
+        | Parser error in file xc_member4.c line 12 near text member
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 10 near text ++
+        |       Expected identifier
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 11 near text ++
+        |       Expected identifier.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 11 near text ++
+        |       Expected identifier.
+        | Parser error in file xc_member4.c line 12 near text member
+        |       Expected ';'
+        ---------------------------------------------------------
+xc_member5.c in mode 3
+    Basic Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 9 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected identifier.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected identifier.
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: First error different
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 14 near text .
+        |       Expected identifier
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected identifier.
+        ---------------------------------------------------------
+        Complete error stream given:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected identifier.
+        | Parser error in file xc_member5.c line 15 near text .
+        |       Expected ';'
+        ---------------------------------------------------------
+[rdjiles@pyrite-n3 Bin]$
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,193 @@
+Git URL: https://git.ece.iastate.edu./cgjohann/compiler
+Grade date: 03/18
+Grader: Richard Jiles rdjiles@iastate.edu
+
+Run as
+  ../Check_3.sh (exepath) [options] files
+
+Note: for the "First error different" cases, run the script in detailed mode
+(with -d) and look at the student error message, it is possible that they
+catch the same error but report a different line number.  This is OK.
+
+
+5/5 README.txt
+	How to build the compiler and documentation. Updated to show which part 3
+	features are implemented.
+
+You should mention where the 'mycc' file is found. I actually  got confused after running your make file in the top directory because I could not find your mycc file in the 'Bin' folder. Then I started running astray so to speak hence the email I sent you which indeed I was not running the make file in the correct location at that point
+	
+12/12 developers.pdf
+	New section for part 3, that explains the purpose of each source file, the main data
+	structures used, and gives a high-level overview of how the various features are
+	implemented.
+	
+8/8 Ease of building
+	How easy was it for the graders to build your compiler and documentation from
+	the README file. You are encouraged to use Makefiles under the Source/ and
+	Documentation/ directories so that running â€œmakeâ€ will build everything and running â€œmake cleanâ€ will remove all generated files.
+	
+5/5 -o switch works
+
+5/5 Still works in mode 0
+
+5/5 Still works in mode 1
+
+
+Basic parser
+  5/5   global vars anywhere
+      global?.c
+
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  4.5/5   function parameter list / prototypes
+      funcproto?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  4.5/5   function local vars and body
+      funcbody?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+ 8.4/10   for, while, do-while loops
+      loop?.c
+	  
+	0 pass = 0 points
+	1 pass = 3 points
+	2 pass = 5 points
+	3 pass = 6.3 points
+	4 pass = 7.2 points
+	5 pass = 7.8 points
+	6 pass = 8.4 points
+	7 pass = 8.9 points
+	8 pass = 9.3 points
+	9 pass = 9.7 points
+	10 pass = 10 points
+
+  3.9/5   if then else
+      ite?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  5/5   break / continue / return / expression stmts
+      stmt?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+ 9.3/10   expressions with unary/binary/ternary operators
+      exprs?.c
+	  
+	0 pass = 0 points
+	1 pass = 3 points
+	2 pass = 5 points
+	3 pass = 6.3 points
+	4 pass = 7.2 points
+	5 pass = 7.8 points
+	6 pass = 8.4 points
+	7 pass = 8.9 points
+	8 pass = 9.3 points
+	9 pass = 9.7 points
+	10 pass = 10 points
+
+  5/5   assignment operators, increment, decrement
+      assign?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  4.5/5   identifiers and arrays
+      array?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  3.9/5   function calls and parameters
+      call?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+
+Extra credit
+  3.9/5   variable initialization
+      xc_init?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+  5/5   constants
+      xc_const?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+
+ 9.3/10   user-defined structs
+      xc_struct?.c
+	  
+	0 pass = 0 points
+	1 pass = 3 points
+	2 pass = 5 points
+	3 pass = 6.3 points
+	4 pass = 7.2 points
+	5 pass = 7.8 points
+	6 pass = 8.4 points
+	7 pass = 8.9 points
+	8 pass = 9.3 points
+	9 pass = 9.7 points
+	10 pass = 10 points
+
+  5/5   struct member selection
+      xc_member?.c
+	  
+	0 pass = 0 points
+	1 pass = 1.5 points
+	2 pass = 3 points
+	3 pass = 3.9 points
+	4 pass = 4.5 points
+	5 pass = 5 points
+

@@ -13,6 +13,8 @@ typedef struct parser {
     int status;
 } parser_t;
 
+
+
 void parse(char *, FILE *);
 
 #endif

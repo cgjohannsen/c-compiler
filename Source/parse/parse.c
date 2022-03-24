@@ -18,11 +18,11 @@ update_parser(parser_t *parser)
 
 
 // forward declarations
-void parse_statement(parser_t *parser);
-void parse_expr(parser_t *parser);
+astnode_t parse_statement(parser_t *parser);
+astnode_t parse_expr(parser_t *parser);
 
 
-void
+astnode_t
 parse_type(parser_t *parser)
 {
     if(parser->cur.type == CONST) { // 'const'
@@ -79,7 +79,7 @@ parse_type(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_paramlist(parser_t *parser)
 {
     if(parser->cur.type == RPAR) {
@@ -127,7 +127,7 @@ parse_paramlist(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_varlist(parser_t *parser)
 {
     if(parser->cur.type == IDENT) {
@@ -168,7 +168,7 @@ parse_varlist(parser_t *parser)
     }
 }
 
-void
+astnode_t
 parse_varlistnoinit(parser_t *parser)
 {
     if(parser->cur.type == IDENT) {
@@ -207,7 +207,7 @@ parse_varlistnoinit(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_forparams(parser_t *parser)
 {
     if(parser->cur.type == SEMI) { // empty first param
@@ -256,7 +256,7 @@ parse_forparams(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_argslist(parser_t *parser)
 {
     parse_expr(parser);
@@ -267,7 +267,7 @@ parse_argslist(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_lvalue(parser_t *parser)
 {
     if(parser->cur.type == IDENT) {
@@ -298,7 +298,7 @@ parse_lvalue(parser_t *parser)
 
 
 
-void
+astnode_t
 parse_term(parser_t *parser)
 {
     if(is_literal(parser->cur.type)) { // literal
@@ -377,7 +377,7 @@ parse_term(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_exprprime(parser_t *parser)
 {
     if(is_binaryop(parser->cur.type)) { // BinaryOp expr
@@ -401,7 +401,7 @@ parse_exprprime(parser_t *parser)
 }
 
 
-void 
+astnode_t 
 parse_expr(parser_t *parser)
 {
     parse_term(parser);
@@ -411,7 +411,7 @@ parse_expr(parser_t *parser)
 
 
 
-void 
+astnode_t 
 parse_block(parser_t *parser)
 {
     if(parser->cur.type == RBRACE) {
@@ -429,7 +429,7 @@ parse_block(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_statement(parser_t *parser)
 {
     if(parser->cur.type == SEMI) {
@@ -593,7 +593,7 @@ parse_statement(parser_t *parser)
 
 
 
-void
+astnode_t
 parse_typedecl(parser_t *parser)
 {
     if(parser->status == 0) {
@@ -627,7 +627,7 @@ parse_typedecl(parser_t *parser)
 }
 
 
-void
+astnode_t
 parse_fundecl(parser_t *parser)
 {
     if(parser->status == 0) {
@@ -689,7 +689,7 @@ parse_fundecl(parser_t *parser)
 }
 
 
-void 
+astnode_t 
 parse_global(parser_t *parser) 
 {
     if(is_typeorqualifier(parser->cur.type)) {
@@ -764,7 +764,7 @@ parse_global(parser_t *parser)
 }
 
 
-void 
+astnode_t 
 parse_program(parser_t *parser)
 {
     while(parser->cur.type != END && parser->status > 0) {
@@ -787,7 +787,7 @@ init_parser(char *filename, parser_t *parser)
 
 }
 
-void 
+astnode_t 
 parse(char *infilename, FILE *outfile)
 {
     parser_t parser;
@@ -795,5 +795,7 @@ parse(char *infilename, FILE *outfile)
     parse_program(&parser);
     if(parser.status > 0) {
         fprintf(outfile,"File %s is syntactically correct.\n",infilename);
+        exit(1);
     }
+    return parser.ast;
 }

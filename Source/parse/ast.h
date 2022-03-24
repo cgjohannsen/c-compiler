@@ -4,13 +4,9 @@
 #include "token.h"
 
 typedef struct astnode {
-    token_t *val;
-    struct astnode *parent;
-    struct astnode **children;
+    token_t *tok;
+    struct astnode *left;
+    struct astnode *right;
 } astnode_t;
-
-typedef struct ast {
-    astnode_t *root;
-} ast_t;
 
 #endif

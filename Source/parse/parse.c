@@ -9,7 +9,7 @@ update_parser(parser_t *parser)
         return;
     }
 
-    free_token(&parser->cur);
+    //free_token(&parser->cur);
     
     tmp = parser->next;
     next_token(&parser->lex, &parser->next);
@@ -25,15 +25,22 @@ astnode_t parse_expr(parser_t *parser);
 astnode_t
 parse_type(parser_t *parser)
 {
+    // astnode_t node;
+
     if(parser->cur.type == CONST) { // 'const'
         update_parser(parser);
+        // node.type = _TYPE;
+        // node.const = 1;
         if(parser->cur.type == TYPE) { // 'const' type
             update_parser(parser);
+            // return node;
             return;
         } else if(parser->cur.type == STRUCT) { // 'const' 'struct'
             update_parser(parser);
+            // node.struct = 1;
             if(parser->cur.type == IDENT) { // 'const' 'struct' ident
                 update_parser(parser);
+                // return node;
                 return;
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
@@ -52,8 +59,11 @@ parse_type(parser_t *parser)
 
     if(parser->cur.type == TYPE) { // type
         update_parser(parser);
+        // node.type = _TYPE;
         if(parser->cur.type == CONST) { // type 'const'
             update_parser(parser);
+            // node.const = 1;
+            // return node;
             return;
         }
         return;
@@ -61,10 +71,14 @@ parse_type(parser_t *parser)
 
     if(parser->cur.type == STRUCT) { // 'struct'
         update_parser(parser);
+        // node.struct = 1;
         if(parser->cur.type == IDENT) { // 'struct' ident
             update_parser(parser);
+            // node.type = _TYPE;
             if(parser->cur.type == CONST) { // 'struct' ident 'const'
                 update_parser(parser);
+                // node.const = 1;
+                // return node;
                 return;
             }
             return;
@@ -303,6 +317,11 @@ parse_term(parser_t *parser)
 {
     if(is_literal(parser->cur.type)) { // literal
         update_parser(parser);
+        // astnode_t node;
+        // node.type = to_nodetype(parser->cur.type);
+        // node.value = parser->cur.value;
+        // add_symtableentry(parser,parser->cur.type,parser->cur.text);
+        // return node;
         return;
     } else if(parser->cur.type == IDENT) {
         if(parser->next.type == LPAR) { // function call
@@ -692,6 +711,8 @@ parse_fundecl(parser_t *parser)
 astnode_t 
 parse_global(parser_t *parser) 
 {
+    // astnode_t global;
+
     if(is_typeorqualifier(parser->cur.type)) {
 
         if(parser->cur.type == STRUCT) { // 'struct' ident
@@ -749,9 +770,10 @@ parse_global(parser_t *parser)
                     return;
                 }
             }
+
         } else {
             print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
-                0, parser->cur.text, "Expected identifier or type declaration.");
+                0, parser->cur.text,"Expected identifier or type declaration.");
             parser->status = 0;
             return;
         }   
@@ -767,9 +789,13 @@ parse_global(parser_t *parser)
 astnode_t 
 parse_program(parser_t *parser)
 {
+    // astnode_t program, node;
     while(parser->cur.type != END && parser->status > 0) {
         parse_global(parser);
+        // node = parse_global(parser);
+        // add_child(&program,&node);
     }
+    // return program;
 }
 
 
@@ -787,6 +813,8 @@ init_parser(char *filename, parser_t *parser)
 
 }
 
+
+
 astnode_t 
 parse(char *infilename, FILE *outfile)
 {
@@ -798,4 +826,12 @@ parse(char *infilename, FILE *outfile)
         exit(1);
     }
     return parser.ast;
+}
+
+
+
+void
+typecheck()
+{
+    return;
 }

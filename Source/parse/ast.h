@@ -3,7 +3,7 @@
 
 #include "token.h"
 
-typedef enum nodetype {
+typedef enum asttype {
     _PROGRAM,
     _GLOBAL,
     _VAR_DECL,
@@ -42,10 +42,10 @@ typedef enum nodetype {
     _INTEGER,
     _FLOAT,
     _STRING
-} nodetype_t;
+} asttype_t;
 
 typedef struct astnode {
-    nodetype_t type;
+    asttype_t type;
     token_t *tok;
     struct astnode *left;
     struct astnode *right;

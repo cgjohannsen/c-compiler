@@ -108,6 +108,7 @@ parse_paramlist(parser_t *parser)
 
     if(is_typeorqualifier(parser->cur.type)) {
         parse_type(parser);
+        // add_child(paramlist,type);
         if(parser->cur.type == IDENT) {
             update_parser(parser);
             if(parser->cur.type == LBRAK) {

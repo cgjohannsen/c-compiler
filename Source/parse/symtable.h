@@ -1,20 +1,41 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
+#include <stdbool.h>
+
 #include "ast.h"
 
 #define MIN_SYMTABLE_SIZE 256
 
-typedef struct symentry {
+typedef enum symtype {
+    __CHAR,
+    __INT,
+    __FLOAT,
+    __STRING,
+    __STRUCT
+} symtype_t;
+
+typedef struct symparam {
+    struct symparam *next;
     char *ident;
-    asttype_t type;
-    int size;
-    int max_size;
+    symtype_t type;
+} symparam_t;
+
+typedef struct symentry {
+    struct symentry *next;
+    char *ident;
+    symtype_t type;
+    bool is_array;
+    symparam_t *param;
 } symentry_t;
 
-typedef symentry_t *symtable symtable_t;
+typedef struct symtable {
+    symentry_t *head; // use linked list
+} symtable_t;
 
-void init_table(symtable_t *table);
-void add_entry(symtable_t *table, symentry_t *entry);
+void init_table(symtable_t *);
+void add_entry(symtable_t *, symentry_t *);
+void remove_entry(symtable_t *, char *);
+symentry_t *get_entry(symtable_t *, char *);
 
 #endif

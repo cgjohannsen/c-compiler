@@ -1,5 +1,8 @@
 #include "parse.h"
 
+/**
+ *
+ */
 void 
 update_parser(parser_t *parser)
 {
@@ -22,25 +25,28 @@ astnode_t parse_statement(parser_t *parser);
 astnode_t parse_expr(parser_t *parser);
 
 
-astnode_t
-parse_type(parser_t *parser)
+
+/**
+ *
+ */
+void
+parse_type(parser_t *parser, astnode_t *node)
 {
-    // astnode_t node;
+    node->is_const = false;
+    node->is_struct = false;
 
     if(parser->cur.type == CONST) { // 'const'
+        node->is_const = true;
         update_parser(parser);
-        // node.type = _TYPE;
-        // node.const = 1;
         if(parser->cur.type == TYPE) { // 'const' type
+            node->type = parser->cur.text;
             update_parser(parser);
-            // return node;
             return;
         } else if(parser->cur.type == STRUCT) { // 'const' 'struct'
             update_parser(parser);
-            // node.struct = 1;
             if(parser->cur.type == IDENT) { // 'const' 'struct' ident
+                node->is_struct = true;
                 update_parser(parser);
-                // return node;
                 return;
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
@@ -58,27 +64,25 @@ parse_type(parser_t *parser)
     }   
 
     if(parser->cur.type == TYPE) { // type
+        node->type = parser->cur.text;
         update_parser(parser);
-        // node.type = _TYPE;
         if(parser->cur.type == CONST) { // type 'const'
+            node->is_const = true;
             update_parser(parser);
-            // node.const = 1;
-            // return node;
             return;
         }
         return;
     }
 
     if(parser->cur.type == STRUCT) { // 'struct'
+        node->is_struct = true;
         update_parser(parser);
-        // node.struct = 1;
         if(parser->cur.type == IDENT) { // 'struct' ident
+            node->type = parser->cur.text;
             update_parser(parser);
-            // node.type = _TYPE;
             if(parser->cur.type == CONST) { // 'struct' ident 'const'
+                node->is_const = true;
                 update_parser(parser);
-                // node.const = 1;
-                // return node;
                 return;
             }
             return;
@@ -93,8 +97,12 @@ parse_type(parser_t *parser)
 }
 
 
-astnode_t
-parse_paramlist(parser_t *parser)
+
+/**
+ *
+ */
+void
+parse_paramlist(parser_t *parser. astnode_t *parent)
 {
     if(parser->cur.type == RPAR) {
         update_parser(parser);
@@ -106,12 +114,15 @@ parse_paramlist(parser_t *parser)
         return;
     }
 
+    astnode_t var;
+
     if(is_typeorqualifier(parser->cur.type)) {
-        parse_type(parser);
-        // add_child(paramlist,type);
+        parse_type(parser,&var);
         if(parser->cur.type == IDENT) {
+            var.text = parser->cur.text;
             update_parser(parser);
             if(parser->cur.type == LBRAK) {
+                var.is_array = true;
                 update_parser(parser);
                 if(parser->cur.type == RBRAK) {
                     update_parser(parser);
@@ -125,7 +136,15 @@ parse_paramlist(parser_t *parser)
             }
             if(parser->cur.type == COMMA) {
                 update_parser(parser);
+                if(!is_typeorqualifier(parser->cur.type)) {
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                              parser->lex.line_num, 0, parser->cur.text, 
+                              "Expected type name.");
+                    parser->status = 0;
+                    return;
+                }
             }
+            add_astchild(parent,var);
             parse_paramlist(parser);
         } else {
             print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
@@ -142,14 +161,24 @@ parse_paramlist(parser_t *parser)
 }
 
 
-astnode_t
+
+/**
+ *
+ */
+astnode_t *
 parse_varlist(parser_t *parser)
 {
+    astnode_t *var;
+    init_astnode(var,_VAR);
+
     if(parser->cur.type == IDENT) {
+        var->text = parser->cur.text;
         update_parser(parser);
         if(parser->cur.type == LBRAK) { // array
+            var->is_array = true;
             update_parser(parser);
             if(parser->cur.type == INT_LIT) {
+                var->array_param = atoi(parser->cur.text);
                 update_parser(parser);
                 if(parser->cur.type == RBRAK) {
                     update_parser(parser);
@@ -158,39 +187,58 @@ parse_varlist(parser_t *parser)
                         parser->lex.line_num, 0, parser->cur.text, 
                         "Expected ']'");
                     parser->status = 0;
-                    return;
+                    return NULL;
                 }
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->lex.line_num, 0, parser->cur.text, 
                     "Expected integer literal.");
                 parser->status = 0;
-                return;
+                return NULL;
             }
         } else if(parser->cur.type == ASSIGN) { // initialization
             update_parser(parser);
-            parse_expr(parser);
+
+            astnode_t *expr;
+            expr = parse_expr(parser);
+            add_astchild(var,expr);
         }
         if(parser->cur.type == COMMA) { // continue declaring vars
             update_parser(parser);
-            parse_varlist(parser);
+
+            astnode_t *var_next;
+            var_next = parse_varlist(parser);
+            add_astsibling(var,var_next);
         }
     } else {
         print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
             0, parser->cur.text, "Expected identifier");
         parser->status = 0;
-        return;
+        return NULL;
     }
+
+    return var;
 }
 
-astnode_t
+
+
+/**
+ *
+ */
+astnode_t *
 parse_varlistnoinit(parser_t *parser)
 {
+    astnode_t *var;
+    init_astnode(var,_VAR);
+
     if(parser->cur.type == IDENT) {
+        var->text = parser->cur.text;
         update_parser(parser);
         if(parser->cur.type == LBRAK) { // array
+            var->is_array = true;
             update_parser(parser);
             if(parser->cur.type == INT_LIT) {
+                var->array_param = atoi(parser->cur.text);
                 update_parser(parser);
                 if(parser->cur.type == RBRAK) {
                     update_parser(parser);
@@ -199,36 +247,77 @@ parse_varlistnoinit(parser_t *parser)
                         parser->lex.line_num, 0, parser->cur.text, 
                         "Expected ']'");
                     parser->status = 0;
-                    return;
+                    return NULL;
                 }
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->lex.line_num, 0, parser->cur.text, 
                     "Expected integer literal.");
                 parser->status = 0;
-                return;
+                return NULL;
             }
         }
         if(parser->cur.type == COMMA) { // continue declaring vars
             update_parser(parser);
-            parse_varlistnoinit(parser);
+
+            astnode_t *var_next;
+            var_next = parse_varlistnoinit(parser);
+            add_astsibling(var,var_next);
         }
     } else {
         print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
             0, parser->cur.text, "Expected identifier.");
         parser->status = 0;
-        return;
+        return NULL;
     }
+
+    return var;
 }
 
 
-astnode_t
-parse_forparams(parser_t *parser)
+
+/**
+ *
+ */
+astnode_t *
+parse_vardecl(parser_t *parser)
 {
+    astnode_t *var_decl, *var;
+    init_astnode(var_decl,_VAR_DECL);
+
+    parse_type(parser,var_decl);
+    var = parse_varlist(parser);
+    add_astchild(var_decl,var);
+
+    return var_decl;
+}
+
+
+
+/**
+ *
+ */
+void
+parse_forparams(parser_t *parser, astnode_t *parent)
+{
+    astnode_t *init_node, *exit_node, *update_node;
+
+    init_astnode(init_node);
+    init_astnode(exit_node);
+    init_astnode(update_node);
+
+    init_node->asttype = _FOR_INIT;
+    exit_node->asttype = _FOR_EXIT;
+    update_node->asttype = _FOR_UPDATE;
+
+    add_astchild(parent,init_node);
+    add_astchild(parent,exit_node);
+    add_astchild(parent,update_node);
+
     if(parser->cur.type == SEMI) { // empty first param
         update_parser(parser);
     } else { // non-empty first param
-        parse_expr(parser);
+        parse_expr(parser,init_node);
         if(parser->cur.type == SEMI) {
             update_parser(parser);
         } else {
@@ -242,7 +331,7 @@ parse_forparams(parser_t *parser)
     if(parser->cur.type == SEMI) { // empty second param
         update_parser(parser);
     } else { // non-empty second param
-        parse_expr(parser);
+        parse_expr(parser,exit_node);
         if(parser->cur.type == SEMI) {
             update_parser(parser);
         } else {
@@ -257,13 +346,13 @@ parse_forparams(parser_t *parser)
         update_parser(parser);
         return;
     } else { // non-empty third param
-        parse_expr(parser);
+        parse_expr(parser,update_node);
         if(parser->cur.type == RPAR) {
             update_parser(parser);
             return;
         } else {
             print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
-                0, parser->cur.text, "Expected ';'");
+                0, parser->cur.text, "Expected ')'");
             parser->status = 0;
             return;
         }
@@ -271,10 +360,14 @@ parse_forparams(parser_t *parser)
 }
 
 
-astnode_t
-parse_argslist(parser_t *parser)
+
+/**
+ *
+ */
+void
+parse_argslist(parser_t *parser, astnode_t *parent)
 {
-    parse_expr(parser);
+    parse_expr(parser,parent);
     if(parser->cur.type == COMMA) {
         update_parser(parser);
         parse_argslist(parser);
@@ -282,7 +375,11 @@ parse_argslist(parser_t *parser)
 }
 
 
-astnode_t
+
+/**
+ *
+ */
+void
 parse_lvalue(parser_t *parser)
 {
     if(parser->cur.type == IDENT) {
@@ -313,16 +410,14 @@ parse_lvalue(parser_t *parser)
 
 
 
+/**
+ *
+ */
 astnode_t
 parse_term(parser_t *parser)
 {
     if(is_literal(parser->cur.type)) { // literal
         update_parser(parser);
-        // astnode_t node;
-        // node.type = to_nodetype(parser->cur.type);
-        // node.value = parser->cur.value;
-        // add_symtableentry(parser,parser->cur.type,parser->cur.text);
-        // return node;
         return;
     } else if(parser->cur.type == IDENT) {
         if(parser->next.type == LPAR) { // function call
@@ -397,7 +492,11 @@ parse_term(parser_t *parser)
 }
 
 
-astnode_t
+
+/**
+ *
+ */
+void
 parse_exprprime(parser_t *parser)
 {
     if(is_binaryop(parser->cur.type)) { // BinaryOp expr
@@ -421,8 +520,12 @@ parse_exprprime(parser_t *parser)
 }
 
 
-astnode_t 
-parse_expr(parser_t *parser)
+
+/**
+ *
+ */
+void 
+parse_expr(parser_t *parser, astnode_t *parent)
 {
     parse_term(parser);
     parse_exprprime(parser);
@@ -430,7 +533,9 @@ parse_expr(parser_t *parser)
 
 
 
-
+/**
+ *
+ */
 astnode_t 
 parse_block(parser_t *parser)
 {
@@ -449,57 +554,104 @@ parse_block(parser_t *parser)
 }
 
 
-astnode_t
+
+/**
+ *
+ */
+astnode_t *
 parse_statement(parser_t *parser)
 {
-    if(parser->cur.type == SEMI) {
+    astnode_t *statement;
+    init_astnode(statement);
+
+    if(parser->cur.type == SEMI) { 
         update_parser(parser);
-        return;
+        return NULL;
     } else if(parser->cur.type == BREAK) {
+        statement->asttype = _BREAK;
         update_parser(parser);
-        if(parser->cur.type == SEMI) {
-            update_parser(parser);
-            return;
-        }
-    } else if(parser->cur.type == CONTINUE) {
-        update_parser(parser);
-        if(parser->cur.type == SEMI) {
-            update_parser(parser);
-            return;
-        }
-    } else if(parser->cur.type == RETURN) {
-        update_parser(parser);
+
         if(parser->cur.type == SEMI) {
             update_parser(parser);
         } else {
-            parse_expr(parser);
+            print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
+                      0, parser->cur.text, "Expected ';'.");
+            parser->status = 0;
+            return NULL;
+        }
+
+        return statement;
+    } else if(parser->cur.type == CONTINUE) {
+        statement->asttype = _CONTINUE;
+        update_parser(parser);
+        
+        if(parser->cur.type == SEMI) {
+            update_parser(parser);
+        } else {
+            print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
+                      0, parser->cur.text, "Expected ';'.");
+            parser->status = 0;
+            return NULL;
+        }
+
+        return statement;
+    } else if(parser->cur.type == RETURN) {
+        statement->asttype = _RETURN;
+        update_parser(parser);
+
+        if(parser->cur.type == SEMI) {
+            update_parser(parser);
+        } else {
+            astnode_t *expr;
+            init_astnode(expr,_EXPR);
+            expr = parse_expr(parser,ret_node);
+            add_astchild(statement,expr);
+
             if(parser->cur.type == SEMI) {
                 update_parser(parser);
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->lex.line_num, 0, parser->cur.text, "Expected ';'");
                 parser->status = 0;
+                return NULL;
             }
         }
-        return;
+
+        return statement;
     } else if(parser->cur.type == IF) {
+        statement->asttype = _IF_STATEMENT;
         update_parser(parser);
+
         if(parser->cur.type == LPAR) {
             update_parser(parser);
-            parse_expr(parser);
+
+            astnode_t *expr;
+            expr = parse_expr(parser);
+            add_astchild(statement,expr);
+
             if(parser->cur.type == RPAR) {
                 update_parser(parser);
+
                 if(parser->cur.type == LBRACE) {
                     update_parser(parser);
-                    parse_block(parser);
+
+                    astnode_t *statement_block;
+                    statement_block = parse_block(parser,block_node);
+                    add_astchild(statement,statement_block);
+                    
                 } else {
-                    parse_statement(parser);
+                    astnode_t *single_statement;
+                    single_statement = parse_statement(parser);
+                    add_astchild(statement,single_statement);
                 }
+
                 if(parser->cur.type == ELSE) {
                     update_parser(parser);
+
                     if(parser->cur.type == LBRACE) {
                         update_parser(parser);
                         parse_block(parser);
+
                     } else {
                         parse_statement(parser);
                     }
@@ -508,13 +660,16 @@ parse_statement(parser_t *parser)
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->lex.line_num, 0, parser->cur.text, "Expected ')'");
                 parser->status = 0;
+                return NULL
             }
         } else {
             print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
                 0, parser->cur.text, "Expected '('");
             parser->status = 0;
+            return NULL;
         }
-        return;
+
+        return statement;
     } else if(parser->cur.type == FOR) {
         update_parser(parser);
         if(parser->cur.type == LPAR) {
@@ -598,7 +753,8 @@ parse_statement(parser_t *parser)
             parser->status = 0;
         }
     } else {
-        parse_expr(parser);
+        statement->asttype = _EXPR;
+        parse_expr(parser,statement);
         if(parser->cur.type == SEMI) {
             update_parser(parser);
             return;
@@ -612,43 +768,69 @@ parse_statement(parser_t *parser)
 }
 
 
-
-astnode_t
-parse_typedecl(parser_t *parser)
+/**
+ *
+ */
+astnode_t *
+parse_typedeclbody(parser_t *parser)
 {
-    if(parser->status == 0) {
-        return;
-    }
+    astnode_t *var_decl, *var, *sibling;
+    init_astnode(var_decl,_VAR_DECL);
 
     if(parser->cur.type == RBRACE) {
         update_parser(parser);
-        return;
+        return NULL;
     } else if(parser->cur.type == END) {
         print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
             0, parser->cur.text, "Expected '}' before end of file.");
         parser->status = 0;
-        return;
+        return NULL;
     }
 
-    parse_type(parser);
-    parse_varlistnoinit(parser);
+    astnode_t *var;
+    parse_type(parser,var_decl);
+    var = parse_varlistnoinit(parser,var_decl);
+    add_astchild(var_decl,var);
+
+    sibling = parse_typedeclbody(parser);
+    add_astsibling(var_decl,sibling);
 
     if(parser->cur.type == SEMI) {
         update_parser(parser);
     } else {
         print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
-                0, parser->cur.text, "Expected ';'");
+                  0, parser->cur.text, "Expected ';'");
         parser->status = 0;
-        return;
+        return NULL;
     }
 
-    parse_typedecl(parser);
-
+    return var_decl;
 }
 
 
-astnode_t
-parse_fundecl(parser_t *parser)
+
+/**
+ *
+ */
+astnode_t *
+parse_typedecl(parser_t *parser)
+{
+    astnode_t *type_decl, *var_decl;
+    init_astnode(type_decl,_TYPE_DECL);
+
+    var_decl = parse_typedeclbody(parser);
+    add_astchild(type_decl,var_decl);
+
+    return type_decl;
+}
+
+
+
+/**
+ *
+ */
+void
+parse_fundef(parser_t *parser, astnode_t *parent)
 {
     if(parser->status == 0) {
         return;
@@ -705,33 +887,45 @@ parse_fundecl(parser_t *parser)
         parse_statement(parser);
     }
 
-    parse_fundecl(parser);
+    parse_fundef(parser);
 }
 
 
-astnode_t 
+
+/**
+ * This function parses a global statement. These can be one of a type
+ * declaration, function prototype, or function definition. This function also
+ * returns the sub-AST rooted in the global node.
+ */
+astnode_t * 
 parse_global(parser_t *parser) 
 {
-    // astnode_t global;
+    astnode_t *global;
+    init_astnode(global);
 
     if(is_typeorqualifier(parser->cur.type)) {
 
         if(parser->cur.type == STRUCT) { // 'struct' ident
             update_parser(parser);
             if(parser->cur.type == IDENT) {
-                update_parser(parser);
                 if(parser->cur.type == LBRACE) { // type-decl
+                    global->asttype = _TYPE_DECL;
+                    global->text = parser->cur.text;
+
                     update_parser(parser);
-                    parse_typedecl(parser);
+                    update_parser(parser);
+
+                    global = parse_typedecl(parser,node);
+
                     if(parser->cur.type == SEMI) {
                         update_parser(parser);
-                        return;
+                        return global;
                     } else {
                         print_msg(PARSER_ERR, parser->lex.filename, 
                             parser->lex.line_num, 0, parser->cur.text, 
                             "Expected ';'.");
                         parser->status = 0;
-                        return;
+                        return NULL;
                     }
                 }
             } else {
@@ -739,24 +933,38 @@ parse_global(parser_t *parser)
                     parser->lex.line_num, 0, parser->cur.text, 
                     "Expected identifier.");
                 parser->status = 0;
-                return;
+                return NULL;
             }
         } else {
-            parse_type(parser);
+            // assign return type to function or type to variable declaration
+            parse_type(parser,global); 
         }
 
         if(parser->cur.type == IDENT) {
-            if(parser->next.type == LPAR) { // fun-decl or fun-proto
+            if(parser->next.type == LPAR) { // fun-def or fun-proto
+                global->text = parser->cur.text;
+
                 update_parser(parser);
                 update_parser(parser);
-                parse_paramlist(parser);
+
+                astnode_t *var;
+                var = parse_paramlist(parser);
+                add_astchild(global,var);
+
                 if(parser->cur.type == SEMI) { // fun-proto
+                    global->type = _FUN_DECL;
+
                     update_parser(parser);
-                    return;
-                } else if(parser->cur.type == LBRACE) { // fun-decl
+
+                    return global;
+                } else if(parser->cur.type == LBRACE) { // fun-def
+                    global->type = _FUN_DEF;
+
                     update_parser(parser);
-                    parse_fundecl(parser);
-                    return;
+
+                    parse_fundef(parser);
+
+                    return global;
                 }
             } else { // var decl
                 parse_varlist(parser);
@@ -780,26 +988,38 @@ parse_global(parser_t *parser)
         }   
     } else {
         print_msg(PARSER_ERR, parser->lex.filename, parser->lex.line_num, 
-            0, parser->cur.text, "Expected type name 1.");
+            0, parser->cur.text, "Expected type name.");
         parser->status = 0;
         return;
     }
+
+    return global;
 }
 
 
-astnode_t 
+
+/**
+ *
+ */
+astnode_t * 
 parse_program(parser_t *parser)
 {
-    // astnode_t program, node;
+    astnode_t *program, *global;
+    init_astnode(program,_PROGRAM);
+
     while(parser->cur.type != END && parser->status > 0) {
-        parse_global(parser);
-        // node = parse_global(parser);
-        // add_child(&program,&node);
+        global = parse_global(parser);
+        add_astchild(program,global);
     }
-    // return program;
+
+    return program;
 }
 
 
+
+/**
+ *
+ */
 void
 init_parser(char *filename, parser_t *parser)
 {
@@ -816,7 +1036,10 @@ init_parser(char *filename, parser_t *parser)
 
 
 
-astnode_t 
+/**
+ *
+ */
+void 
 parse(char *infilename, FILE *outfile)
 {
     parser_t parser;
@@ -826,13 +1049,20 @@ parse(char *infilename, FILE *outfile)
         fprintf(outfile,"File %s is syntactically correct.\n",infilename);
         exit(1);
     }
-    return parser.ast;
 }
 
 
 
+/**
+ *
+ */
 void
-typecheck()
+typecheck(astnode_t *root)
 {
+    // traverse tree via DFS (left-most childern first i.e., in order that
+    // statements appear in the input)
+    // update symbol table on-the-fly
+    // if any type rules are violated, return
+
     return;
 }

@@ -6,13 +6,13 @@
 #include "../util/io.h"
 #include "lexer.h"
 
-/*
+/**
  * Determines if input is a valid octal character i.e. [0-7]
  * Sister function to those in ctype.h (i.e. isdigit(), isalpha(), etc.)
  *
- * c: character to check
+ * @param c character to check
  *
- * return:  1 if c is in [0-7]
+ * @return  1 if c is in [0-7]
  *          0 otherwise
  */
 int
@@ -22,14 +22,14 @@ isoctal(int c)
     return (digit >= 0 && digit <= 7);
 }
 
-/*
+/**
  * Checks if token is of valid size i.e. under the max of the token's type. If 
  * it is already equal to max size, warns user that lexeme is being truncated.
  *
- * lex: lexer struct with useful info to print
- * tok: token to be considered
+ * @param lex lexer struct with useful info to print
+ * @param tok token to be considered
  *
- * return:  0 if token is above max size
+ * @return  0 if token is above max size
  *          1 otherwise
  */
 int
@@ -56,13 +56,13 @@ is_valid_size(lexer_t *lex, token_t *tok)
     return 1;
 }
 
-/*
+/**
  * Iterates the current character pointer of the lexer. Most importantly, checks
  * if the buffer needs to be refilled and if so, refills it.
  *
- * lex: lexer under use
+ * @param lex lexer under use
  *
- * return: 1
+ * @return 1
  */
 int
 iterate_cur(lexer_t *lex)
@@ -78,14 +78,14 @@ iterate_cur(lexer_t *lex)
 }
 
 
-/*
+/**
  * Appends the current char to the input token if the token has available size. 
  * Also resizes the size of the text for the token if necesary
  *
- * lex: relevant lexer
- * tok: token to append the current char to
+ * @param lex relevant lexer
+ * @param tok token to append the current char to
  *
- * return:  1 on success
+ * @return  1 on success
  *          0 otherwise
  */
 int 
@@ -111,16 +111,16 @@ append_char(lexer_t *lex, token_t *tok)
     return 1;
 }
 
-/*
+/**
  * Consumes a c-style comment (i.e. same style as this commnent)/. Tracks
  * newlines and does not append any characters to the current token. Returns
  * an error if EOF is found before comment close. Once end of the comment is 
  * found, reenters consume().
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_c_comment(lexer_t *lex, token_t *tok) 
@@ -156,14 +156,14 @@ consume_c_comment(lexer_t *lex, token_t *tok)
     return consume_c_comment(lex, tok);
 }
 
-/*
+/**
  * Consumes cpp-style comment (i.e. //). Does not append any chars to current 
  * token. Once \n is found, reenters consume().
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_cpp_comment(lexer_t *lex, token_t *tok) 
@@ -180,14 +180,14 @@ consume_cpp_comment(lexer_t *lex, token_t *tok)
     return consume_cpp_comment(lex, tok);
 }
 
-/*
+/**
  * Consumes a '/' and determines whether tok is a c-style comment, cpp-style 
  * comment, SLASHASSIGN, or SLASH.
  *
- * lex: relevant lexer
- * tok: token to be generated 
+ * @param lex relevant lexer
+ * @param tok token to be generated 
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_slash(lexer_t *lex, token_t *tok) 
@@ -214,14 +214,14 @@ consume_slash(lexer_t *lex, token_t *tok)
     return 0;    
 }
 
-/*
+/**
  * Consumes the exponent portion of a REAL_LIT (i.e. following 'e'). All chars 
  * should be digits. 
  *
- * lex: relevant lexer
- * tok: token to be generated 
+ * @param lex relevant lexer
+ * @param tok token to be generated 
  *
- * return: 0
+ * @return 0
  */
 int
 consume_real_exp(lexer_t *lex, token_t *tok)
@@ -240,14 +240,14 @@ consume_real_exp(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes the fractional portion of a REAL_LIT (i.e. following '.'). 
  * Characters following this can be exp-type chars or digits.
  *
- * lex: relevant lexer
- * tok: token to be generated 
+ * @param lex relevant lexer
+ * @param tok token to be generated 
  *
- * return: 0
+ * @return 0
  */
 int
 consume_real_frac(lexer_t *lex, token_t *tok)
@@ -273,14 +273,14 @@ consume_real_frac(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes a digit in the context of an INT_LIT. If a '.' or 'e' is found,
  * starts consuming as a REAL_LIT. 
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_int(lexer_t *lex, token_t *tok) 
@@ -319,14 +319,14 @@ consume_int(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes a hexidecimal literal. If a non-hex alphanumeric character is found,
  * prints an error. 
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int
 consume_hex(lexer_t *lex, token_t *tok)
@@ -345,14 +345,14 @@ consume_hex(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes an octal literal. If a non-octal alphanumeric character is found,
  * prints an error. 
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int
 consume_octal(lexer_t *lex, token_t *tok)
@@ -371,14 +371,14 @@ consume_octal(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes an identifier token i.e. of the form ([a-zA-Z_][a-zA-Z0-9_]*). If 
  * current character is anything other than [a-zA-Z0-9], returns.
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_ident(lexer_t *lex, token_t *tok) 
@@ -394,15 +394,15 @@ consume_ident(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Consumes a string token until the matching '"' is found. Also handles cases 
  * of escape characters and prints an error if an invalid escape character is 
  * used (similar to behavior of a CHAR_LIT)
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume_string(lexer_t *lex, token_t *tok) 
@@ -443,7 +443,7 @@ consume_string(lexer_t *lex, token_t *tok)
     return consume_string(lex, tok);
 }
 
-/*
+/**
  * Consumes the current character under consideration by the lexer. Single or
  * double character tokens are handled directly by this function, else consume()
  * dispatches to the relevant function call to generate teh correct token. Note
@@ -451,10 +451,10 @@ consume_string(lexer_t *lex, token_t *tok)
  * dispatched functions are recursive i.e., all generated tokens enter and exit
  * from this function call.
  *
- * lex: relevant lexer
- * tok: token to be generated
+ * @param lex relevant lexer
+ * @param tok token to be generated
  *
- * return: 0
+ * @return 0
  */
 int 
 consume(lexer_t *lex, token_t *tok) 
@@ -739,15 +739,15 @@ consume(lexer_t *lex, token_t *tok)
     return 0;
 }
 
-/*
+/**
  * Checks if the text of the token is the same as a keyword. Hashes for each 
  * keyword are predetermined by a run of the hash() function and defined in
  * lexer.h. If the hash of the token text matches that of a keyword, we use
  * strcmp to verify that the token is a keyword.
  *
- * tok: token to be checked
+ * @param tok token to be checked
  *
- * return: void
+ * @return void
  */
 void 
 keyword_check(token_t *tok) 
@@ -846,14 +846,14 @@ keyword_check(token_t *tok)
 }
 
 
-/*
+/**
  * Generates the next token according to the current state of the lexer.
  * At a high level, this function calls consume() to generate the token then
  * categorizes the token if consume() could not.
  *
- * lex: lexer currently under use
+ * @param lex lexer currently under use
  *
- * return: void
+ * @return void
  */
 void
 next_token(lexer_t *lex, token_t *tok) 
@@ -873,13 +873,13 @@ next_token(lexer_t *lex, token_t *tok)
 }
 
 
-/*
+/**
  * Initializes and returns a lexer structure that starts at the begnning of
  * the file "filename". Opens the input file and reads data into buffer.
  *
  * filename: name of input file
  *
- * return: void
+ * @return void
  */
 void
 init_lexer(char *filename, lexer_t *lex)
@@ -897,14 +897,14 @@ init_lexer(char *filename, lexer_t *lex)
 }
 
 
-/*
+/**
  * Prints a stream of tokens corresponding to the contents of filename and
  * outputs thie stream of tokens to outfile.
  *
  * filename: name of input file
  * outfile: file ptr to print stream of tokens to
  *
- * return: void
+ * @return void
  */
 void 
 tokenize(char *filename, FILE *outfile) 

@@ -2,10 +2,11 @@
 #define AST_H
 
 #include "token.h"
+#include "stdbool.h"
 
 typedef enum asttype {
+    _NONE,
     _PROGRAM,
-    _GLOBAL,
     _VAR_DECL,
     _VAR_LIST,
     _TYPE_DECL,
@@ -13,13 +14,15 @@ typedef enum asttype {
     _FUN_DECL,
     _PARAM_LIST,
     _FUN_DEF,
-    _STATEMENT,
     _EXPR,
     _BREAK,
     _CONTINUE,
     _RETURN,
     _IF_STATEMENT,
     _FOR_STATEMENT,
+    _FOR_INIT,
+    _FOR_EXIT,
+    _FOR_UPDATE,
     _WHILE_STATEMENT,
     _DO_STATEMENT,
     _STATEMENT_BLOCK,
@@ -33,22 +36,30 @@ typedef enum asttype {
     _UNARYOP,
     _BINARYOP,
     _DOT,
-    _QUEST,
+    _TERNARY,
     _COLON,
     _TYPE,
     _SEMI,
-    _VOID,
-    _CHAR,
-    _INTEGER,
-    _FLOAT,
-    _STRING
+    _LITERAL,
+    _STRUCT
 } asttype_t;
 
 typedef struct astnode {
-    asttype_t type;
-    token_t *tok;
     struct astnode *left;
     struct astnode *right;
+    asttype_t asttype;
+    char *text;
+    char *type;
+    int array_param;
+    bool is_const;
+    bool is_struct;
+    bool is_array;
 } astnode_t;
+
+void init_astnode(astnode_t *node, asttype_t asttype);
+void init_astnode(astnode_t *node);
+void add_astchild(astnode_t *parent, astnode_t *child);
+void add_astsibling(astnode_t *node, astnode_t *sibling);
+void free_ast(astnode_t *root);
 
 #endif

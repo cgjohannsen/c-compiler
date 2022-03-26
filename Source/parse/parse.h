@@ -9,13 +9,10 @@
 
 typedef struct parser {
     lexer_t lex;
-    symtable_t table;
-    ast_t ast;
     token_t cur, next;
     int status;
 } parser_t;
 
 void parse(char *, FILE *);
-void typecheck(void);
 
 #endif

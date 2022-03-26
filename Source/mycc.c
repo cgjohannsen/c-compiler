@@ -4,6 +4,7 @@
 
 #include "parse/lexer.h"
 #include "parse/parse.h"
+#include "parse/typecheck.h"
 
 const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
                     "\tmode\t\tinteger from 0-5 specifying mode to run\n"
@@ -105,8 +106,7 @@ int main(int argc, char **argv)
   }
 
   if(node == 4) {
-    parse(infilename, outfile);
-    typecheck();
+    typecheck(parse(infilename, outfile));
     exit(0);
   }
 

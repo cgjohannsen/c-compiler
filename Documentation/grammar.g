@@ -21,7 +21,11 @@ fun-decl : type Ident '(' param-list ')'
 
 param-list : ( type Ident '[]'? )*
 
-fun-def : fun-decl '{' (var-decl | statement)* '}'
+fun-statement : var-decl | type-decl | statement 
+
+fun-body : '{' (fun-statement)* '}'
+
+fun-def : fun-decl fun-body
 
 statement : ';'
           | expr ';'

@@ -18,13 +18,13 @@ typedef enum symtype {
 typedef struct symparam {
     struct symparam *next;
     char *ident;
-    symtype_t type;
+    char *type;
 } symparam_t;
 
 typedef struct symentry {
     struct symentry *next;
     char *ident;
-    symtype_t type;
+    char *type;
     bool is_array;
     symparam_t *param;
 } symentry_t;

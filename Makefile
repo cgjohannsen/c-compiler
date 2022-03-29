@@ -11,7 +11,7 @@ SRC_DIRS := $(SRC_PATH) $(SRC_PATH)/util $(SRC_PATH)/parse
 OBJ_DIRS := $(OBJ_PATH) $(addprefix $(OBJ_PATH), $(subst $(SRC_PATH),,$(SRC_DIRS)))
 
 # compile macros
-CFLAGS := -Wall
+CFLAGS := 
 CCOBJFLAG := $(CFLAGS) -c
 
 TARGET_NAME := mycc

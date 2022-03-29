@@ -3,6 +3,6 @@
 
 #include "ast.h"
 
-int typecheck(astnode_t *ast);
+int typecheck(char *infilename, FILE *outfile);
 
 #endif

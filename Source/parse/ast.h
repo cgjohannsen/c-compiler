@@ -11,7 +11,7 @@ typedef enum asttype {
     _FUN_DECL,
     _FUN_DEF,
     _FUN_BODY,
-    _FUN_PARAM,
+    _FUN_ARGS,
     _BREAK,
     _CONTINUE,
     _RETURN,
@@ -23,6 +23,7 @@ typedef enum asttype {
     _FOR_INIT,
     _FOR_EXIT,
     _FOR_UPDATE,
+    _FOR_BODY,
     _WHILE_STATEMENT,
     _WHILE_COND,
     _WHILE_BODY,
@@ -54,12 +55,14 @@ typedef enum asttype {
     _DOT,
     _TERNARY,
     _ARR_ACCESS,
+    _STRUCT_ACCESS,
     _ARR_DIM,
     _CHAR_LIT,
     _INT_LIT,
     _REAL_LIT,
-    _STRING_LIT,
-    _VAR
+    _STR_LIT,
+    _VAR, 
+    _TYPE
 } asttype_t;
 
 typedef union astval {
@@ -79,7 +82,7 @@ typedef struct astnode {
     bool is_struct;
 } astnode_t;
 
-void init_astnode(astnode_t *node, asttype_t asttype, char *text);
+astnode_t *init_astnode(asttype_t asttype, char *text);
 
 void set_asttext(astnode_t *node, char *text);
 void set_astchar(astnode_t *node, char c);

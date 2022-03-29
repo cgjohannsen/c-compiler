@@ -1,12 +1,13 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "ast.h"
 
-void 
-init_astnode(astnode_t *node, asttype_t asttype, char *text)
+astnode_t * 
+init_astnode(asttype_t asttype, char *text)
 {
-    node = (astnode_t *) malloc(sizeof(astnode_t));
+    astnode_t *node = (astnode_t *) malloc(sizeof(astnode_t));
 
     node->text = (char *) malloc(sizeof(char) * (strlen(text) + 1));
     strcpy(node->text, text);
@@ -20,17 +21,19 @@ init_astnode(astnode_t *node, asttype_t asttype, char *text)
 
     switch(asttype) {
         case _CHAR_LIT: 
-            node->astval.c = *text;
+            node->val.c = *text;
             break;
         case _INT_LIT:
-            node->astval.i = atoi(text);
+            node->val.i = atoi(text);
             break;
         case _REAL_LIT:
-            node->astval.f = strtof(text);
+            node->val.f = atof(text);
             break;
         default:
             break;
     }
+
+    return node;
 }
 
 
@@ -38,8 +41,7 @@ init_astnode(astnode_t *node, asttype_t asttype, char *text)
 void 
 set_asttext(astnode_t *node, char *text)
 {
-    free(node->text);
-    node->text = (char *) malloc(sizeof(char) * (strlen(text) + 1));
+    node->text = (char *) realloc(node->text,sizeof(char) * (strlen(text) + 1));
     strcpy(node->text, text);
 }
 
@@ -48,7 +50,7 @@ set_asttext(astnode_t *node, char *text)
 void 
 set_astchar(astnode_t *node, char c)
 {
-    node->astval.c = c;
+    node->val.c = c;
 }
 
 
@@ -56,7 +58,7 @@ set_astchar(astnode_t *node, char c)
 void 
 set_astint(astnode_t *node, int i)
 {
-    node->astval.i = i;
+    node->val.i = i;
 }
 
 
@@ -64,7 +66,7 @@ set_astint(astnode_t *node, int i)
 void 
 set_astfloat(astnode_t *node, float f)
 {
-    node->astval.f = f;
+    node->val.f = f;
 }
 
 
@@ -81,6 +83,7 @@ add_astchild(astnode_t *parent, astnode_t *child)
 
     if(cur == NULL) { // case when parent has no children
         parent->left = child;
+        return 1;
     }
 
     while(cur->right != NULL) {

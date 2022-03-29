@@ -2,6 +2,14 @@
 #include "parse.h"
 #include "typecheck.h"
 
+
+int
+typecheck_program(astnode_t *program)
+{
+    return 1;
+}
+
+
 int 
 typecheck(char *infilename, FILE *outfile)
 {

@@ -106,7 +106,7 @@ int main(int argc, char **argv)
   }
 
   if(mode == 4) {
-    typecheck(parse(infilename, outfile));
+    typecheck(infilename, outfile);
     exit(0);
   }
 

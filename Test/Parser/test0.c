@@ -1,6 +1,10 @@
 void f()
 {
-    f[g[7]] *= 5;
+    int a, b, t;
+
+    struct m {
+        struct g h;
+    };
 }
 
 struct a {

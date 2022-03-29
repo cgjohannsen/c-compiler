@@ -5,7 +5,6 @@
 
 #include "lexer.h"
 #include "ast.h"
-#include "symtable.h"
 
 typedef struct parser {
     lexer_t lex;
@@ -13,6 +12,8 @@ typedef struct parser {
     int status;
 } parser_t;
 
-astnode_t *parse(char *, FILE *);
+astnode_t *parse_program(parser_t *parser);
+void init_parser(char *filename, parser_t *parser);
+void parse(char *, FILE *);
 
 #endif

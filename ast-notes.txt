@@ -248,13 +248,35 @@ e --> &&
 
 
 
+expr(n) -> term exprPn
 
+exprP1 -> assign-op expr(1)
 
+exprP2 -> ? expr(2) : expr(2)
 
+epxrP3 -> || expr(3)
 
+...
 
+exprP9 -> + expr(9)
+        | - expr(9)
 
-struct my_struct function(int i);
-const struct my_struct function(int i);
-struct my_struct const function(int i);
-struct my_struct m;
+exprP10 -> * expr(10)
+         | / expr(10)
+         | % expr(10)
+
+term -> ! expr
+      | ~ expr
+      | - expr
+      | -- lvalue
+      | ++ lvalue
+      | lvalue ++
+      | lvalue --
+      | ( type ) expr
+      | ( expr )
+      | lvalue
+      | literal
+
+lvalue -> ident
+        | lvalue [ expr ]
+        | lvalue . lvalue

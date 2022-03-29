@@ -106,6 +106,7 @@ add_astchildleft(astnode_t *parent, astnode_t *child)
 
     if(parent->left == NULL) { // case when parent has no children
         parent->left = child;
+        return 1;
     }
 
     astnode_t *tmp;
@@ -130,6 +131,7 @@ add_astsibling(astnode_t *node, astnode_t *sibling)
 
     if(cur == NULL) { // case where node is only child
         node->right = sibling;
+        return 1;
     }
 
     while(cur->right != NULL) {
@@ -158,7 +160,7 @@ free_ast(astnode_t *node)
 
 
 
-int 
+bool 
 is_inttype(asttype_t asttype)
 {
     return asttype == _CHAR_LIT || asttype == _INT_LIT;
@@ -166,8 +168,25 @@ is_inttype(asttype_t asttype)
 
 
 
-int is_numerictype(asttype_t asttype)
+bool 
+is_numerictype(asttype_t asttype)
 {   
     return asttype == _CHAR_LIT || asttype == _INT_LIT || asttype == _REAL_LIT;
 }
 
+
+
+bool 
+is_lvalue(astnode_t *node)
+{
+    if(node == NULL) {
+        return true;
+    }
+
+    if(node->type != _ARR_ACCESS && node->type != _STRUCT_ACCESS && 
+        node->type != _VAR) {
+        return false;
+    }
+
+    return is_lvalue(node->left);
+}

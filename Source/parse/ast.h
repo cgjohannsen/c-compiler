@@ -11,7 +11,7 @@ typedef enum asttype {
     _FUN_DECL,
     _FUN_DEF,
     _FUN_BODY,
-    _FUN_ARGS,
+    _FUN_PARAMS,
     _BREAK,
     _CONTINUE,
     _RETURN,
@@ -48,6 +48,8 @@ typedef enum asttype {
     _SUB_ASSIGN,
     _MULT_ASSIGN,
     _DIV_ASSIGN,
+    _FUN_ARGS,
+    _FUN_CALL,
     _ADD,
     _SUB,
     _MULT,
@@ -96,8 +98,9 @@ int add_astsibling(astnode_t *node, astnode_t *sibling);
 
 void free_ast(astnode_t *root);
 
-int is_inttype(asttype_t asttype);
-int is_numerictype(asttype_t asttype);
-int is_vartype(asttype_t asttype);
+bool is_inttype(asttype_t asttype);
+bool is_numerictype(asttype_t asttype);
+bool is_vartype(asttype_t asttype);
+bool is_lvalue(astnode_t *node);
 
 #endif

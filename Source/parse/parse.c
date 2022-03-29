@@ -105,83 +105,10 @@ parse_type(parser_t *parser)
  *
  */
 astnode_t *
-parse_forparams(parser_t *parser)
+parse_funparams(parser_t *parser)
 {
-    astnode_t *for_init, *for_exit, *for_update;
-
-    if(parser->cur.type == SEMI) { // empty first param
-        for_init = init_astnode(_FOR_INIT, "");
-        update_parser(parser);
-    } else { // non-empty first param
-        astnode_t *init_expr;
-        for_init = init_astnode(_FOR_INIT, parser->cur.text);
-        init_expr = parse_expr(parser);
-        add_astchild(for_init, init_expr);
-        
-        if(parser->cur.type == SEMI) {
-            update_parser(parser);
-        } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'");
-            parser->status = 0;
-            exit(1);
-        }
-    }
-
-    if(parser->cur.type == SEMI) { // empty second param
-        for_exit = init_astnode(_FOR_EXIT, "");
-        update_parser(parser);
-    } else { // non-empty second param
-        astnode_t *exit_expr;
-        for_exit = init_astnode(_FOR_EXIT, parser->cur.text);
-        exit_expr = parse_expr(parser);
-        add_astchild(for_exit, exit_expr);
-
-        if(parser->cur.type == SEMI) {
-            update_parser(parser);
-        } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'");
-            parser->status = 0;
-            exit(1);
-        }
-    }
-
-    if(parser->cur.type == RPAR) { // empty third param
-        for_update = init_astnode(_FOR_UPDATE, "");
-        update_parser(parser);
-    } else { // non-empty third param
-        astnode_t *update_expr;
-        for_update = init_astnode(_FOR_UPDATE, parser->cur.text);
-        update_expr = parse_expr(parser);
-        add_astchild(for_update, update_expr);
-
-        if(parser->cur.type == RPAR) {
-            update_parser(parser);
-        } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ')'");
-            parser->status = 0;
-            exit(1);
-        }
-    }
-
-    add_astsibling(for_init, for_exit);
-    add_astsibling(for_exit, for_update);
-
-    return for_init;
-}
-
-
-
-/**
- *
- */
-astnode_t *
-parse_funargs(parser_t *parser)
-{
-    astnode_t *args;
-    args = init_astnode(_FUN_ARGS, parser->cur.text);
+    astnode_t *params;
+    params = init_astnode(_FUN_PARAMS, parser->cur.text);
 
     astnode_t *type, *var;
     while(is_typeorqualifier(parser->cur.type)) {
@@ -189,8 +116,23 @@ parse_funargs(parser_t *parser)
         
         if(parser->cur.type == IDENT) {
             var = init_astnode(_VAR, parser->cur.text);
-            add_astchild(args, type);
-            add_astchild(args, var);
+            add_astchild(params, type);
+            add_astchild(params, var);
+
+            update_parser(parser);
+
+            if(parser->cur.type == RBRAK) {
+                update_parser(parser);
+                if(parser->cur.type == LBRAK) {
+                    var->is_array = true;
+                } else {
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                        parser->cur.line_num, 0, parser->cur.text, 
+                        "Expected ']'");
+                    parser->status = 0;
+                    exit(1);
+                }
+            }
         } else {
             print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
                 0, parser->cur.text, "Expected identifier");
@@ -203,7 +145,7 @@ parse_funargs(parser_t *parser)
         }
     }
 
-    return args;
+    return params;
 }
 
 
@@ -230,8 +172,10 @@ parse_literal(parser_t *parser)
             literal = init_astnode(_STR_LIT, parser->cur.text);
             break;
         default:
-            literal = NULL;
-            break;
+            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
+                0, parser->cur.text, "Expected literal.");
+            parser->status = 0;
+            exit(1);
     }
 
     update_parser(parser);
@@ -313,15 +257,174 @@ parse_lvalue(parser_t *parser)
 }
 
 
+
+astnode_t *
+parse_term(parser_t *parser)
+{
+    astnode_t *op, *expr;
+
+    switch(parser->cur.type) {
+        case BANG:
+            op = init_astnode(_LOG_NEG, parser->cur.text);
+            update_parser(parser);
+            expr = parse_term(parser);
+            add_astchild(op, expr);
+            return op;
+        case TILDE:
+            op = init_astnode(_BIT_NEG, parser->cur.text);
+            update_parser(parser);
+            expr = parse_term(parser);
+            add_astchild(op, expr);
+            return op;
+        case MINUS:
+            op = init_astnode(_ARITH_NEG, parser->cur.text);
+            update_parser(parser);
+            expr = parse_term(parser);
+            add_astchild(op, expr);
+            return op;
+        case DECR:
+            op = init_astnode(_DECR, parser->cur.text);
+            update_parser(parser);
+            expr = parse_lvalue(parser);
+            add_astchild(op, expr);
+            return op;
+        case INCR:
+            op = init_astnode(_INCR, parser->cur.text);
+            update_parser(parser);
+            expr = parse_lvalue(parser);
+            add_astchild(op, expr);
+            return op;
+        case LPAR:
+            if(is_typeorqualifier(parser->cur.type)) { // type cast
+                update_parser(parser);
+                op = parse_type(parser);
+                if(parser->cur.type == RPAR) {
+                    update_parser(parser);
+                    expr = parse_term(parser);
+                    add_astchild(op, expr);
+                    return op;
+                } else {
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                        parser->cur.line_num, 0, parser->cur.text, 
+                        "Expected ')'.");
+                    parser->status = 0;
+                    exit(1);
+                }
+            } else {
+                update_parser(parser);
+                expr = parse_expr(parser, 1);
+                if(parser->cur.type == RPAR) {
+                    return expr;
+                } else {
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                       parser->cur.line_num,0,parser->cur.text,"Expected ')'.");
+                    parser->status = 0;
+                    exit(1);
+                }
+            }
+        case IDENT:
+            if(parser->next.type == LPAR) { // function call
+                op = init_astnode(_FUN_CALL, parser->cur.text);
+                update_parser(parser);
+                update_parser(parser);
+
+                astnode_t *fun_args, *arg;
+                fun_args = init_astnode(_FUN_ARGS, "");
+                while(1) {
+                    arg = parse_expr(parser, 1);
+                    add_astchild(fun_args, arg);
+                    if(parser->cur.type == COMMA) {
+                        update_parser(parser);
+                    } else if(parser->cur.type == RPAR) {
+                        update_parser(parser);
+                        break;
+                    } else {
+                        print_msg(PARSER_ERR, parser->lex.filename, 
+                            parser->cur.line_num, 0, parser->cur.text,
+                            "Expected ',' or ')'.");
+                        parser->status = 0;
+                        exit(1);
+                    }
+                }
+
+                add_astchild(op,fun_args);
+                return op;
+            } else {
+                expr = parse_lvalue(parser);
+                
+                if(parser->cur.type == INCR) {
+                    op = init_astnode(_INCR, parser->cur.text);
+                    add_astchild(op, expr);
+                    return op;
+                } else if(parser->cur.type == DECR) {
+                    op = init_astnode(_DECR, parser->cur.text);
+                    add_astchild(op, expr);
+                    return op;
+                } else {
+                    return expr;
+                }
+            }
+        default:
+            return parse_literal(parser);
+    }
+}
+
+
+
 /**
  *
  */
 astnode_t *
-parse_expr(parser_t *parser)
+parse_exprprime(parser_t *parser, int prec)
 {
-    astnode_t *expr;
-    expr = init_astnode(_VAR, parser->cur.text);
+    astnode_t *op, *expr;
+
+    switch(prec) {
+        case 1:
+            if(is_assignop(parser->cur.type)) {
+                if(is_lvalue(expr1)) {
+                    op = init_astnode(_ASSIGN, parser->cur.type);
+                    update_parser(parser);
+                    expr2 = parse_expr(parser, 2);
+                    add_astchild(op, expr1);
+                    add_astchild(op, expr2);
+                    return op;
+                } else {
+                    // error
+                }
+            }
+        case 2:
+        case 3:
+        ...
+        case 9:
+            while(prec(parser->cur.type) >= 9) {
+
+            }
+        case 10:
+
+        default:
+    }
+
+
+
     return expr;
+}
+
+
+
+astnode_t *
+parse_expr(parser_t *parser, int prec)
+{
+    astnode_t *term, *expr_prime;
+    term = parse_term(parser);
+    expr_prime = parse_exprprime(parser, prec);
+
+    if(expr_prime != NULL) {
+        add_astchildleft(expr_prime, term);
+        return expr_prime;
+    }
+
+    return term;
 }
 
 
@@ -508,6 +611,79 @@ parse_if(parser_t *parser)
     }
 
     return statement;
+}
+
+
+
+/**
+ *
+ */
+astnode_t *
+parse_forparams(parser_t *parser)
+{
+    astnode_t *for_init, *for_exit, *for_update;
+
+    if(parser->cur.type == SEMI) { // empty first param
+        for_init = init_astnode(_FOR_INIT, "");
+        update_parser(parser);
+    } else { // non-empty first param
+        astnode_t *init_expr;
+        for_init = init_astnode(_FOR_INIT, parser->cur.text);
+        init_expr = parse_expr(parser);
+        add_astchild(for_init, init_expr);
+        
+        if(parser->cur.type == SEMI) {
+            update_parser(parser);
+        } else {
+            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
+                0, parser->cur.text, "Expected ';'");
+            parser->status = 0;
+            exit(1);
+        }
+    }
+
+    if(parser->cur.type == SEMI) { // empty second param
+        for_exit = init_astnode(_FOR_EXIT, "");
+        update_parser(parser);
+    } else { // non-empty second param
+        astnode_t *exit_expr;
+        for_exit = init_astnode(_FOR_EXIT, parser->cur.text);
+        exit_expr = parse_expr(parser);
+        add_astchild(for_exit, exit_expr);
+
+        if(parser->cur.type == SEMI) {
+            update_parser(parser);
+        } else {
+            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
+                0, parser->cur.text, "Expected ';'");
+            parser->status = 0;
+            exit(1);
+        }
+    }
+
+    if(parser->cur.type == RPAR) { // empty third param
+        for_update = init_astnode(_FOR_UPDATE, "");
+        update_parser(parser);
+    } else { // non-empty third param
+        astnode_t *update_expr;
+        for_update = init_astnode(_FOR_UPDATE, parser->cur.text);
+        update_expr = parse_expr(parser);
+        add_astchild(for_update, update_expr);
+
+        if(parser->cur.type == RPAR) {
+            update_parser(parser);
+        } else {
+            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
+                0, parser->cur.text, "Expected ')'");
+            parser->status = 0;
+            exit(1);
+        }
+    }
+
+    add_astsibling(for_init, for_exit);
+    add_astsibling(for_exit, for_update);
+
+    return for_init;
 }
 
 
@@ -769,7 +945,7 @@ parse_vardecl(parser_t *parser)
                 } else {
                     print_msg(PARSER_ERR, parser->lex.filename, 
                         parser->cur.line_num, 0, parser->cur.text, 
-                        "Expected '}'.");
+                        "Expected ']'.");
                     parser->status = 0;
                     exit(1);
                 }
@@ -965,9 +1141,9 @@ parse_funbody(parser_t *parser)
 
 
 /**
- * This function parses a global statement. These can be one of a type
- * declaration, function prototype, or function definition. This function also
- * returns the AST rooted in the global node.
+ * Parses a global statement. These can be one of a type declaration, function
+ * prototype, or function definition. This function also returns the AST rooted
+ * in the global node.
  */
 astnode_t * 
 parse_global(parser_t *parser) 
@@ -1011,7 +1187,7 @@ parse_global(parser_t *parser)
             update_parser(parser);
 
             astnode_t *args;
-            args = parse_funargs(parser);
+            args = parse_funparams(parser);
             add_astchild(fun_decl, args);
 
             if(parser->cur.type == RPAR) {
@@ -1062,6 +1238,8 @@ parse_global(parser_t *parser)
                 var = init_astnode(_VAR, parser->cur.text);
                 add_astchild(var_decl, var);
 
+                update_parser(parser);
+
                 if(parser->cur.type == LBRAK) {
                     update_parser(parser);
                     if(parser->cur.type == INT_LIT) {
@@ -1073,7 +1251,7 @@ parse_global(parser_t *parser)
                         } else {
                             print_msg(PARSER_ERR, parser->lex.filename, 
                                 parser->cur.line_num, 0, parser->cur.text, 
-                                "Expected '}'.");
+                                "Expected ']'.");
                             parser->status = 0;
                             exit(1);
                         }

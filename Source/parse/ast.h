@@ -11,6 +11,7 @@ typedef enum asttype {
     _FUN_DECL,
     _FUN_DEF,
     _FUN_BODY,
+    _FUN_PARAM,
     _BREAK,
     _CONTINUE,
     _RETURN,
@@ -29,34 +30,67 @@ typedef enum asttype {
     _DO_COND,
     _DO_BODY,
     _STATEMENT_BLOCK,
-    _ASSIGNOP,
-    _UNARYOP,
-    _BINARYOP,
+    _EQ,
+    _NEQ, 
+    _GEQ, 
+    _LEQ, 
+    _INCR,
+    _DECR,
+    _LOG_OR,
+    _LOG_AND,
+    _BIT_OR,
+    _BIT_AND,
+    _LOG_NEG,
+    _ARITH_NEG,
+    _BIT_NEG,
+    _ADD_ASSIGN,
+    _SUB_ASSIGN,
+    _MULT_ASSIGN,
+    _DIV_ASSIGN,
+    _ADD,
+    _SUB,
+    _MULT,
+    _DIV,
     _DOT,
     _TERNARY,
-    _COLON,
+    _ARR_ACCESS,
+    _ARR_DIM,
     _CHAR_LIT,
     _INT_LIT,
-    _FLOAT_LIT,
+    _REAL_LIT,
     _STRING_LIT,
     _VAR
 } asttype_t;
 
+typedef union astval {
+    char c;
+    int i;
+    float f;
+} astval_t;
+
 typedef struct astnode {
     struct astnode *left;
     struct astnode *right;
-    asttype_t asttype;
+    asttype_t type;
+    astval_t val;
     char *text;
-    char *type;
     bool is_array;
     bool is_const;
     bool is_struct;
 } astnode_t;
 
-void init_astnode(astnode_t *node, asttype_t asttype);
-void init_astnode(astnode_t *node);
-void add_astchild(astnode_t *parent, astnode_t *child);
-void add_astsibling(astnode_t *node, astnode_t *sibling);
+void init_astnode(astnode_t *node, asttype_t asttype, char *text);
+
+void set_asttext(astnode_t *node, char *text);
+void set_astchar(astnode_t *node, char c);
+void set_astint(astnode_t *node, int i);
+void set_astfloat(astnode_t *node, float f);
+void set_aststring(astnode_t *node, char *s);
+
+int add_astchild(astnode_t *parent, astnode_t *child);
+int add_astchildleft(astnode_t *parent, astnode_t *child);
+int add_astsibling(astnode_t *node, astnode_t *sibling);
+
 void free_ast(astnode_t *root);
 
 int is_inttype(asttype_t asttype);

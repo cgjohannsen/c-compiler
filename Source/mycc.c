@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     exit(0);
   }
 
-  if(node == 4) {
+  if(mode == 4) {
     typecheck(parse(infilename, outfile));
     exit(0);
   }

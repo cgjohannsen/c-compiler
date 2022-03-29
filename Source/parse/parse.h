@@ -9,10 +9,10 @@
 
 typedef struct parser {
     lexer_t lex;
-    token_t cur, next;
+    token_t cur, next, nextnext;
     int status;
 } parser_t;
 
-void parse(char *, FILE *);
+astnode_t *parse(char *, FILE *);
 
 #endif

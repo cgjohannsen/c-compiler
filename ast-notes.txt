@@ -1,0 +1,260 @@
+int test0, test1 = 1;
+
+program
+|
+v
+var-decl
+|
+v
+test0 --> test1 --> NULL
+|         |         |         
+v         v         v         
+NULL      1         NULL
+
+symbol table
+--------------
+test0 | int
+test1 | int
+
+
+
+
+
+
+
+int i,j,k = 1;
+for(i = 0; i < k; i++) {
+
+}
+
+program
+|
+v
+var-decl ------> for-statement
+|                |
+v                v
+i --> j --> k    expr --------> expr --------> expr
+            |    |              |              | 
+            v    v              v              v
+            1    BinOp1         BinOp2         UnOp
+                 |              |              | 
+                 v              v              v
+                 i --> 0        i --> k        i
+
+BinOp1.val = EQ
+BinOp2.val = LT
+UnOp.val = INCR
+
+
+
+
+
+float fn1(int i, char c);
+
+int k = 5 * 8;
+
+float fn2(int i, float f, char c) {
+    float g;
+    while(i > 5) {
+        i++;
+        g = f + 5.0;
+    }
+    k = i;
+    return g; 
+}
+
+struct mstruct {
+    int a;
+    float b;
+};
+
+
+
+
+program
+|
+v
+fun-decl ----> var-decl --> fun-def ------------------------------------------------------------------------> type-decl
+|              |            |                                                                                 |
+v              v            v                                                                                 v
+var --> var    var          fun-decl --------------> fun-body                                                 var-decl ----> var-decl
+               |            |                        |                                                        |              |
+               v            v                        v                                                        v              v
+               bin-op       var --> var --> var      var-decl --> while-statement -----------------> return   var            var
+               |                                     |            |                                  | 
+               v                                     v            v                                  v
+               5 --> 8                               var          while-cond ----> while-body        var
+                                                                  |                |                
+                                                                  v                v                
+                                                                  bin-op           unary-op --> assign-op
+                                                                  |                |            |                      
+                                                                  v                v            v                      
+                                                                  opvar --> lit    var          var --> bin-op 
+                                                                                                        | 
+                                                                                                        v
+                                                                                                        var --> lit
+
+                                                                                     
+
+
+
+symbol table
+-----------------
+fn1 | float | int i | char c
+fn2 | float | int i | float f | char c
+
+k   | int  
+
+i   | int   ***
+f   | float *** only while in scope of fn2
+c   | char  *** after exiting fn2, these are deleted
+g   | float ***
+
+mstruct | struct | int a | float b
+
+
+
+
+
+
+
+
+
+void fn(){
+    if(i > 5);
+    else;
+}
+
+program
+|
+v
+fun-def
+|
+v
+fun-decl --> fun-body
+             |
+             v
+             if-statement
+             |
+             v
+             if-cond --> if-body --> else-body
+             |
+             v
+             bin-op
+             |
+             v
+             i --> 5
+
+
+
+
+
+
+for(i = 0; i < 6; ++i) {
+    g = 6;
+}
+
+for-statement
+|
+v
+for-init-param --> for-exit-param --> for-update-param --> for-body
+|                  |                  |                    |
+v                  v                  v                    v
+...
+
+
+
+
+
+int h[7], k = 5+6, j;
+
+var-decl
+|
+v
+var ----> var --> var
+|         | 
+v         v
+int-lit   assign-op
+          |
+          v
+          ...
+
+
+
+
+
+
+
+fn(x,y+z)
+
+
+fun-call
+|
+v
+x --> bin-op
+      |
+      v
+      y --> z
+
+
+
+
+
+
+
+a+!b+c[x-y].member+d
+
+bin-op(+)
+|
+v
+bin-op(+) --> d
+|
+v
+bin-op(+) -------> c[x-y].member
+|                  
+v                 
+a --> unary-op(!)  
+      |            
+      v            
+      b            
+                         
+                         
+                         
+
+
+
+e = a+!b*c&&d
+
+
+=
+|
+v
+e --> &&
+      |
+      v
+      + --> d
+      |
+      v
+      a --> *
+            |
+            v
+            ! --> c
+            |
+            v
+            b
+
+
+
+
+
+
+
+
+
+
+
+
+struct my_struct function(int i);
+const struct my_struct function(int i);
+struct my_struct const function(int i);
+struct my_struct m;

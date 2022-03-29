@@ -178,13 +178,13 @@ is_numerictype(asttype_t asttype)
 
 bool 
 is_lvalue(astnode_t *node)
-{
+{  
     if(node == NULL) {
         return true;
     }
 
     if(node->type != _ARR_ACCESS && node->type != _STRUCT_ACCESS && 
-        node->type != _VAR) {
+        node->type != _VAR || node->right != NULL) {
         return false;
     }
 

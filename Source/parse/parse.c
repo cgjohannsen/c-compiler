@@ -23,7 +23,7 @@ update_parser(parser_t *parser)
 
 // forward declarations
 astnode_t *parse_statement(parser_t *parser);
-astnode_t *parse_expr(parser_t *parser);
+astnode_t *parse_expr(parser_t *parser, int prec);
 
 
 
@@ -204,7 +204,7 @@ parse_lvalue(parser_t *parser)
             arr_access = init_astnode(_ARR_ACCESS, parser->cur.text);
 
             astnode_t *arr_expr;
-            arr_expr = parse_expr(parser);
+            arr_expr = parse_expr(parser, 1);
             add_astchild(arr_access, arr_expr);
             add_astchild(arr_access, var);
 
@@ -214,7 +214,7 @@ parse_lvalue(parser_t *parser)
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->cur.line_num, 0, parser->cur.text, "Expected ']'");
                 parser->status = 0;
-                return NULL;
+                exit(1);
             }
 
             if(parser->cur.type == DOT) { // array and struct access
@@ -252,7 +252,7 @@ parse_lvalue(parser_t *parser)
         print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
             0, parser->cur.text, "Expected identifier.");
         parser->status = 0;
-        return NULL;
+        exit(1);
     }
 }
 
@@ -373,58 +373,240 @@ parse_term(parser_t *parser)
 
 /**
  *
+ * Note that the switch statement ~does not~ include break statements.
+ *
+ * Precedence chart:
+ * = += -= *= /=      1 (lowest)
+ * ?:                 2
+ * ||                 3
+ * &&                 4
+ * |                  5
+ * &                  6
+ * == !=              7
+ * < <= > >=          8
+ * + -                9
+ * * / %              10
+ *
+ * --- parse_term ---
+ *
+ * ! ~ - -- ++ (type) 11
+ * () [] .            12 (highest)
+ * 
+ * @param parser
+ * @param prec
+ *
+ * @return 
  */
 astnode_t *
-parse_exprprime(parser_t *parser, int prec)
+parse_expr(parser_t *parser, int prec)
 {
-    astnode_t *op, *expr;
+    astnode_t *term, *op, *expr1, *expr2;
+
+    term = parse_term(parser);
 
     switch(prec) {
         case 1:
             if(is_assignop(parser->cur.type)) {
-                if(is_lvalue(expr1)) {
-                    op = init_astnode(_ASSIGN, parser->cur.type);
+                if(is_lvalue(term)) {
+                    switch(parser->cur.type) {
+                        case ASSIGN:
+                            op = init_astnode(_ASSIGN, parser->cur.text);
+                            break;
+                        case PLUSASSIGN:
+                            op = init_astnode(_ADD_ASSIGN, parser->cur.text);
+                            break;
+                        case MINUSASSIGN:
+                            op = init_astnode(_SUB_ASSIGN, parser->cur.text);
+                            break;
+                        case STARASSIGN:
+                            op = init_astnode(_MULT_ASSIGN, parser->cur.text);
+                            break;
+                        case SLASHASSIGN:
+                            op = init_astnode(_DIV_ASSIGN, parser->cur.text);
+                            break;
+                        default:
+                            // impossible
+                            break;
+                    }
                     update_parser(parser);
-                    expr2 = parse_expr(parser, 2);
+
+                    expr1 = parse_expr(parser, prec);
+
+                    add_astchild(op, term);
                     add_astchild(op, expr1);
-                    add_astchild(op, expr2);
+
                     return op;
                 } else {
-                    // error
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                        parser->cur.line_num, 0, parser->cur.text, 
+                        "Expected l-value on lhs of assignment operator.");
+                    parser->status = 0;
+                    exit(1);
                 }
             }
         case 2:
-        case 3:
-        ...
-        case 9:
-            while(prec(parser->cur.type) >= 9) {
+            if(parser->cur.type == QUEST) {
+                op = init_astnode(_ITE, "");
+                update_parser(parser);
 
+                expr1 = parse_expr(parser, 3);
+
+                if(parser->cur.type == COLON) {
+                    update_parser(parser);
+
+                    expr2 = parse_expr(parser, prec);
+
+                    add_astchild(op, term);
+                    add_astchild(op, expr1);
+                    add_astchild(op, expr2);
+
+                    return op;
+                } else {
+                    print_msg(PARSER_ERR, parser->lex.filename, 
+                        parser->cur.line_num, 0, parser->cur.text, 
+                        "Expected ':'.");
+                    parser->status = 0;
+                    exit(1);
+                }
+            }
+        case 3:
+            if(parser->cur.type == DPIPE) {
+                op = init_astnode(_LOG_OR, parser->cur.text);
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 4:
+            if(parser->cur.type == DAMP) {
+                op = init_astnode(_LOG_AND, parser->cur.text);
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 5:
+            if(parser->cur.type == PIPE) {
+                op = init_astnode(_BIT_OR, parser->cur.text);
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 6:
+            if(parser->cur.type == AMP) {
+                op = init_astnode(_BIT_AND, parser->cur.text);
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 7:
+            if(parser->cur.type == EQ || parser->cur.type == NEQ) {
+                if(parser->cur.type == EQ) {
+                    op = init_astnode(_EQ, parser->cur.text);
+                } else { // NEQ
+                    op = init_astnode(_NEQ, parser->cur.text);
+                }
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 8:
+            if(parser->cur.type == GT || parser->cur.type == GEQ || 
+                parser->cur.type == LT || parser->cur.type == LEQ) {
+
+                if(parser->cur.type == GT) {
+                    op = init_astnode(_GT, parser->cur.text);
+                } else if(parser->cur.type == GEQ) {
+                    op = init_astnode(_GEQ, parser->cur.text);
+                } else if(parser->cur.type == LT) {
+                    op = init_astnode(_LT, parser->cur.text);
+                } else { // LEQ
+                    op = init_astnode(_LEQ, parser->cur.text);
+                }
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 9:
+            if(parser->cur.type == PLUS || parser->cur.type == MINUS) {
+                if(parser->cur.type == PLUS) {
+                    op = init_astnode(_ADD, parser->cur.text);
+                } else { // MINUS
+                    op = init_astnode(_SUB, parser->cur.text);
+                }
+                update_parser(parser);
+
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
             }
         case 10:
+            if(parser->cur.type == STAR || parser->cur.type == SLASH ||
+                parser->cur.type == MOD) {
+                if(parser->cur.type == STAR) {
+                    op = init_astnode(_MULT, parser->cur.text);
+                } else if(parser->cur.type == SLASH) {
+                    op = init_astnode(_DIV, parser->cur.text);
+                } else { // MOD
+                    op = init_astnode(_MOD, parser->cur.text);
+                }
+                update_parser(parser);
 
+                expr1 = parse_expr(parser, prec+1);
+
+                add_astchild(op, term);
+                add_astchild(op, expr1);
+
+                return op;
+            }
+        case 11:
+            if(parser->cur.type == INCR || parser->cur.type == DECR) {
+                if(parser->cur.type == INCR) {
+                    op = init_astnode(_INCR, parser->cur.text);
+                } else { // DECR
+                    op = init_astnode(_DECR, parser->cur.text);
+                }
+                update_parser(parser);
+
+                add_astchild(op, term);
+
+                return op;
+            }
         default:
+            // no such operator with precedence > prec --> return term
+            return term;
     }
-
-
-
-    return expr;
-}
-
-
-
-astnode_t *
-parse_expr(parser_t *parser, int prec)
-{
-    astnode_t *term, *expr_prime;
-    term = parse_term(parser);
-    expr_prime = parse_exprprime(parser, prec);
-
-    if(expr_prime != NULL) {
-        add_astchildleft(expr_prime, term);
-        return expr_prime;
-    }
-
-    return term;
 }
 
 
@@ -520,7 +702,7 @@ parse_return(parser_t *parser)
         update_parser(parser);
     } else {
         astnode_t *expr;
-        expr = parse_expr(parser);
+        expr = parse_expr(parser, 1);
         add_astchild(statement, expr);
 
         if(parser->cur.type == SEMI) {
@@ -557,7 +739,7 @@ parse_if(parser_t *parser)
         add_astchild(statement, if_cond);
 
         astnode_t *if_expr;
-        if_expr = parse_expr(parser);
+        if_expr = parse_expr(parser, 1);
         add_astchild(if_cond, if_expr);
 
         if(parser->cur.type == RPAR) {
@@ -629,7 +811,7 @@ parse_forparams(parser_t *parser)
     } else { // non-empty first param
         astnode_t *init_expr;
         for_init = init_astnode(_FOR_INIT, parser->cur.text);
-        init_expr = parse_expr(parser);
+        init_expr = parse_expr(parser, 1);
         add_astchild(for_init, init_expr);
         
         if(parser->cur.type == SEMI) {
@@ -648,7 +830,7 @@ parse_forparams(parser_t *parser)
     } else { // non-empty second param
         astnode_t *exit_expr;
         for_exit = init_astnode(_FOR_EXIT, parser->cur.text);
-        exit_expr = parse_expr(parser);
+        exit_expr = parse_expr(parser, 1);
         add_astchild(for_exit, exit_expr);
 
         if(parser->cur.type == SEMI) {
@@ -667,7 +849,7 @@ parse_forparams(parser_t *parser)
     } else { // non-empty third param
         astnode_t *update_expr;
         for_update = init_astnode(_FOR_UPDATE, parser->cur.text);
-        update_expr = parse_expr(parser);
+        update_expr = parse_expr(parser, 1);
         add_astchild(for_update, update_expr);
 
         if(parser->cur.type == RPAR) {
@@ -753,7 +935,7 @@ parse_while(parser_t *parser)
         add_astchild(statement, while_cond);
 
         astnode_t *while_expr;
-        while_expr = parse_expr(parser);
+        while_expr = parse_expr(parser, 1);
         add_astchild(while_cond, while_expr);
 
         if(parser->cur.type == RPAR) {
@@ -830,7 +1012,7 @@ parse_do(parser_t *parser)
             add_astchild(statement, do_cond);
             
             astnode_t *do_expr;
-            do_expr = parse_expr(parser);
+            do_expr = parse_expr(parser, 1);
             add_astchild(do_cond, do_expr);
 
             if(parser->cur.type == RPAR) {
@@ -895,7 +1077,7 @@ parse_statement(parser_t *parser)
             return parse_do(parser);
         default:
             astnode_t *statement;
-            statement = parse_expr(parser);
+            statement = parse_expr(parser, 1);
 
             if(parser->cur.type == SEMI) {
                 update_parser(parser);
@@ -958,7 +1140,7 @@ parse_vardecl(parser_t *parser)
             }
         } else if(parser->cur.type == ASSIGN) {
             update_parser(parser);
-            var_init = parse_expr(parser);
+            var_init = parse_expr(parser, 1);
             add_astchild(var, var_init);
         } 
 
@@ -1264,7 +1446,7 @@ parse_global(parser_t *parser)
                     }
                 } else if(parser->cur.type == ASSIGN) {
                     update_parser(parser);
-                    var_init = parse_expr(parser);
+                    var_init = parse_expr(parser, 1);
                     add_astchild(var, var_init);
                 } 
 

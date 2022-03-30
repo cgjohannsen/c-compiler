@@ -17,8 +17,9 @@ typedef struct lexer {
 } lexer_t;
 
 int consume(lexer_t *, token_t *);
-void next_token(lexer_t *, token_t *);
-void init_lexer(char *, lexer_t *);
-void tokenize(char *, FILE *);
+token_t * next_token(lexer_t *);
+lexer_t * init_lexer(char *);
+void free_lexer(lexer_t *);
+void tokenize(char *);
 
 #endif

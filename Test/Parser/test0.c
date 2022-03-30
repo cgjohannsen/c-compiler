@@ -8,8 +8,6 @@ struct mstruct {
 
 struct mstruct const function(int g[], float h) {
     int i, j;
-    struct mstruct2 {
-        float g[50];
-        struct mstruct a[3];
-    };
+    struct mstruct {};
+    struct mstruct {};
 }

@@ -3,6 +3,6 @@
 
 #include "ast.h"
 
-int typecheck(char *infilename, FILE *outfile);
+int typecheck(char *filename);
 
 #endif

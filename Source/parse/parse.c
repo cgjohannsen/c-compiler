@@ -1,3 +1,4 @@
+#include "../util/io.h"
 #include "ast.h"
 #include "parse.h"
 
@@ -7,17 +8,13 @@
 void 
 update_parser(parser_t *parser)
 {
-    token_t tmp1, tmp2;
-    
-    if(parser->cur.type == END) {
+    if(parser->cur->type == END) {
         return;
     }
 
-    tmp1 = parser->nextnext;
-    tmp2 = parser->next;
-    next_token(&parser->lex, &parser->nextnext);
-    parser->next = tmp1;
-    parser->cur = tmp2;
+    parser->cur = parser->next;
+    parser->next = parser->nextnext;
+    parser->nextnext = next_token(parser->lex);
 }  
 
 
@@ -34,41 +31,41 @@ astnode_t *
 parse_type(parser_t *parser)
 {
     astnode_t *type;
-    type = init_astnode(_TYPE, "", parser->cur.line_num);
+    type = init_astnode(_TYPE, parser->cur);
 
-    if(parser->cur.type == CONST) { // 'const'
+    if(parser->cur->type == CONST) { // 'const'
         type->is_const = true;
         update_parser(parser);
-        if(parser->cur.type == TYPE) { // 'const' type
-            set_asttext(type, parser->cur.text);
+        if(parser->cur->type == TYPE) { // 'const' type
+            set_asttext(type, parser->cur->text);
             update_parser(parser);
             return type;
-        } else if(parser->cur.type == STRUCT) { // 'const' 'struct'
+        } else if(parser->cur->type == STRUCT) { // 'const' 'struct'
             update_parser(parser);
-            if(parser->cur.type == IDENT) { // 'const' 'struct' ident
+            if(parser->cur->type == IDENT) { // 'const' 'struct' ident
                 type->is_struct = true;
-                set_asttext(type, parser->cur.text);
+                set_asttext(type, parser->cur->text);
                 update_parser(parser);
                 return type;
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, 
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
                     "Expected identifier.");
                 parser->status = 0;
                 return NULL;
             }
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected type or 'struct'.");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected type or 'struct'.");
             parser->status = 0;
             return NULL;
         }
     }   
 
-    if(parser->cur.type == TYPE) { // type
-        set_asttext(type, parser->cur.text);
+    if(parser->cur->type == TYPE) { // type
+        set_asttext(type, parser->cur->text);
         update_parser(parser);
-        if(parser->cur.type == CONST) { // type 'const'
+        if(parser->cur->type == CONST) { // type 'const'
             type->is_const = true;
             update_parser(parser);
             return type;
@@ -76,21 +73,21 @@ parse_type(parser_t *parser)
         return type;
     }
 
-    if(parser->cur.type == STRUCT) { // 'struct'
+    if(parser->cur->type == STRUCT) { // 'struct'
         type->is_struct = true;
         update_parser(parser);
-        if(parser->cur.type == IDENT) { // 'struct' ident
-            set_asttext(type, parser->cur.text);
+        if(parser->cur->type == IDENT) { // 'struct' ident
+            set_asttext(type, parser->cur->text);
             update_parser(parser);
-            if(parser->cur.type == CONST) { // 'struct' ident 'const'
+            if(parser->cur->type == CONST) { // 'struct' ident 'const'
                 type->is_const = true;
                 update_parser(parser);
                 return type;
             }
             return type;
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected identifier.");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected identifier.");
             parser->status = 0;
             return NULL;
         }
@@ -108,40 +105,40 @@ astnode_t *
 parse_funparams(parser_t *parser)
 {
     astnode_t *params;
-    params = init_astnode(_FUN_PARAMS, parser->cur.text, parser->cur.line_num);
+    params = init_astnode(_FUN_PARAMS, parser->cur);
 
     astnode_t *type, *var;
-    while(is_typeorqualifier(parser->cur.type)) {
+    while(is_typeorqualifier(parser->cur->type)) {
         type = parse_type(parser);
         
-        if(parser->cur.type == IDENT) {
-            var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+        if(parser->cur->type == IDENT) {
+            var = init_astnode(_VAR, parser->cur);
             add_astchild(params, type);
             add_astchild(params, var);
 
             update_parser(parser);
 
-            if(parser->cur.type == LBRAK) {
+            if(parser->cur->type == LBRAK) {
                 update_parser(parser);
-                if(parser->cur.type == RBRAK) {
+                if(parser->cur->type == RBRAK) {
                     var->is_array = true;
                     update_parser(parser);
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ']'");
                     parser->status = 0;
                     exit(1);
                 }
             }
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected identifier");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected identifier.");
             parser->status = 0;
             exit(1);
         }
 
-        if(parser->cur.type == COMMA) {
+        if(parser->cur->type == COMMA) {
             update_parser(parser);
         }
     }
@@ -159,22 +156,22 @@ parse_literal(parser_t *parser)
 {
     astnode_t *literal;
 
-    switch(parser->cur.type) {
+    switch(parser->cur->type) {
         case CHAR_LIT: 
-            literal = init_astnode(_CHAR_LIT, parser->cur.text, parser->cur.line_num);
+            literal = init_astnode(_CHAR_LIT, parser->cur);
             break;
         case INT_LIT:
-            literal = init_astnode(_INT_LIT, parser->cur.text, parser->cur.line_num);
+            literal = init_astnode(_INT_LIT, parser->cur);
             break;
         case REAL_LIT:
-            literal = init_astnode(_REAL_LIT, parser->cur.text, parser->cur.line_num);
+            literal = init_astnode(_REAL_LIT, parser->cur);
             break;
         case STR_LIT:
-            literal = init_astnode(_STR_LIT, parser->cur.text, parser->cur.line_num);
+            literal = init_astnode(_STR_LIT, parser->cur);
             break;
         default:
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected literal.");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected literal.");
             parser->status = 0;
             exit(1);
     }
@@ -193,36 +190,36 @@ astnode_t *
 parse_lvalue(parser_t *parser)
 {
     astnode_t *var;
-    var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+    var = init_astnode(_VAR, parser->cur);
 
-    if(parser->cur.type == IDENT) {
+    if(parser->cur->type == IDENT) {
         update_parser(parser);
 
-        if(parser->cur.type == LBRAK) { // array access
+        if(parser->cur->type == LBRAK) { // array access
             update_parser(parser);
 
             astnode_t *arr_access;
-            arr_access = init_astnode(_ARR_ACCESS, parser->cur.text, parser->cur.line_num);
+            arr_access = init_astnode(_ARR_ACCESS, parser->cur);
 
             astnode_t *arr_expr;
             arr_expr = parse_expr(parser, 1);
             add_astchild(arr_access, arr_expr);
             add_astchild(arr_access, var);
 
-            if(parser->cur.type == RBRAK) {
+            if(parser->cur->type == RBRAK) {
                 update_parser(parser);
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, "Expected ']'");
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, "Expected ']'");
                 parser->status = 0;
                 exit(1);
             }
 
-            if(parser->cur.type == DOT) { // array and struct access
+            if(parser->cur->type == DOT) { // array and struct access
                 update_parser(parser);
 
                 astnode_t *struct_access;
-                struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text, parser->cur.line_num);
+                struct_access = init_astnode(_STRUCT_ACCESS, parser->cur);
 
                 astnode_t *struct_member;
                 struct_member = parse_lvalue(parser);
@@ -234,11 +231,11 @@ parse_lvalue(parser_t *parser)
                 return arr_access;
             }
         }
-        if(parser->cur.type == DOT) { // struct access
+        if(parser->cur->type == DOT) { // struct access
             update_parser(parser);
 
             astnode_t *struct_access;
-            struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text, parser->cur.line_num);
+            struct_access = init_astnode(_STRUCT_ACCESS, parser->cur);
 
             astnode_t *struct_member;
             struct_member = parse_lvalue(parser);
@@ -250,8 +247,8 @@ parse_lvalue(parser_t *parser)
             return var;
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected identifier.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected identifier.");
         parser->status = 0;
         exit(1);
     }
@@ -264,49 +261,49 @@ parse_term(parser_t *parser)
 {
     astnode_t *op, *expr;
 
-    switch(parser->cur.type) {
+    switch(parser->cur->type) {
         case BANG:
-            op = init_astnode(_LOG_NEG, parser->cur.text, parser->cur.line_num);
+            op = init_astnode(_LOG_NEG, parser->cur);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case TILDE:
-            op = init_astnode(_BIT_NEG, parser->cur.text, parser->cur.line_num);
+            op = init_astnode(_BIT_NEG, parser->cur);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case MINUS:
-            op = init_astnode(_ARITH_NEG, parser->cur.text, parser->cur.line_num);
+            op = init_astnode(_ARITH_NEG, parser->cur);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case DECR:
-            op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
+            op = init_astnode(_DECR, parser->cur);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
             return op;
         case INCR:
-            op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
+            op = init_astnode(_INCR, parser->cur);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
             return op;
         case LPAR:
-            if(is_typeorqualifier(parser->cur.type)) { // type cast
+            if(is_typeorqualifier(parser->cur->type)) { // type cast
                 update_parser(parser);
                 op = parse_type(parser);
-                if(parser->cur.type == RPAR) {
+                if(parser->cur->type == RPAR) {
                     update_parser(parser);
                     expr = parse_term(parser);
                     add_astchild(op, expr);
                     return op;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ')'.");
                     parser->status = 0;
                     exit(1);
@@ -314,34 +311,35 @@ parse_term(parser_t *parser)
             } else {
                 update_parser(parser);
                 expr = parse_expr(parser, 1);
-                if(parser->cur.type == RPAR) {
+                if(parser->cur->type == RPAR) {
+                    update_parser(parser);
                     return expr;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                       parser->cur.line_num,0,parser->cur.text,"Expected ')'.");
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                       parser->cur->line_num,0,parser->cur->text,"Expected ')'.");
                     parser->status = 0;
                     exit(1);
                 }
             }
         case IDENT:
-            if(parser->next.type == LPAR) { // function call
-                op = init_astnode(_FUN_CALL, parser->cur.text, parser->cur.line_num);
+            if(parser->next->type == LPAR) { // function call
+                op = init_astnode(_FUN_CALL, parser->cur);
                 update_parser(parser);
                 update_parser(parser);
 
                 astnode_t *fun_args, *arg;
-                fun_args = init_astnode(_FUN_ARGS, "", parser->cur.line_num);
+                fun_args = init_astnode(_FUN_ARGS, parser->cur);
                 while(1) {
                     arg = parse_expr(parser, 1);
                     add_astchild(fun_args, arg);
-                    if(parser->cur.type == COMMA) {
+                    if(parser->cur->type == COMMA) {
                         update_parser(parser);
-                    } else if(parser->cur.type == RPAR) {
+                    } else if(parser->cur->type == RPAR) {
                         update_parser(parser);
                         break;
                     } else {
-                        print_msg(PARSER_ERR, parser->lex.filename, 
-                            parser->cur.line_num, 0, parser->cur.text,
+                        print_msg(PARSER_ERR, parser->lex->filename, 
+                            parser->cur->line_num, 0, parser->cur->text,
                             "Expected ',' or ')'.");
                         parser->status = 0;
                         exit(1);
@@ -353,12 +351,12 @@ parse_term(parser_t *parser)
             } else {
                 expr = parse_lvalue(parser);
                 
-                if(parser->cur.type == INCR) {
-                    op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
+                if(parser->cur->type == INCR) {
+                    op = init_astnode(_INCR, parser->cur);
                     add_astchild(op, expr);
                     return op;
-                } else if(parser->cur.type == DECR) {
-                    op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
+                } else if(parser->cur->type == DECR) {
+                    op = init_astnode(_DECR, parser->cur);
                     add_astchild(op, expr);
                     return op;
                 } else {
@@ -407,23 +405,23 @@ parse_expr(parser_t *parser, int prec)
 
     switch(prec) {
         case 1:
-            if(is_assignop(parser->cur.type)) {
+            if(is_assignop(parser->cur->type)) {
                 if(is_lvalue(term)) {
-                    switch(parser->cur.type) {
+                    switch(parser->cur->type) {
                         case ASSIGN:
-                            op = init_astnode(_ASSIGN, parser->cur.text, parser->cur.line_num);
+                            op = init_astnode(_ASSIGN, parser->cur);
                             break;
                         case PLUSASSIGN:
-                            op = init_astnode(_ADD_ASSIGN, parser->cur.text, parser->cur.line_num);
+                            op = init_astnode(_ADD_ASSIGN, parser->cur);
                             break;
                         case MINUSASSIGN:
-                            op = init_astnode(_SUB_ASSIGN, parser->cur.text, parser->cur.line_num);
+                            op = init_astnode(_SUB_ASSIGN, parser->cur);
                             break;
                         case STARASSIGN:
-                            op = init_astnode(_MULT_ASSIGN, parser->cur.text, parser->cur.line_num);
+                            op = init_astnode(_MULT_ASSIGN, parser->cur);
                             break;
                         case SLASHASSIGN:
-                            op = init_astnode(_DIV_ASSIGN, parser->cur.text, parser->cur.line_num);
+                            op = init_astnode(_DIV_ASSIGN, parser->cur);
                             break;
                         default:
                             // impossible
@@ -438,21 +436,21 @@ parse_expr(parser_t *parser, int prec)
 
                     return op;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected l-value on lhs of assignment operator.");
                     parser->status = 0;
                     exit(1);
                 }
             }
         case 2:
-            if(parser->cur.type == QUEST) {
-                op = init_astnode(_ITE, "", parser->cur.line_num);
+            if(parser->cur->type == QUEST) {
+                op = init_astnode(_ITE, parser->cur);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, 3);
 
-                if(parser->cur.type == COLON) {
+                if(parser->cur->type == COLON) {
                     update_parser(parser);
 
                     expr2 = parse_expr(parser, prec);
@@ -463,16 +461,16 @@ parse_expr(parser_t *parser, int prec)
 
                     return op;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ':'.");
                     parser->status = 0;
                     exit(1);
                 }
             }
         case 3:
-            if(parser->cur.type == DPIPE) {
-                op = init_astnode(_LOG_OR, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == DPIPE) {
+                op = init_astnode(_LOG_OR, parser->cur);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -483,8 +481,8 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 4:
-            if(parser->cur.type == DAMP) {
-                op = init_astnode(_LOG_AND, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == DAMP) {
+                op = init_astnode(_LOG_AND, parser->cur);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -495,8 +493,8 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 5:
-            if(parser->cur.type == PIPE) {
-                op = init_astnode(_BIT_OR, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == PIPE) {
+                op = init_astnode(_BIT_OR, parser->cur);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -507,8 +505,8 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 6:
-            if(parser->cur.type == AMP) {
-                op = init_astnode(_BIT_AND, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == AMP) {
+                op = init_astnode(_BIT_AND, parser->cur);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -519,11 +517,11 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 7:
-            if(parser->cur.type == EQ || parser->cur.type == NEQ) {
-                if(parser->cur.type == EQ) {
-                    op = init_astnode(_EQ, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == EQ || parser->cur->type == NEQ) {
+                if(parser->cur->type == EQ) {
+                    op = init_astnode(_EQ, parser->cur);
                 } else { // NEQ
-                    op = init_astnode(_NEQ, parser->cur.text, parser->cur.line_num);
+                    op = init_astnode(_NEQ, parser->cur);
                 }
                 update_parser(parser);
 
@@ -535,17 +533,17 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 8:
-            if(parser->cur.type == GT || parser->cur.type == GEQ || 
-                parser->cur.type == LT || parser->cur.type == LEQ) {
+            if(parser->cur->type == GT || parser->cur->type == GEQ || 
+                parser->cur->type == LT || parser->cur->type == LEQ) {
 
-                if(parser->cur.type == GT) {
-                    op = init_astnode(_GT, parser->cur.text, parser->cur.line_num);
-                } else if(parser->cur.type == GEQ) {
-                    op = init_astnode(_GEQ, parser->cur.text, parser->cur.line_num);
-                } else if(parser->cur.type == LT) {
-                    op = init_astnode(_LT, parser->cur.text, parser->cur.line_num);
+                if(parser->cur->type == GT) {
+                    op = init_astnode(_GT, parser->cur);
+                } else if(parser->cur->type == GEQ) {
+                    op = init_astnode(_GEQ, parser->cur);
+                } else if(parser->cur->type == LT) {
+                    op = init_astnode(_LT, parser->cur);
                 } else { // LEQ
-                    op = init_astnode(_LEQ, parser->cur.text, parser->cur.line_num);
+                    op = init_astnode(_LEQ, parser->cur);
                 }
                 update_parser(parser);
 
@@ -557,11 +555,11 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 9:
-            if(parser->cur.type == PLUS || parser->cur.type == MINUS) {
-                if(parser->cur.type == PLUS) {
-                    op = init_astnode(_ADD, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == PLUS || parser->cur->type == MINUS) {
+                if(parser->cur->type == PLUS) {
+                    op = init_astnode(_ADD, parser->cur);
                 } else { // MINUS
-                    op = init_astnode(_SUB, parser->cur.text, parser->cur.line_num);
+                    op = init_astnode(_SUB, parser->cur);
                 }
                 update_parser(parser);
 
@@ -573,14 +571,14 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 10:
-            if(parser->cur.type == STAR || parser->cur.type == SLASH ||
-                parser->cur.type == MOD) {
-                if(parser->cur.type == STAR) {
-                    op = init_astnode(_MULT, parser->cur.text, parser->cur.line_num);
-                } else if(parser->cur.type == SLASH) {
-                    op = init_astnode(_DIV, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == STAR || parser->cur->type == SLASH ||
+                parser->cur->type == MOD) {
+                if(parser->cur->type == STAR) {
+                    op = init_astnode(_MULT, parser->cur);
+                } else if(parser->cur->type == SLASH) {
+                    op = init_astnode(_DIV, parser->cur);
                 } else { // MOD
-                    op = init_astnode(_MOD, parser->cur.text, parser->cur.line_num);
+                    op = init_astnode(_MOD, parser->cur);
                 }
                 update_parser(parser);
 
@@ -592,11 +590,11 @@ parse_expr(parser_t *parser, int prec)
                 return op;
             }
         case 11:
-            if(parser->cur.type == INCR || parser->cur.type == DECR) {
-                if(parser->cur.type == INCR) {
-                    op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
+            if(parser->cur->type == INCR || parser->cur->type == DECR) {
+                if(parser->cur->type == INCR) {
+                    op = init_astnode(_INCR, parser->cur);
                 } else { // DECR
-                    op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
+                    op = init_astnode(_DECR, parser->cur);
                 }
                 update_parser(parser);
 
@@ -618,12 +616,12 @@ parse_expr(parser_t *parser, int prec)
 astnode_t *
 parse_statementblock(parser_t *parser)
 {
-    if(parser->cur.type == RBRACE) {
+    if(parser->cur->type == RBRACE) {
         update_parser(parser);
         return NULL;
-    } else if(parser->cur.type == END) {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected '}' before end of file.");
+    } else if(parser->cur->type == END) {
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected '}' before end of file.");
         parser->status = 0;
         return NULL;
     }
@@ -645,15 +643,15 @@ astnode_t *
 parse_break(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_BREAK, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_BREAK, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == SEMI) {
+    if(parser->cur->type == SEMI) {
         update_parser(parser);
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ';'.");
         parser->status = 0;
         return NULL;
     }
@@ -670,15 +668,15 @@ astnode_t *
 parse_continue(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_CONTINUE, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_CONTINUE, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == SEMI) {
+    if(parser->cur->type == SEMI) {
         update_parser(parser);
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ';'.");
         parser->status = 0;
         return NULL;
     }
@@ -695,22 +693,22 @@ astnode_t *
 parse_return(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_RETURN, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_RETURN, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == SEMI) {
+    if(parser->cur->type == SEMI) {
         update_parser(parser);
     } else {
         astnode_t *expr;
         expr = parse_expr(parser, 1);
         add_astchild(statement, expr);
 
-        if(parser->cur.type == SEMI) {
+        if(parser->cur->type == SEMI) {
             update_parser(parser);
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, 
-                parser->cur.line_num, 0, parser->cur.text, "Expected ';'");
+            print_msg(PARSER_ERR, parser->lex->filename, 
+                parser->cur->line_num, 0, parser->cur->text, "Expected ';'");
             parser->status = 0;
             exit(1);
         }
@@ -728,29 +726,29 @@ astnode_t *
 parse_if(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_IF_STATEMENT, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_IF_STATEMENT, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == LPAR) {
+    if(parser->cur->type == LPAR) {
         update_parser(parser);
 
         astnode_t *if_cond;
-        if_cond = init_astnode(_IF_COND, parser->cur.text, parser->cur.line_num);
+        if_cond = init_astnode(_IF_COND, parser->cur);
         add_astchild(statement, if_cond);
 
         astnode_t *if_expr;
         if_expr = parse_expr(parser, 1);
         add_astchild(if_cond, if_expr);
 
-        if(parser->cur.type == RPAR) {
+        if(parser->cur->type == RPAR) {
             update_parser(parser);
 
             astnode_t *if_body;
-            if_body = init_astnode(_IF_BODY, parser->cur.text, parser->cur.line_num);
+            if_body = init_astnode(_IF_BODY, parser->cur);
             add_astchild(statement, if_body); 
 
-            if(parser->cur.type == LBRACE) { // if(cond) { }
+            if(parser->cur->type == LBRACE) { // if(cond) { }
                 update_parser(parser);
 
                 astnode_t *if_statement_block;
@@ -763,14 +761,14 @@ parse_if(parser_t *parser)
                 add_astchild(if_body, if_single_statement);
             }
 
-            if(parser->cur.type == ELSE) {
+            if(parser->cur->type == ELSE) {
                 update_parser(parser);
 
                 astnode_t *else_body;
-                else_body = init_astnode(_ELSE_BODY, parser->cur.text, parser->cur.line_num);
+                else_body = init_astnode(_ELSE_BODY, parser->cur);
                 add_astchild(statement, else_body);
 
-                if(parser->cur.type == LBRACE) { // else { }
+                if(parser->cur->type == LBRACE) { // else { }
                     update_parser(parser);
 
                     astnode_t *else_statement_block;
@@ -783,13 +781,13 @@ parse_if(parser_t *parser)
                 }
             }
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, 
-                parser->cur.line_num, 0, parser->cur.text, "Expected ')'");
+            print_msg(PARSER_ERR, parser->lex->filename, 
+                parser->cur->line_num, 0, parser->cur->text, "Expected ')'");
             exit(1);
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected '('");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected '('");
         exit(1);
     }
 
@@ -806,58 +804,58 @@ parse_forparams(parser_t *parser)
 {
     astnode_t *for_init, *for_exit, *for_update;
 
-    if(parser->cur.type == SEMI) { // empty first param
-        for_init = init_astnode(_FOR_INIT, "", parser->cur.line_num);
+    if(parser->cur->type == SEMI) { // empty first param
+        for_init = init_astnode(_FOR_INIT, parser->cur);
         update_parser(parser);
     } else { // non-empty first param
         astnode_t *init_expr;
-        for_init = init_astnode(_FOR_INIT, parser->cur.text, parser->cur.line_num);
+        for_init = init_astnode(_FOR_INIT, parser->cur);
         init_expr = parse_expr(parser, 1);
         add_astchild(for_init, init_expr);
         
-        if(parser->cur.type == SEMI) {
+        if(parser->cur->type == SEMI) {
             update_parser(parser);
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ';'");
             parser->status = 0;
             exit(1);
         }
     }
 
-    if(parser->cur.type == SEMI) { // empty second param
-        for_exit = init_astnode(_FOR_EXIT, "", parser->cur.line_num);
+    if(parser->cur->type == SEMI) { // empty second param
+        for_exit = init_astnode(_FOR_EXIT, parser->cur);
         update_parser(parser);
     } else { // non-empty second param
         astnode_t *exit_expr;
-        for_exit = init_astnode(_FOR_EXIT, parser->cur.text, parser->cur.line_num);
+        for_exit = init_astnode(_FOR_EXIT, parser->cur);
         exit_expr = parse_expr(parser, 1);
         add_astchild(for_exit, exit_expr);
 
-        if(parser->cur.type == SEMI) {
+        if(parser->cur->type == SEMI) {
             update_parser(parser);
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ';'");
             parser->status = 0;
             exit(1);
         }
     }
 
-    if(parser->cur.type == RPAR) { // empty third param
-        for_update = init_astnode(_FOR_UPDATE, "", parser->cur.line_num);
+    if(parser->cur->type == RPAR) { // empty third param
+        for_update = init_astnode(_FOR_UPDATE, parser->cur);
         update_parser(parser);
     } else { // non-empty third param
         astnode_t *update_expr;
-        for_update = init_astnode(_FOR_UPDATE, parser->cur.text, parser->cur.line_num);
+        for_update = init_astnode(_FOR_UPDATE, parser->cur);
         update_expr = parse_expr(parser, 1);
         add_astchild(for_update, update_expr);
 
-        if(parser->cur.type == RPAR) {
+        if(parser->cur->type == RPAR) {
             update_parser(parser);
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ')'");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ')'");
             parser->status = 0;
             exit(1);
         }
@@ -878,11 +876,11 @@ astnode_t *
 parse_for(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_FOR_STATEMENT, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_FOR_STATEMENT, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == LPAR) {
+    if(parser->cur->type == LPAR) {
         update_parser(parser);
 
         astnode_t *for_params;
@@ -890,10 +888,10 @@ parse_for(parser_t *parser)
         add_astchild(statement,for_params);
 
         astnode_t *for_body;
-        for_body = init_astnode(_FOR_BODY, parser->cur.text, parser->cur.line_num);
+        for_body = init_astnode(_FOR_BODY, parser->cur);
         add_astchild(statement, for_body);
 
-        if(parser->cur.type == LBRACE) { // for() { }
+        if(parser->cur->type == LBRACE) { // for() { }
             update_parser(parser);
 
             astnode_t *for_statement_block;
@@ -906,8 +904,8 @@ parse_for(parser_t *parser)
             add_astchild(for_body, for_single_statement);
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected '('");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected '('");
         parser->status = 0;
         return NULL;
     }
@@ -924,29 +922,29 @@ astnode_t *
 parse_while(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_WHILE_STATEMENT, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_WHILE_STATEMENT, parser->cur);
 
     update_parser(parser);
 
-    if(parser->cur.type == LPAR) {
+    if(parser->cur->type == LPAR) {
         update_parser(parser);
 
         astnode_t *while_cond;
-        while_cond = init_astnode(_WHILE_COND, parser->cur.text, parser->cur.line_num);
+        while_cond = init_astnode(_WHILE_COND, parser->cur);
         add_astchild(statement, while_cond);
 
         astnode_t *while_expr;
         while_expr = parse_expr(parser, 1);
         add_astchild(while_cond, while_expr);
 
-        if(parser->cur.type == RPAR) {
+        if(parser->cur->type == RPAR) {
             update_parser(parser);
 
             astnode_t *while_body;
-            while_body = init_astnode(_WHILE_BODY, parser->cur.text, parser->cur.line_num);
+            while_body = init_astnode(_WHILE_BODY, parser->cur);
             add_astchild(statement, while_body);
 
-            if(parser->cur.type == LBRACE) {
+            if(parser->cur->type == LBRACE) {
                 update_parser(parser);
 
                 astnode_t *while_statement_block;
@@ -959,14 +957,14 @@ parse_while(parser_t *parser)
                 add_astchild(while_body, while_single_statement);
             }
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, 
-                parser->cur.line_num, 0, parser->cur.text, "Expected ')'");
+            print_msg(PARSER_ERR, parser->lex->filename, 
+                parser->cur->line_num, 0, parser->cur->text, "Expected ')'");
             parser->status = 0;
             return NULL;
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected '('");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected '('");
         parser->status = 0;
         return NULL;
     }
@@ -983,15 +981,15 @@ astnode_t *
 parse_do(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_DO_STATEMENT, parser->cur.text, parser->cur.line_num);
+    statement = init_astnode(_DO_STATEMENT, parser->cur);
 
     update_parser(parser);
 
     astnode_t *do_body;
-    do_body = init_astnode(_DO_BODY, parser->cur.text, parser->cur.line_num);
+    do_body = init_astnode(_DO_BODY, parser->cur);
     add_astchild(statement, do_body);
 
-    if(parser->cur.type == LBRACE) {
+    if(parser->cur->type == LBRACE) {
         update_parser(parser);
         
         astnode_t *do_statement_block;
@@ -1003,48 +1001,48 @@ parse_do(parser_t *parser)
         add_astchild(do_body, do_single_statement); 
     }
 
-    if(parser->cur.type == WHILE) {
+    if(parser->cur->type == WHILE) {
         update_parser(parser);
-        if(parser->cur.type == LPAR) {
+        if(parser->cur->type == LPAR) {
             update_parser(parser);
 
             astnode_t *do_cond;
-            do_cond = init_astnode(_DO_COND, parser->cur.text, parser->cur.line_num);
+            do_cond = init_astnode(_DO_COND, parser->cur);
             add_astchild(statement, do_cond);
             
             astnode_t *do_expr;
             do_expr = parse_expr(parser, 1);
             add_astchild(do_cond, do_expr);
 
-            if(parser->cur.type == RPAR) {
+            if(parser->cur->type == RPAR) {
                 update_parser(parser);
 
-                if(parser->cur.type == SEMI) {
+                if(parser->cur->type == SEMI) {
                     update_parser(parser);
                     return statement;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ';'.");
                     parser->status = 0;
                     return NULL;
                 }
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, 
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
                     "Expected ')'.");
                 parser->status = 0;
                 return NULL;
             }
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, 
-                parser->cur.line_num, 0, parser->cur.text, "Expected '('.");
+            print_msg(PARSER_ERR, parser->lex->filename, 
+                parser->cur->line_num, 0, parser->cur->text, "Expected '('.");
             parser->status = 0;
             return NULL;
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-            0, parser->cur.text, "Expected while following do.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+            0, parser->cur->text, "Expected while following do.");
         parser->status = 0;
         return NULL;
     }
@@ -1058,7 +1056,7 @@ parse_do(parser_t *parser)
 astnode_t *
 parse_statement(parser_t *parser)
 {
-    switch(parser->cur.type) {
+    switch(parser->cur->type) {
         case SEMI:
             update_parser(parser);
             return NULL;
@@ -1080,12 +1078,12 @@ parse_statement(parser_t *parser)
             astnode_t *statement;
             statement = parse_expr(parser, 1);
 
-            if(parser->cur.type == SEMI) {
+            if(parser->cur->type == SEMI) {
                 update_parser(parser);
                 return statement;
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                    0, parser->cur.text, "Expected ';'");
+                print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                    0, parser->cur->text, "Expected ';'");
                 parser->status = 0;
                 exit(1);
             }
@@ -1099,62 +1097,62 @@ parse_vardecl(parser_t *parser)
 {
     astnode_t *var_decl, *type;
     
-    var_decl = init_astnode(_VAR_DECL, "", parser->cur.line_num);
+    var_decl = init_astnode(_VAR_DECL, parser->cur);
     type = parse_type(parser);
     add_astchild(var_decl, type);
 
-    if(parser->cur.type != IDENT) {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected identifier.");
+    if(parser->cur->type != IDENT) {
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected identifier.");
         parser->status = 0;
         exit(1);
     }
 
     astnode_t *var, *var_init, *arr_dim;
-    while(parser->cur.type == IDENT) {
-        var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+    while(parser->cur->type == IDENT) {
+        var = init_astnode(_VAR, parser->cur);
         add_astchild(var_decl, var);
 
         update_parser(parser);
 
-        if(parser->cur.type == LBRAK) {
+        if(parser->cur->type == LBRAK) {
             var->is_array = true;
             update_parser(parser);
-            if(parser->cur.type == INT_LIT) {
-                var->arr_dim = atoi(parser->cur.text);
+            if(parser->cur->type == INT_LIT) {
+                var->arr_dim = atoi(parser->cur->text);
                 update_parser(parser);
-                if(parser->cur.type == RBRAK) {
+                if(parser->cur->type == RBRAK) {
                     update_parser(parser);
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ']'.");
                     parser->status = 0;
                     exit(1);
                 }
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, 
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
                     "Expected integer literal.");
                 parser->status = 0;
                 exit(1);
             }
-        } else if(parser->cur.type == ASSIGN) {
+        } else if(parser->cur->type == ASSIGN) {
             update_parser(parser);
             var_init = parse_expr(parser, 1);
             add_astchild(var, var_init);
         } 
 
-        if(parser->cur.type == COMMA) {
+        if(parser->cur->type == COMMA) {
             update_parser(parser);
         }
     }
 
-    if(parser->cur.type == SEMI) {
+    if(parser->cur->type == SEMI) {
         update_parser(parser);
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected ';'.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected ';'.");
         parser->status = 0;
         exit(1);
     }
@@ -1169,49 +1167,49 @@ parse_vardeclnoinit(parser_t *parser)
 {
     astnode_t *var_decl, *type;
 
-    var_decl = init_astnode(_VAR_DECL, "", parser->cur.line_num);
+    var_decl = init_astnode(_VAR_DECL, parser->cur);
     type = parse_type(parser);
     add_astchild(var_decl, type);
 
-    if(parser->cur.type != IDENT) {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected identifier.");
+    if(parser->cur->type != IDENT) {
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected identifier.");
         parser->status = 0;
         exit(1);
     }
 
     astnode_t *var, *arr_dim;
-    while(parser->cur.type == IDENT) {
-        var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+    while(parser->cur->type == IDENT) {
+        var = init_astnode(_VAR, parser->cur);
         add_astchild(var_decl, var);
 
         update_parser(parser);
 
-        if(parser->cur.type == LBRAK) {
+        if(parser->cur->type == LBRAK) {
             var->is_array = true;
             update_parser(parser);
-            if(parser->cur.type == INT_LIT) {
-                var->arr_dim = atoi(parser->cur.text);
+            if(parser->cur->type == INT_LIT) {
+                var->arr_dim = atoi(parser->cur->text);
                 update_parser(parser);
-                if(parser->cur.type == RBRAK) {
+                if(parser->cur->type == RBRAK) {
                     update_parser(parser);
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected '}'.");
                     parser->status = 0;
                     exit(1);
                 }
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, 
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
                     "Expected integer literal.");
                 parser->status = 0;
                 exit(1);
             }
         } 
 
-        if(parser->cur.type == COMMA) {
+        if(parser->cur->type == COMMA) {
             update_parser(parser);
         }
     }
@@ -1227,40 +1225,40 @@ parse_typedecl(parser_t *parser)
     update_parser(parser); // consume 'struct' keyword
 
     astnode_t *type_decl;
-    type_decl = init_astnode(_TYPE_DECL, parser->cur.text, parser->cur.line_num);
+    type_decl = init_astnode(_TYPE_DECL, parser->cur);
     
     update_parser(parser);
 
-    if(parser->cur.type == LBRACE) {
+    if(parser->cur->type == LBRACE) {
         update_parser(parser);
 
         astnode_t *var_declnoinit;
-        while(is_typeorqualifier(parser->cur.type)) {
+        while(is_typeorqualifier(parser->cur->type)) {
             var_declnoinit = parse_vardeclnoinit(parser);
             add_astchild(type_decl, var_declnoinit);
 
-            if(parser->cur.type == SEMI) {
+            if(parser->cur->type == SEMI) {
                 update_parser(parser);
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, "Expected ';'.");
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, "Expected ';'.");
                 parser->status = 0;
                 exit(1);
             }
         }
 
-        if(parser->cur.type == RBRACE) {
+        if(parser->cur->type == RBRACE) {
             update_parser(parser);
             return type_decl;
         } else {
-            print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
-                0, parser->cur.text, "Expected '}'.");
+            print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
+                0, parser->cur->text, "Expected '}'.");
             parser->status = 0;
             exit(1);
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 0, 
-            parser->cur.text, "Expected '{'.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 0, 
+            parser->cur->text, "Expected '{'.");
         parser->status = 0;
         exit(1);
     }
@@ -1276,17 +1274,17 @@ parse_funstatement(parser_t *parser)
 {
     astnode_t *fun_statement;
 
-    if(parser->cur.type == STRUCT) { 
-        if(parser->next.type == IDENT) {
-            if(parser->nextnext.type == LBRACE) { // type-decl
+    if(parser->cur->type == STRUCT) { 
+        if(parser->next->type == IDENT) {
+            if(parser->nextnext->type == LBRACE) { // type-decl
                 fun_statement = parse_typedecl(parser);
 
-                if(parser->cur.type == SEMI) {
+                if(parser->cur->type == SEMI) {
                     update_parser(parser);
                     return fun_statement;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ';'.");
                     parser->status = 0;
                     exit(1);
@@ -1295,7 +1293,7 @@ parse_funstatement(parser_t *parser)
         } 
     }
 
-    if(is_typeorqualifier(parser->cur.type)) {
+    if(is_typeorqualifier(parser->cur->type)) {
         fun_statement = parse_vardecl(parser);
         return fun_statement;
     } else {
@@ -1312,9 +1310,9 @@ astnode_t *
 parse_funbody(parser_t *parser)
 {
     astnode_t *fun_body;
-    fun_body = init_astnode(_FUN_BODY, parser->cur.text, parser->cur.line_num);
+    fun_body = init_astnode(_FUN_BODY, parser->cur);
 
-    while(parser->cur.type != RBRACE) {
+    while(parser->cur->type != RBRACE) {
         add_astchild(fun_body, parse_funstatement(parser));
     }
 
@@ -1331,18 +1329,18 @@ parse_funbody(parser_t *parser)
 astnode_t * 
 parse_global(parser_t *parser) 
 {
-    if(parser->cur.type == STRUCT) {
-        if(parser->next.type == IDENT) {
-            if(parser->nextnext.type == LBRACE) { // type-decl
+    if(parser->cur->type == STRUCT) {
+        if(parser->next->type == IDENT) {
+            if(parser->nextnext->type == LBRACE) { // type-decl
                 astnode_t *type_decl;
                 type_decl = parse_typedecl(parser);
 
-                if(parser->cur.type == SEMI) {
+                if(parser->cur->type == SEMI) {
                     update_parser(parser);
                     return type_decl;
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ';'.");
                     parser->status = 0;
                     exit(1);
@@ -1356,14 +1354,14 @@ parse_global(parser_t *parser)
     astnode_t *type;
     type = parse_type(parser);
 
-    if(parser->cur.type == IDENT) {
-        if(parser->next.type == LPAR) {
+    if(parser->cur->type == IDENT) {
+        if(parser->next->type == LPAR) {
             astnode_t *fun_decl;
-            fun_decl = init_astnode(_FUN_DECL, "", parser->cur.line_num);
+            fun_decl = init_astnode(_FUN_DECL, parser->cur);
             add_astchild(fun_decl, type);
 
             astnode_t *ident;
-            ident = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+            ident = init_astnode(_VAR, parser->cur);
             add_astchild(fun_decl, ident);
 
             update_parser(parser);
@@ -1373,13 +1371,14 @@ parse_global(parser_t *parser)
             args = parse_funparams(parser);
             add_astchild(fun_decl, args);
 
-            if(parser->cur.type == RPAR) {
+            if(parser->cur->type == RPAR) {
                 update_parser(parser);
-                if(parser->cur.type == SEMI) { // fun-decl
+                if(parser->cur->type == SEMI) { // fun-decl
+                    update_parser(parser);
                     return fun_decl;
-                } else if(parser->cur.type == LBRACE) { // fun-def
+                } else if(parser->cur->type == LBRACE) { // fun-def
                     astnode_t *fun_def;
-                    fun_def = init_astnode(_FUN_DEF, fun_decl->text, parser->cur.line_num);
+                    fun_def = init_astnode(_FUN_DEF, parser->cur);
                     add_astchild(fun_def, fun_decl);
 
                     update_parser(parser);
@@ -1388,87 +1387,88 @@ parse_global(parser_t *parser)
                     fun_body = parse_funbody(parser);
                     add_astchild(fun_def, fun_body);
 
-                    if(parser->cur.type == RBRACE) {
+                    if(parser->cur->type == RBRACE) {
                         update_parser(parser);
                         return fun_def;
                     } else {
-                        print_msg(PARSER_ERR, parser->lex.filename, 
-                                parser->cur.line_num, 0, parser->cur.text, 
+                        print_msg(PARSER_ERR, parser->lex->filename, 
+                                parser->cur->line_num, 0, parser->cur->text, 
                                 "Expected '}'.");
                         parser->status = 0;
                         exit(1);
                     }
                 } else {
-                    print_msg(PARSER_ERR, parser->lex.filename, 
-                        parser->cur.line_num, 0, parser->cur.text, 
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                        parser->cur->line_num, 0, parser->cur->text, 
                         "Expected ';' or '{'.");
                     parser->status = 0;
                     exit(1);
                 }
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, "Expected ')'.");
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, "Expected ')'.");
                 parser->status = 0;
                 exit(1);
             }
         } else { // var-decl
             astnode_t *var_decl;
-            var_decl = init_astnode(_VAR_DECL, type->text, parser->cur.line_num);
+            var_decl = init_astnode(_VAR_DECL, parser->cur);
+            set_asttext(var_decl, type->text);
             add_astchild(var_decl, type);
 
             astnode_t *var, *var_init, *arr_dim;
-            while(parser->cur.type == IDENT) {
-                var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
+            while(parser->cur->type == IDENT) {
+                var = init_astnode(_VAR, parser->cur);
                 add_astchild(var_decl, var);
 
                 update_parser(parser);
 
-                if(parser->cur.type == LBRAK) {
+                if(parser->cur->type == LBRAK) {
                     update_parser(parser);
-                    if(parser->cur.type == INT_LIT) {
-                        arr_dim = init_astnode(_ARR_DIM, parser->cur.text, parser->cur.line_num);
+                    if(parser->cur->type == INT_LIT) {
+                        arr_dim = init_astnode(_ARR_DIM, parser->cur);
                         add_astchild(var, arr_dim);
                         update_parser(parser);
-                        if(parser->cur.type == RBRAK) {
+                        if(parser->cur->type == RBRAK) {
                             update_parser(parser);
                         } else {
-                            print_msg(PARSER_ERR, parser->lex.filename, 
-                                parser->cur.line_num, 0, parser->cur.text, 
+                            print_msg(PARSER_ERR, parser->lex->filename, 
+                                parser->cur->line_num, 0, parser->cur->text, 
                                 "Expected ']'.");
                             parser->status = 0;
                             exit(1);
                         }
                     } else {
-                        print_msg(PARSER_ERR, parser->lex.filename, 
-                            parser->cur.line_num, 0, parser->cur.text, 
+                        print_msg(PARSER_ERR, parser->lex->filename, 
+                            parser->cur->line_num, 0, parser->cur->text, 
                             "Expected integer literal.");
                         parser->status = 0;
                         exit(1);
                     }
-                } else if(parser->cur.type == ASSIGN) {
+                } else if(parser->cur->type == ASSIGN) {
                     update_parser(parser);
                     var_init = parse_expr(parser, 1);
                     add_astchild(var, var_init);
                 } 
 
-                if(parser->cur.type == COMMA) {
+                if(parser->cur->type == COMMA) {
                     update_parser(parser);
                 }
             }
 
-            if(parser->cur.type == SEMI) {
+            if(parser->cur->type == SEMI) {
                 update_parser(parser);
                 return var_decl;
             } else {
-                print_msg(PARSER_ERR, parser->lex.filename, 
-                    parser->cur.line_num, 0, parser->cur.text, "Expected ';'.");
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, "Expected ';'.");
                 parser->status = 0;
                 exit(1);
             }
         }
     } else {
-        print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 0, 
-            parser->cur.text, "Expected identifier.");
+        print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 0, 
+            parser->cur->text, "Expected identifier.");
         parser->status = 0;
         exit(1);
     }
@@ -1485,9 +1485,9 @@ astnode_t *
 parse_program(parser_t *parser)
 {
     astnode_t *program, *global;
-    program = init_astnode(_PROGRAM, parser->cur.text, parser->cur.line_num);
+    program = init_astnode(_PROGRAM, parser->cur);
 
-    while(parser->cur.type != END) {
+    while(parser->cur->type != END) {
         global = parse_global(parser);
         add_astchild(program, global);
     }
@@ -1503,15 +1503,15 @@ parse_program(parser_t *parser)
 void
 init_parser(char *filename, parser_t *parser)
 {
-    init_lexer(filename, &parser->lex);
+    parser->lex = init_lexer(filename);
     
     parser->status = 1;
 
-    next_token(&parser->lex, &parser->cur);
-    if(parser->cur.type != END) {
-        next_token(&parser->lex, &parser->next);
-        if(parser->next.type != END) {
-            next_token(&parser->lex, &parser->nextnext);
+    parser->cur = next_token(parser->lex);
+    if(parser->cur->type != END) {
+        parser->next = next_token(parser->lex);
+        if(parser->next->type != END) {
+            parser->nextnext = next_token(parser->lex);
         }
     }
 }
@@ -1522,14 +1522,20 @@ init_parser(char *filename, parser_t *parser)
  *
  */
 void
-parse(char *infilename, FILE *outfile)
+parse(char *filename)
 {
     parser_t parser;
-    init_parser(infilename, &parser);
-    free(parse_program(&parser));
+    astnode_t *program;
+
+    init_parser(filename, &parser);
+    program = parse_program(&parser);
+
+
     if(parser.status > 0) {
-        fprintf(outfile, "File %s is syntactically correct.\n", infilename);
+        fprintf(outfile, "File %s is syntactically correct.\n", filename);
         exit(1);
     }
+
+    free_ast(program);
 }
 

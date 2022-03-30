@@ -1,5 +1,5 @@
+#include "../util/io.h"
 #include "token.h"
-
 
 int 
 is_unaryop(tokentype_t type)
@@ -42,15 +42,14 @@ is_typeorqualifier(tokentype_t type)
 /**
  * Prints token to screen in the form seen in function
  * 
- * @param outfile file pointer to print the output to
  * @param tok     token to print relevant contents of
  *
  * @return  void
  */
 void 
-print_token(FILE *outfile, token_t *tok) 
+print_token(token_t *tok) 
 {
-    fprintf(outfile,"File %s Line %*d Token %*d Text %s\n", 
+    fprintf(outfile, "File %s Line %*d Token %*d Text %s\n", 
         tok->filename, 5, tok->line_num, 3, tok->type, tok->text);
 }
 
@@ -61,11 +60,13 @@ print_token(FILE *outfile, token_t *tok)
  * @param filename name of file currently being processed 
  * @param line_num current line number within file being processed
  *
- * @return void
+ * @return 
  */
-void 
-init_token(char *filename, int line_num, token_t *tok) 
+token_t * 
+init_token(char *filename, int line_num) 
 {
+    token_t *tok = (token_t *) malloc(sizeof(token_t));
+
     // allocate 4 chars to start
     tok->text = (char *) malloc((sizeof(char) * MIN_LEXEME_SIZE) + 1);
     tok->text[0] = '\0';
@@ -73,6 +74,8 @@ init_token(char *filename, int line_num, token_t *tok)
     tok->text_max_size = MIN_LEXEME_SIZE;
     tok->filename = filename;
     tok->line_num = line_num;
+
+    return tok;
 }
 
 /**
@@ -86,4 +89,5 @@ void
 free_token(token_t *tok)
 {
     free(tok->text);
+    free(tok);
 }

@@ -6,12 +6,16 @@
 #define MAX_FILE_SIZE 5000000 // 5MB
 #define BUFFER_SIZE   1000    // 1kb 
 
+extern FILE *outfile;
+
 typedef enum msgcode {
     FILE_ERR,
     LEXER_ERR,
     LEXER_WRN,
     PARSER_ERR,
-    PARSER_WRN
+    PARSER_WRN,
+    TYPE_ERR,
+    TYPE_WRN
 } msgcode_t;
 
 void print_msg(msgcode_t, char *, int, char, char *, char *);

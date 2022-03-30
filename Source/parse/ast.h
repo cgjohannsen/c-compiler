@@ -80,6 +80,7 @@ typedef union astval {
 typedef struct astnode {
     struct astnode *left;
     struct astnode *right;
+    char *filename;
     int line_num;
     asttype_t type;
     astval_t val;
@@ -90,7 +91,7 @@ typedef struct astnode {
     bool is_struct;
 } astnode_t;
 
-astnode_t *init_astnode(asttype_t asttype, char *text, int line_num);
+astnode_t *init_astnode(asttype_t asttype, token_t *tok);
 
 void set_asttext(astnode_t *node, char *text);
 void set_astchar(astnode_t *node, char c);

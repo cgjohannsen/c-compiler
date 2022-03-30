@@ -22,29 +22,25 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
 {
     switch(code) {
         case FILE_ERR:
-        {
             fprintf(stderr, "File error in file %s\n\t%s\n",
                 filename, msg);
-        }
-        break;
+            break;
         case LEXER_ERR:
-        {
             fprintf(stderr, "Lexer error in file %s line %d near text " 
                 "%c\n\t%s\n", filename, line_num, c, msg);
-        }
-        break;
+            break;
         case LEXER_WRN:
-        {
             fprintf(stderr, "Lexer warning in file %s line %d near text " 
                 "%c\n\t%s\n", filename, line_num, c, msg);
-        }
-        break;
+            break;
         case PARSER_ERR:
-        {
             fprintf(stderr, "Parser error in file %s line %d near text " 
                 "%s\n\t%s\n", filename, line_num, s, msg);
-        }
-        break;
+            break;
+        case TYPE_ERR:
+            fprintf(stderr, "Type checking error in file %s line %d\n\t%s\n",
+                filename, line_num, msg);
+            break;
         default:
         {
             fprintf(stderr, "Error in file %s line %d\n\t%s\n", 

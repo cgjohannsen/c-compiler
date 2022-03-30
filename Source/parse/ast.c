@@ -5,14 +5,15 @@
 #include "ast.h"
 
 astnode_t * 
-init_astnode(asttype_t asttype, char *text, int line_num)
+init_astnode(asttype_t asttype, token_t *tok)
 {
     astnode_t *node = (astnode_t *) malloc(sizeof(astnode_t));
 
-    node->text = (char *) malloc(sizeof(char) * (strlen(text) + 1));
-    strcpy(node->text, text);
+    node->text = (char *) malloc(sizeof(char) * (strlen(tok->text) + 1));
+    strcpy(node->text, tok->text);
 
-    node->line_num = line_num;
+    node->filename = tok->filename;
+    node->line_num = tok->line_num;
     node->left = NULL;
     node->right = NULL;
     node->type = asttype;
@@ -23,13 +24,13 @@ init_astnode(asttype_t asttype, char *text, int line_num)
 
     switch(asttype) {
         case _CHAR_LIT: 
-            node->val.c = *text;
+            node->val.c = *(tok->text);
             break;
         case _INT_LIT:
-            node->val.i = atoi(text);
+            node->val.i = atoi(tok->text);
             break;
         case _REAL_LIT:
-            node->val.f = atof(text);
+            node->val.f = atof(tok->text);
             break;
         default:
             break;

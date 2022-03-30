@@ -855,10 +855,12 @@ keyword_check(token_t *tok)
  *
  * @return void
  */
-void
-next_token(lexer_t *lex, token_t *tok) 
+token_t *
+next_token(lexer_t *lex) 
 {
-    init_token(lex->filename, lex->line_num, tok);
+    token_t *tok;
+
+    tok = init_token(lex->filename, lex->line_num);
 
     consume(lex, tok);
 
@@ -870,6 +872,8 @@ next_token(lexer_t *lex, token_t *tok)
         case IDENT:     tok->value.s = tok->text; keyword_check(tok); break;
         default: break;
     }
+
+    return tok;
 }
 
 
@@ -881,9 +885,13 @@ next_token(lexer_t *lex, token_t *tok)
  *
  * @return void
  */
-void
-init_lexer(char *filename, lexer_t *lex)
+lexer_t *
+init_lexer(char *filename)
 {
+    lexer_t *lex;
+
+    lex = (lexer_t *) malloc(sizeof(lexer_t));
+
     FILE *fp = open_file(filename);
 
     lex->filename = filename;
@@ -894,6 +902,17 @@ init_lexer(char *filename, lexer_t *lex)
     refill_buffer(lex->infile, lex->buffer);
 
     lex->cur = lex->buffer; // set cur to beginning of buffer
+
+    return lex;
+}
+
+/**
+ *
+ */
+void
+free_lexer(lexer_t *lex)
+{
+    free(lex);
 }
 
 
@@ -907,21 +926,23 @@ init_lexer(char *filename, lexer_t *lex)
  * @return void
  */
 void 
-tokenize(char *filename, FILE *outfile) 
+tokenize(char *filename) 
 {
-    lexer_t lex;
-    token_t tok;
+    lexer_t *lex;
+    token_t *tok;
 
-    init_lexer(filename, &lex);
+    lex = init_lexer(filename);
 
-    next_token(&lex, &tok);
-    while(tok.type != END) { // get tokens until EOF
-        print_token(outfile, &tok);
-        free_token(&tok);
-        next_token(&lex, &tok);
+    tok = next_token(lex);
+    while(tok->type != END) { // get tokens until EOF
+        print_token(tok);
+        free_token(tok);
+        tok = next_token(lex);
     }
-    free_token(&tok);
-    fclose(lex.infile);
+
+    free_token(tok);
+    fclose(lex->infile);
+    free_lexer(lex);
 }
 
 

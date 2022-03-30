@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "util/io.h"
 #include "parse/lexer.h"
 #include "parse/parse.h"
 #include "parse/typecheck.h"
@@ -17,10 +18,12 @@ const char *version = "My C compiler\n"
                       "\tVersion: 0.1\n"
                       "\tDate: 2-9-2022\n";
 
+FILE *outfile;
+
 int main(int argc, char **argv)
 {
   int mode = -1;
-  FILE *outfile = stdout;
+  outfile = stdout;
 
   if(argc < 2) {
     fprintf(stderr, "%s", usage);
@@ -93,20 +96,20 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  char *infilename = argv[optind];
+  char *filename = argv[optind];
 
   if(mode == 1) {
-    tokenize(infilename, outfile);
+    tokenize(filename);
     exit(0);
   }
 
   if(mode == 3) {
-    parse(infilename, outfile);
+    parse(filename);
     exit(0);
   }
 
   if(mode == 4) {
-    typecheck(infilename, outfile);
+    typecheck(filename);
     exit(0);
   }
 

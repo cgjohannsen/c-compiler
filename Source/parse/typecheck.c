@@ -23,6 +23,134 @@ print_var(astnode_t *type, astnode_t *var, FILE *outfile)
 
 
 
+
+void
+typecheck_localvardecl(astnode_t *var_decl, FILE *outfile)
+{
+    astnode_t *type, *var;
+
+    type = var_decl->left;
+    var = type->right;
+
+    while(var != NULL) {
+        fprintf(outfile, "\tLine %*d: local ", 4, var->line_num);
+        print_var(type, var, outfile);
+        fprintf(outfile, "\n");
+
+        // add var to local symbol table
+
+        var = var->right;
+    }
+}
+
+
+
+
+
+void
+typecheck_globalvardecl(astnode_t *var_decl, FILE *outfile)
+{
+    astnode_t *type, *var;
+
+    type = var_decl->left;
+    var = type->right;
+
+    while(var != NULL) {
+        fprintf(outfile, "Line %*d: global ", 4, var->line_num);
+        print_var(type, var, outfile);
+        fprintf(outfile, "\n");
+
+        // add var to global symbol table
+
+        var = var->right;
+    }
+}
+
+
+
+
+void
+typecheck_localtypedecl(astnode_t *type_decl, FILE *outfile)
+{
+    fprintf(outfile, "\tLine %*d: local struct %s\n", 4, type_decl->line_num, type_decl->text);
+
+    // add struct to global struct symbol tble
+
+
+    astnode_t *var_decl, *type, *var;
+    var_decl = type_decl->left;
+
+    while(var_decl != NULL) { // cycle thru member declarations
+        type = var_decl->left;
+        var = type->right;
+
+        while(var != NULL) { // cycle thru each variable
+            fprintf(outfile, "\t\tLine %*d: member ", 4, var->line_num);
+            print_var(type, var, outfile);
+            fprintf(outfile, "\n");
+            
+            // add var as member to struct in symbol table
+
+            var = var->right;
+        }
+
+        var_decl = var_decl->right;
+    } 
+}
+
+
+
+
+void
+typecheck_globaltypedecl(astnode_t *type_decl, FILE *outfile)
+{
+    fprintf(outfile, "Line %*d: global struct %s\n", 4, type_decl->line_num, type_decl->text);
+    
+    // add struct to global struct symbol tble
+
+    astnode_t *var_decl, *type, *var;
+    var_decl = type_decl->left;
+
+    while(var_decl != NULL) { // cycle thru member declarations
+        type = var_decl->left;
+        var = type->right;
+
+        while(var != NULL) { // cycle thru each variable
+            fprintf(outfile, "\tLine %*d: member ", 4, var->line_num);
+            print_var(type, var, outfile);
+            fprintf(outfile, "\n");
+            
+            // add var as member to struct in symbol table
+
+            var = var->right;
+        }
+
+        var_decl = var_decl->right;
+    } 
+}
+
+
+
+void
+typecheck_funbody(astnode_t *fun_body, FILE *outfile)
+{
+    astnode_t *statement;
+
+    statement = fun_body->left;
+    while(statement != NULL) {
+        if(statement->type == _VAR_DECL) {
+            typecheck_localvardecl(statement, outfile);
+        } else if(statement->type == _TYPE_DECL) {
+            typecheck_localtypedecl(statement, outfile);
+        }
+
+        statement = statement->right;
+    }
+}
+
+
+
+
 void 
 typecheck_fundecl(astnode_t *fun_decl, FILE *outfile)
 {
@@ -62,69 +190,18 @@ typecheck_fundef(astnode_t *fun_def, FILE *outfile)
     fun_body = fun_decl->right;
 
     typecheck_fundecl(fun_decl, outfile);
-    //typecheck_funbody(fun_body)
+    typecheck_funbody(fun_body, outfile);
 }
 
 
 
 
 void
-typecheck_funproto()
+typecheck_funproto(astnode_t *fun_proto, FILE *outfile)
 {
     // add function to symbol table
 }
 
-
-
-void
-typecheck_globalvardecl(astnode_t *var_decl, FILE *outfile)
-{
-    astnode_t *type, *var;
-
-    type = var_decl->left;
-    var = type->right;
-
-    while(var != NULL) {
-        fprintf(outfile, "Line %*d: global ", 4, var->line_num);
-        print_var(type, var, outfile);
-        fprintf(outfile, "\n");
-
-        // add var to global symbol table
-
-        var = var->right;
-    }
-}
-
-
-
-
-
-void
-typecheck_globaltypedecl(astnode_t *type_decl, FILE *outfile)
-{
-    fprintf(outfile, "Line %*d: global struct %s\n", 4, type_decl->line_num, type_decl->text);
-    //add_structsym(table->global_structs, type_decl->text);
-
-    astnode_t *var_decl, *type, *var;
-    var_decl = type_decl->left;
-
-    while(var_decl != NULL) { // cycle thru member declarations
-        type = var_decl->left;
-        var = type->right;
-
-        while(var != NULL) { // cycle thru each variable
-            fprintf(outfile, "\tLine %*d: member ", 4, var->line_num);
-            print_var(type, var, outfile);
-            fprintf(outfile, "\n");
-            
-            // add var as member to struct in symbol table
-
-            var = var->right;
-        }
-
-        var_decl = var_decl->right;
-    } 
-}
 
 
 

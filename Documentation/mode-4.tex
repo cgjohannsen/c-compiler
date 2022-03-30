@@ -1,0 +1,29 @@
+\subsection{Mode 4}
+\label{sec:mode-4}
+
+This mode corresponds to the type checker and will output each of the 
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Parser now returns an Abstract Syntax Tree (AST) corresponding to the input program.
+    \item Global and local variable, type, and function declarations are printed.
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+\textbf{Relevant Files:}
+
+\begin{itemize}
+    \item \verb|parse/parse.c|: This file was revamped from mode 3 so that it now builds an AST as well as just checking for syntax errors.
+    \item \verb|parse/ast.c|: The data structure corresponding to the AST.
+    \item \verb|parse/typecheck.c|: This file holds all the functionality for performing type checking of the input file.
+\end{itemize}
+
+\noindent \textbf{Relevant Data Structures:}
+
+\begin{itemize}
+    \item \verb|astnode_t|: This is a tree structure that serves as the AST of the program. Functionally, the AST is a binary tree where the left child is the child of the current node and the right child is the next sibling. 
+\end{itemize}
+
+\noindent \textbf{Working Description:} 

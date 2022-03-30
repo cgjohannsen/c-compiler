@@ -110,7 +110,7 @@ f   | float *** only while in scope of fn2
 c   | char  *** after exiting fn2, these are deleted
 g   | float ***
 
-mstruct | struct | int a | float b
+mstruct | type-decl | int a | float b
 
 
 
@@ -280,3 +280,34 @@ term -> ! expr
 lvalue -> ident
         | lvalue [ expr ]
         | lvalue . lvalue
+
+
+
+
+
+
+
+int a, b;
+
+struct mstruct {
+    float f;
+    char c;
+};
+
+const struct mstruct m;
+
+float fn1(int a, int b);
+int fn2(float f1, char d);
+
+
+symbol table
+--------------------
+a       | int
+b       | int
+
+mstruct | type | float f | char c
+
+m       | struct | mstruct
+
+fn1     | function | float | int a    | int b
+fn2     | function | int   | float f1 | char d

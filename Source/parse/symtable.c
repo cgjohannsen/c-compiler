@@ -63,10 +63,48 @@ init_structsym(astnode_t *type_decl)
 funsym_t * 
 init_funsym(astnode_t *fun_decl, bool is_def)
 {
-    return NULL;
+    funsym_t *new;
+
+    new = (funsym_t *) malloc(sizeof(funsym_t));
+
+    astnode_t *ret_type, *ident, *args;
+
+    ret_type = fun_decl->left;
+    ident = ret_type->right;
+    args = ident->right;
+
+    new->is_def = is_def;
+    new->ret_type = ret_type;
+    new->next = NULL;
+
+    new->name = (char *) malloc(sizeof(char) * strlen(ident->text) + 1);
+    strcpy(new->name, ident->text);
+
+    astnode_t *param;
+    varsym_t *new_param, *cur;
+
+    param = args->left;
+
+    while(param != NULL) {
+        new_param = init_varsym(param, param->right);
+
+        if(new->param == NULL) {
+            new->param = new_param;
+        } else {
+            cur = new->param;
+            while(cur->next != NULL) {
+                cur = cur->next;
+            }
+            cur->next = new_param;
+        }
+
+        param = param->right->right;
+    }
+
+    return new;
 }
 
-void
+bool
 add_localvar(symtable_t *table, astnode_t *type, astnode_t *var)
 {
     varsym_t *new, *cur;
@@ -75,17 +113,23 @@ add_localvar(symtable_t *table, astnode_t *type, astnode_t *var)
 
     if(table->local_vars == NULL) {
         table->local_vars = new;
-        return;
+        return true;
     }
 
     cur = table->local_vars;
     while(cur->next != NULL) {
+        if(!strcmp(cur->name, var->text)) {
+            // failed -- variable declaration already in table
+            return false;
+        }
         cur = cur->next;
     }
     cur->next = new;
+
+    return true;
 }
 
-void
+bool
 add_globalvar(symtable_t *table, astnode_t *type, astnode_t *var)
 {
     varsym_t *new, *cur;
@@ -94,18 +138,24 @@ add_globalvar(symtable_t *table, astnode_t *type, astnode_t *var)
 
     if(table->local_vars == NULL) {
         table->local_vars = new;
-        return;
+        return true;
     }
 
     cur = table->local_vars;
     while(cur->next != NULL) {
+        if(!strcmp(cur->name, var->text)) {
+            // failed -- variable declaration already in table
+            return false;
+        }
         cur = cur->next;
     }
     cur->next = new;
+
+    return true;
 }
 
 
-void
+bool
 add_localstruct(symtable_t *table, astnode_t *type_decl)
 {
     structsym_t *new, *cur;
@@ -114,18 +164,24 @@ add_localstruct(symtable_t *table, astnode_t *type_decl)
 
     if(table->local_structs == NULL) {
         table->local_structs = new;
-        return;
+        return true;
     }
 
     cur = table->local_structs;
     while(cur->next != NULL) {
+        if(!strcmp(cur->name, type_decl->text)) {
+            // failed -- type declaration already in table
+            return false;
+        }
         cur = cur->next;
     }
     cur->next = new;
+
+    return true;
 }
 
 
-void
+bool
 add_globalstruct(symtable_t *table, astnode_t *type_decl)
 {
     structsym_t *new, *cur;
@@ -134,18 +190,24 @@ add_globalstruct(symtable_t *table, astnode_t *type_decl)
 
     if(table->global_structs == NULL) {
         table->global_structs = new;
-        return;
+        return true;
     }
 
     cur = table->global_structs;
     while(cur->next != NULL) {
+        if(!strcmp(cur->name, type_decl->text)) {
+            // failed -- type declaration already in table
+            return false;
+        }
         cur = cur->next;
     }
     cur->next = new;
+
+    return true;
 }
 
 
-void
+bool
 add_function(symtable_t *table, astnode_t *fun_decl, bool is_def)
 {
     funsym_t *new, *cur;
@@ -154,14 +216,20 @@ add_function(symtable_t *table, astnode_t *fun_decl, bool is_def)
 
     if(table->functions == NULL) {
         table->functions = new;
-        return;
+        return true;  
     }
 
     cur = table->functions;
     while(cur->next != NULL) {
+        if(!strcmp(cur->name, fun_decl->left->right->text)) {
+            // failed -- function already in table
+            return false;
+        }
         cur = cur->next;
     }
     cur->next = new;
+
+    return true;
 }
 
 
@@ -263,10 +331,47 @@ init_symtable()
 }
 
 
+void
+free_structsym(structsym_t *sym)
+{
+    free(sym->name);
+
+    varsym_t *cur, *next;
+
+    cur = sym->member;
+    while(cur != NULL) {
+        next = cur->next;
+        free(cur->name);
+        free(cur);
+        cur = next;
+    }
+
+    free(sym);
+}
+
+
 void 
 free_locals(symtable_t *table)
 {
+    varsym_t *cur1, *next1;
 
+    cur1 = table->local_vars;
+    while(cur1 != NULL) {
+        next1 = cur1->next;
+        free(cur1->name);
+        free(cur1);
+        cur1 = next1;
+    }
+
+    structsym_t *cur2, *next2;
+    cur2 = table->local_structs;
+    while(cur2 != NULL) {
+        next2 = cur2->next;
+        free_structsym(cur2);
+        cur2 = next2;
+    }
+
+    table->local_vars = NULL;
 }
 
 

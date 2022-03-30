@@ -35,15 +35,16 @@ typedef struct symtable {
     structsym_t *global_structs;
     structsym_t *local_structs;
     funsym_t *functions;
+    astnode_t *ret_type;
 } symtable_t;
 
 symtable_t *init_symtable(void);
 
-void add_localvar(symtable_t *table, astnode_t *type, astnode_t *var);
-void add_globalvar(symtable_t *table, astnode_t *type, astnode_t *var);
-void add_localstruct(symtable_t *table, astnode_t *type_decl);
-void add_globalstruct(symtable_t *table, astnode_t *type_decl);
-void add_function(symtable_t *table, astnode_t *fun_decl, bool is_def);
+bool add_localvar(symtable_t *table, astnode_t *type, astnode_t *var);
+bool add_globalvar(symtable_t *table, astnode_t *type, astnode_t *var);
+bool add_localstruct(symtable_t *table, astnode_t *type_decl);
+bool add_globalstruct(symtable_t *table, astnode_t *type_decl);
+bool add_function(symtable_t *table, astnode_t *fun_decl, bool is_def);
 
 void free_locals(symtable_t *table);
 void free_symtable(symtable_t *table);

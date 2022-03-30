@@ -71,6 +71,14 @@ typedef enum asttype {
     _TYPE
 } asttype_t;
 
+typedef enum exprtype {
+    __CHAR,
+    __INT,
+    __REAL,
+    __STRING,
+    __STRUCT
+} exprtype_t;
+
 typedef union astval {
     char c;
     int i;
@@ -84,6 +92,7 @@ typedef struct astnode {
     int line_num;
     asttype_t type;
     astval_t val;
+    exprtype_t exprtype;
     char *text;
     int arr_dim;
     bool is_array;

@@ -1,13 +1,12 @@
-int a = 5+5-b*5, b[10], 
-c;
+int f(int i, int j, int k);
+float h();
 
-struct mstruct {
-    int g, j;
-    float a[50];
-};
+int f(int i, int j, int l)
+{
 
-struct mstruct const function(int g[], float h) {
-    int i, j;
-    struct mstruct {};
-    struct mstruct {};
+}
+
+int f(int i, int j, int l)
+{
+    
 }

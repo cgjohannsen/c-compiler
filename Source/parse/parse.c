@@ -34,7 +34,7 @@ astnode_t *
 parse_type(parser_t *parser)
 {
     astnode_t *type;
-    type = init_astnode(_TYPE, "");
+    type = init_astnode(_TYPE, "", parser->cur.line_num);
 
     if(parser->cur.type == CONST) { // 'const'
         type->is_const = true;
@@ -108,23 +108,24 @@ astnode_t *
 parse_funparams(parser_t *parser)
 {
     astnode_t *params;
-    params = init_astnode(_FUN_PARAMS, parser->cur.text);
+    params = init_astnode(_FUN_PARAMS, parser->cur.text, parser->cur.line_num);
 
     astnode_t *type, *var;
     while(is_typeorqualifier(parser->cur.type)) {
         type = parse_type(parser);
         
         if(parser->cur.type == IDENT) {
-            var = init_astnode(_VAR, parser->cur.text);
+            var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
             add_astchild(params, type);
             add_astchild(params, var);
 
             update_parser(parser);
 
-            if(parser->cur.type == RBRAK) {
+            if(parser->cur.type == LBRAK) {
                 update_parser(parser);
-                if(parser->cur.type == LBRAK) {
+                if(parser->cur.type == RBRAK) {
                     var->is_array = true;
+                    update_parser(parser);
                 } else {
                     print_msg(PARSER_ERR, parser->lex.filename, 
                         parser->cur.line_num, 0, parser->cur.text, 
@@ -160,16 +161,16 @@ parse_literal(parser_t *parser)
 
     switch(parser->cur.type) {
         case CHAR_LIT: 
-            literal = init_astnode(_CHAR_LIT, parser->cur.text);
+            literal = init_astnode(_CHAR_LIT, parser->cur.text, parser->cur.line_num);
             break;
         case INT_LIT:
-            literal = init_astnode(_INT_LIT, parser->cur.text);
+            literal = init_astnode(_INT_LIT, parser->cur.text, parser->cur.line_num);
             break;
         case REAL_LIT:
-            literal = init_astnode(_REAL_LIT, parser->cur.text);
+            literal = init_astnode(_REAL_LIT, parser->cur.text, parser->cur.line_num);
             break;
         case STR_LIT:
-            literal = init_astnode(_STR_LIT, parser->cur.text);
+            literal = init_astnode(_STR_LIT, parser->cur.text, parser->cur.line_num);
             break;
         default:
             print_msg(PARSER_ERR, parser->lex.filename, parser->cur.line_num, 
@@ -192,7 +193,7 @@ astnode_t *
 parse_lvalue(parser_t *parser)
 {
     astnode_t *var;
-    var = init_astnode(_VAR, parser->cur.text);
+    var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
 
     if(parser->cur.type == IDENT) {
         update_parser(parser);
@@ -201,7 +202,7 @@ parse_lvalue(parser_t *parser)
             update_parser(parser);
 
             astnode_t *arr_access;
-            arr_access = init_astnode(_ARR_ACCESS, parser->cur.text);
+            arr_access = init_astnode(_ARR_ACCESS, parser->cur.text, parser->cur.line_num);
 
             astnode_t *arr_expr;
             arr_expr = parse_expr(parser, 1);
@@ -221,7 +222,7 @@ parse_lvalue(parser_t *parser)
                 update_parser(parser);
 
                 astnode_t *struct_access;
-                struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text);
+                struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text, parser->cur.line_num);
 
                 astnode_t *struct_member;
                 struct_member = parse_lvalue(parser);
@@ -237,7 +238,7 @@ parse_lvalue(parser_t *parser)
             update_parser(parser);
 
             astnode_t *struct_access;
-            struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text);
+            struct_access = init_astnode(_STRUCT_ACCESS, parser->cur.text, parser->cur.line_num);
 
             astnode_t *struct_member;
             struct_member = parse_lvalue(parser);
@@ -265,31 +266,31 @@ parse_term(parser_t *parser)
 
     switch(parser->cur.type) {
         case BANG:
-            op = init_astnode(_LOG_NEG, parser->cur.text);
+            op = init_astnode(_LOG_NEG, parser->cur.text, parser->cur.line_num);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case TILDE:
-            op = init_astnode(_BIT_NEG, parser->cur.text);
+            op = init_astnode(_BIT_NEG, parser->cur.text, parser->cur.line_num);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case MINUS:
-            op = init_astnode(_ARITH_NEG, parser->cur.text);
+            op = init_astnode(_ARITH_NEG, parser->cur.text, parser->cur.line_num);
             update_parser(parser);
             expr = parse_term(parser);
             add_astchild(op, expr);
             return op;
         case DECR:
-            op = init_astnode(_DECR, parser->cur.text);
+            op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
             return op;
         case INCR:
-            op = init_astnode(_INCR, parser->cur.text);
+            op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
@@ -324,12 +325,12 @@ parse_term(parser_t *parser)
             }
         case IDENT:
             if(parser->next.type == LPAR) { // function call
-                op = init_astnode(_FUN_CALL, parser->cur.text);
+                op = init_astnode(_FUN_CALL, parser->cur.text, parser->cur.line_num);
                 update_parser(parser);
                 update_parser(parser);
 
                 astnode_t *fun_args, *arg;
-                fun_args = init_astnode(_FUN_ARGS, "");
+                fun_args = init_astnode(_FUN_ARGS, "", parser->cur.line_num);
                 while(1) {
                     arg = parse_expr(parser, 1);
                     add_astchild(fun_args, arg);
@@ -353,11 +354,11 @@ parse_term(parser_t *parser)
                 expr = parse_lvalue(parser);
                 
                 if(parser->cur.type == INCR) {
-                    op = init_astnode(_INCR, parser->cur.text);
+                    op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
                     add_astchild(op, expr);
                     return op;
                 } else if(parser->cur.type == DECR) {
-                    op = init_astnode(_DECR, parser->cur.text);
+                    op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
                     add_astchild(op, expr);
                     return op;
                 } else {
@@ -410,19 +411,19 @@ parse_expr(parser_t *parser, int prec)
                 if(is_lvalue(term)) {
                     switch(parser->cur.type) {
                         case ASSIGN:
-                            op = init_astnode(_ASSIGN, parser->cur.text);
+                            op = init_astnode(_ASSIGN, parser->cur.text, parser->cur.line_num);
                             break;
                         case PLUSASSIGN:
-                            op = init_astnode(_ADD_ASSIGN, parser->cur.text);
+                            op = init_astnode(_ADD_ASSIGN, parser->cur.text, parser->cur.line_num);
                             break;
                         case MINUSASSIGN:
-                            op = init_astnode(_SUB_ASSIGN, parser->cur.text);
+                            op = init_astnode(_SUB_ASSIGN, parser->cur.text, parser->cur.line_num);
                             break;
                         case STARASSIGN:
-                            op = init_astnode(_MULT_ASSIGN, parser->cur.text);
+                            op = init_astnode(_MULT_ASSIGN, parser->cur.text, parser->cur.line_num);
                             break;
                         case SLASHASSIGN:
-                            op = init_astnode(_DIV_ASSIGN, parser->cur.text);
+                            op = init_astnode(_DIV_ASSIGN, parser->cur.text, parser->cur.line_num);
                             break;
                         default:
                             // impossible
@@ -446,7 +447,7 @@ parse_expr(parser_t *parser, int prec)
             }
         case 2:
             if(parser->cur.type == QUEST) {
-                op = init_astnode(_ITE, "");
+                op = init_astnode(_ITE, "", parser->cur.line_num);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, 3);
@@ -471,7 +472,7 @@ parse_expr(parser_t *parser, int prec)
             }
         case 3:
             if(parser->cur.type == DPIPE) {
-                op = init_astnode(_LOG_OR, parser->cur.text);
+                op = init_astnode(_LOG_OR, parser->cur.text, parser->cur.line_num);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -483,7 +484,7 @@ parse_expr(parser_t *parser, int prec)
             }
         case 4:
             if(parser->cur.type == DAMP) {
-                op = init_astnode(_LOG_AND, parser->cur.text);
+                op = init_astnode(_LOG_AND, parser->cur.text, parser->cur.line_num);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -495,7 +496,7 @@ parse_expr(parser_t *parser, int prec)
             }
         case 5:
             if(parser->cur.type == PIPE) {
-                op = init_astnode(_BIT_OR, parser->cur.text);
+                op = init_astnode(_BIT_OR, parser->cur.text, parser->cur.line_num);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -507,7 +508,7 @@ parse_expr(parser_t *parser, int prec)
             }
         case 6:
             if(parser->cur.type == AMP) {
-                op = init_astnode(_BIT_AND, parser->cur.text);
+                op = init_astnode(_BIT_AND, parser->cur.text, parser->cur.line_num);
                 update_parser(parser);
 
                 expr1 = parse_expr(parser, prec+1);
@@ -520,9 +521,9 @@ parse_expr(parser_t *parser, int prec)
         case 7:
             if(parser->cur.type == EQ || parser->cur.type == NEQ) {
                 if(parser->cur.type == EQ) {
-                    op = init_astnode(_EQ, parser->cur.text);
+                    op = init_astnode(_EQ, parser->cur.text, parser->cur.line_num);
                 } else { // NEQ
-                    op = init_astnode(_NEQ, parser->cur.text);
+                    op = init_astnode(_NEQ, parser->cur.text, parser->cur.line_num);
                 }
                 update_parser(parser);
 
@@ -538,13 +539,13 @@ parse_expr(parser_t *parser, int prec)
                 parser->cur.type == LT || parser->cur.type == LEQ) {
 
                 if(parser->cur.type == GT) {
-                    op = init_astnode(_GT, parser->cur.text);
+                    op = init_astnode(_GT, parser->cur.text, parser->cur.line_num);
                 } else if(parser->cur.type == GEQ) {
-                    op = init_astnode(_GEQ, parser->cur.text);
+                    op = init_astnode(_GEQ, parser->cur.text, parser->cur.line_num);
                 } else if(parser->cur.type == LT) {
-                    op = init_astnode(_LT, parser->cur.text);
+                    op = init_astnode(_LT, parser->cur.text, parser->cur.line_num);
                 } else { // LEQ
-                    op = init_astnode(_LEQ, parser->cur.text);
+                    op = init_astnode(_LEQ, parser->cur.text, parser->cur.line_num);
                 }
                 update_parser(parser);
 
@@ -558,9 +559,9 @@ parse_expr(parser_t *parser, int prec)
         case 9:
             if(parser->cur.type == PLUS || parser->cur.type == MINUS) {
                 if(parser->cur.type == PLUS) {
-                    op = init_astnode(_ADD, parser->cur.text);
+                    op = init_astnode(_ADD, parser->cur.text, parser->cur.line_num);
                 } else { // MINUS
-                    op = init_astnode(_SUB, parser->cur.text);
+                    op = init_astnode(_SUB, parser->cur.text, parser->cur.line_num);
                 }
                 update_parser(parser);
 
@@ -575,11 +576,11 @@ parse_expr(parser_t *parser, int prec)
             if(parser->cur.type == STAR || parser->cur.type == SLASH ||
                 parser->cur.type == MOD) {
                 if(parser->cur.type == STAR) {
-                    op = init_astnode(_MULT, parser->cur.text);
+                    op = init_astnode(_MULT, parser->cur.text, parser->cur.line_num);
                 } else if(parser->cur.type == SLASH) {
-                    op = init_astnode(_DIV, parser->cur.text);
+                    op = init_astnode(_DIV, parser->cur.text, parser->cur.line_num);
                 } else { // MOD
-                    op = init_astnode(_MOD, parser->cur.text);
+                    op = init_astnode(_MOD, parser->cur.text, parser->cur.line_num);
                 }
                 update_parser(parser);
 
@@ -593,9 +594,9 @@ parse_expr(parser_t *parser, int prec)
         case 11:
             if(parser->cur.type == INCR || parser->cur.type == DECR) {
                 if(parser->cur.type == INCR) {
-                    op = init_astnode(_INCR, parser->cur.text);
+                    op = init_astnode(_INCR, parser->cur.text, parser->cur.line_num);
                 } else { // DECR
-                    op = init_astnode(_DECR, parser->cur.text);
+                    op = init_astnode(_DECR, parser->cur.text, parser->cur.line_num);
                 }
                 update_parser(parser);
 
@@ -644,7 +645,7 @@ astnode_t *
 parse_break(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_BREAK, parser->cur.text);
+    statement = init_astnode(_BREAK, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -669,7 +670,7 @@ astnode_t *
 parse_continue(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_CONTINUE, parser->cur.text);
+    statement = init_astnode(_CONTINUE, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -694,7 +695,7 @@ astnode_t *
 parse_return(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_RETURN, parser->cur.text);
+    statement = init_astnode(_RETURN, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -727,7 +728,7 @@ astnode_t *
 parse_if(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_IF_STATEMENT, parser->cur.text);
+    statement = init_astnode(_IF_STATEMENT, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -735,7 +736,7 @@ parse_if(parser_t *parser)
         update_parser(parser);
 
         astnode_t *if_cond;
-        if_cond = init_astnode(_IF_COND, parser->cur.text);
+        if_cond = init_astnode(_IF_COND, parser->cur.text, parser->cur.line_num);
         add_astchild(statement, if_cond);
 
         astnode_t *if_expr;
@@ -746,7 +747,7 @@ parse_if(parser_t *parser)
             update_parser(parser);
 
             astnode_t *if_body;
-            if_body = init_astnode(_IF_BODY, parser->cur.text);
+            if_body = init_astnode(_IF_BODY, parser->cur.text, parser->cur.line_num);
             add_astchild(statement, if_body); 
 
             if(parser->cur.type == LBRACE) { // if(cond) { }
@@ -766,7 +767,7 @@ parse_if(parser_t *parser)
                 update_parser(parser);
 
                 astnode_t *else_body;
-                else_body = init_astnode(_ELSE_BODY, parser->cur.text);
+                else_body = init_astnode(_ELSE_BODY, parser->cur.text, parser->cur.line_num);
                 add_astchild(statement, else_body);
 
                 if(parser->cur.type == LBRACE) { // else { }
@@ -806,11 +807,11 @@ parse_forparams(parser_t *parser)
     astnode_t *for_init, *for_exit, *for_update;
 
     if(parser->cur.type == SEMI) { // empty first param
-        for_init = init_astnode(_FOR_INIT, "");
+        for_init = init_astnode(_FOR_INIT, "", parser->cur.line_num);
         update_parser(parser);
     } else { // non-empty first param
         astnode_t *init_expr;
-        for_init = init_astnode(_FOR_INIT, parser->cur.text);
+        for_init = init_astnode(_FOR_INIT, parser->cur.text, parser->cur.line_num);
         init_expr = parse_expr(parser, 1);
         add_astchild(for_init, init_expr);
         
@@ -825,11 +826,11 @@ parse_forparams(parser_t *parser)
     }
 
     if(parser->cur.type == SEMI) { // empty second param
-        for_exit = init_astnode(_FOR_EXIT, "");
+        for_exit = init_astnode(_FOR_EXIT, "", parser->cur.line_num);
         update_parser(parser);
     } else { // non-empty second param
         astnode_t *exit_expr;
-        for_exit = init_astnode(_FOR_EXIT, parser->cur.text);
+        for_exit = init_astnode(_FOR_EXIT, parser->cur.text, parser->cur.line_num);
         exit_expr = parse_expr(parser, 1);
         add_astchild(for_exit, exit_expr);
 
@@ -844,11 +845,11 @@ parse_forparams(parser_t *parser)
     }
 
     if(parser->cur.type == RPAR) { // empty third param
-        for_update = init_astnode(_FOR_UPDATE, "");
+        for_update = init_astnode(_FOR_UPDATE, "", parser->cur.line_num);
         update_parser(parser);
     } else { // non-empty third param
         astnode_t *update_expr;
-        for_update = init_astnode(_FOR_UPDATE, parser->cur.text);
+        for_update = init_astnode(_FOR_UPDATE, parser->cur.text, parser->cur.line_num);
         update_expr = parse_expr(parser, 1);
         add_astchild(for_update, update_expr);
 
@@ -877,7 +878,7 @@ astnode_t *
 parse_for(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_FOR_STATEMENT, parser->cur.text);
+    statement = init_astnode(_FOR_STATEMENT, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -889,7 +890,7 @@ parse_for(parser_t *parser)
         add_astchild(statement,for_params);
 
         astnode_t *for_body;
-        for_body = init_astnode(_FOR_BODY, parser->cur.text);
+        for_body = init_astnode(_FOR_BODY, parser->cur.text, parser->cur.line_num);
         add_astchild(statement, for_body);
 
         if(parser->cur.type == LBRACE) { // for() { }
@@ -923,7 +924,7 @@ astnode_t *
 parse_while(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_WHILE_STATEMENT, parser->cur.text);
+    statement = init_astnode(_WHILE_STATEMENT, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
@@ -931,7 +932,7 @@ parse_while(parser_t *parser)
         update_parser(parser);
 
         astnode_t *while_cond;
-        while_cond = init_astnode(_WHILE_COND, parser->cur.text);
+        while_cond = init_astnode(_WHILE_COND, parser->cur.text, parser->cur.line_num);
         add_astchild(statement, while_cond);
 
         astnode_t *while_expr;
@@ -942,7 +943,7 @@ parse_while(parser_t *parser)
             update_parser(parser);
 
             astnode_t *while_body;
-            while_body = init_astnode(_WHILE_BODY, parser->cur.text);
+            while_body = init_astnode(_WHILE_BODY, parser->cur.text, parser->cur.line_num);
             add_astchild(statement, while_body);
 
             if(parser->cur.type == LBRACE) {
@@ -982,12 +983,12 @@ astnode_t *
 parse_do(parser_t *parser)
 {
     astnode_t *statement;
-    statement = init_astnode(_DO_STATEMENT, parser->cur.text);
+    statement = init_astnode(_DO_STATEMENT, parser->cur.text, parser->cur.line_num);
 
     update_parser(parser);
 
     astnode_t *do_body;
-    do_body = init_astnode(_DO_BODY, parser->cur.text);
+    do_body = init_astnode(_DO_BODY, parser->cur.text, parser->cur.line_num);
     add_astchild(statement, do_body);
 
     if(parser->cur.type == LBRACE) {
@@ -1008,7 +1009,7 @@ parse_do(parser_t *parser)
             update_parser(parser);
 
             astnode_t *do_cond;
-            do_cond = init_astnode(_DO_COND, parser->cur.text);
+            do_cond = init_astnode(_DO_COND, parser->cur.text, parser->cur.line_num);
             add_astchild(statement, do_cond);
             
             astnode_t *do_expr;
@@ -1098,7 +1099,7 @@ parse_vardecl(parser_t *parser)
 {
     astnode_t *var_decl, *type;
     
-    var_decl = init_astnode(_VAR_DECL, "");
+    var_decl = init_astnode(_VAR_DECL, "", parser->cur.line_num);
     type = parse_type(parser);
     add_astchild(var_decl, type);
 
@@ -1111,16 +1112,16 @@ parse_vardecl(parser_t *parser)
 
     astnode_t *var, *var_init, *arr_dim;
     while(parser->cur.type == IDENT) {
-        var = init_astnode(_VAR, parser->cur.text);
+        var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
         add_astchild(var_decl, var);
 
         update_parser(parser);
 
         if(parser->cur.type == LBRAK) {
+            var->is_array = true;
             update_parser(parser);
             if(parser->cur.type == INT_LIT) {
-                arr_dim = init_astnode(_ARR_DIM, parser->cur.text);
-                add_astchild(var, arr_dim);
+                var->arr_dim = atoi(parser->cur.text);
                 update_parser(parser);
                 if(parser->cur.type == RBRAK) {
                     update_parser(parser);
@@ -1168,7 +1169,7 @@ parse_vardeclnoinit(parser_t *parser)
 {
     astnode_t *var_decl, *type;
 
-    var_decl = init_astnode(_VAR_DECL, "");
+    var_decl = init_astnode(_VAR_DECL, "", parser->cur.line_num);
     type = parse_type(parser);
     add_astchild(var_decl, type);
 
@@ -1181,16 +1182,16 @@ parse_vardeclnoinit(parser_t *parser)
 
     astnode_t *var, *arr_dim;
     while(parser->cur.type == IDENT) {
-        var = init_astnode(_VAR, parser->cur.text);
+        var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
         add_astchild(var_decl, var);
 
         update_parser(parser);
 
         if(parser->cur.type == LBRAK) {
+            var->is_array = true;
             update_parser(parser);
             if(parser->cur.type == INT_LIT) {
-                arr_dim = init_astnode(_ARR_DIM, parser->cur.text);
-                add_astchild(var, arr_dim);
+                var->arr_dim = atoi(parser->cur.text);
                 update_parser(parser);
                 if(parser->cur.type == RBRAK) {
                     update_parser(parser);
@@ -1226,7 +1227,7 @@ parse_typedecl(parser_t *parser)
     update_parser(parser); // consume 'struct' keyword
 
     astnode_t *type_decl;
-    type_decl = init_astnode(_TYPE_DECL, parser->cur.text);
+    type_decl = init_astnode(_TYPE_DECL, parser->cur.text, parser->cur.line_num);
     
     update_parser(parser);
 
@@ -1311,7 +1312,7 @@ astnode_t *
 parse_funbody(parser_t *parser)
 {
     astnode_t *fun_body;
-    fun_body = init_astnode(_FUN_BODY, parser->cur.text);
+    fun_body = init_astnode(_FUN_BODY, parser->cur.text, parser->cur.line_num);
 
     while(parser->cur.type != RBRACE) {
         add_astchild(fun_body, parse_funstatement(parser));
@@ -1358,11 +1359,11 @@ parse_global(parser_t *parser)
     if(parser->cur.type == IDENT) {
         if(parser->next.type == LPAR) {
             astnode_t *fun_decl;
-            fun_decl = init_astnode(_FUN_DECL, "");
+            fun_decl = init_astnode(_FUN_DECL, "", parser->cur.line_num);
             add_astchild(fun_decl, type);
 
             astnode_t *ident;
-            ident = init_astnode(_VAR, parser->cur.text);
+            ident = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
             add_astchild(fun_decl, ident);
 
             update_parser(parser);
@@ -1378,7 +1379,7 @@ parse_global(parser_t *parser)
                     return fun_decl;
                 } else if(parser->cur.type == LBRACE) { // fun-def
                     astnode_t *fun_def;
-                    fun_def = init_astnode(_FUN_DEF, fun_decl->text);
+                    fun_def = init_astnode(_FUN_DEF, fun_decl->text, parser->cur.line_num);
                     add_astchild(fun_def, fun_decl);
 
                     update_parser(parser);
@@ -1412,12 +1413,12 @@ parse_global(parser_t *parser)
             }
         } else { // var-decl
             astnode_t *var_decl;
-            var_decl = init_astnode(_VAR_DECL, type->text);
+            var_decl = init_astnode(_VAR_DECL, type->text, parser->cur.line_num);
             add_astchild(var_decl, type);
 
             astnode_t *var, *var_init, *arr_dim;
             while(parser->cur.type == IDENT) {
-                var = init_astnode(_VAR, parser->cur.text);
+                var = init_astnode(_VAR, parser->cur.text, parser->cur.line_num);
                 add_astchild(var_decl, var);
 
                 update_parser(parser);
@@ -1425,7 +1426,7 @@ parse_global(parser_t *parser)
                 if(parser->cur.type == LBRAK) {
                     update_parser(parser);
                     if(parser->cur.type == INT_LIT) {
-                        arr_dim = init_astnode(_ARR_DIM, parser->cur.text);
+                        arr_dim = init_astnode(_ARR_DIM, parser->cur.text, parser->cur.line_num);
                         add_astchild(var, arr_dim);
                         update_parser(parser);
                         if(parser->cur.type == RBRAK) {
@@ -1457,6 +1458,7 @@ parse_global(parser_t *parser)
 
             if(parser->cur.type == SEMI) {
                 update_parser(parser);
+                return var_decl;
             } else {
                 print_msg(PARSER_ERR, parser->lex.filename, 
                     parser->cur.line_num, 0, parser->cur.text, "Expected ';'.");
@@ -1482,10 +1484,13 @@ parse_global(parser_t *parser)
 astnode_t * 
 parse_program(parser_t *parser)
 {
-    astnode_t *program;
-    program = init_astnode(_PROGRAM, parser->cur.text);
+    astnode_t *program, *global;
+    program = init_astnode(_PROGRAM, parser->cur.text, parser->cur.line_num);
 
-    while(add_astchild(program, parse_global(parser)) && parser->cur.type != END);
+    while(parser->cur.type != END) {
+        global = parse_global(parser);
+        add_astchild(program, global);
+    }
 
     return program;
 }
@@ -1521,7 +1526,7 @@ parse(char *infilename, FILE *outfile)
 {
     parser_t parser;
     init_parser(infilename, &parser);
-    parse_program(&parser);
+    free(parse_program(&parser));
     if(parser.status > 0) {
         fprintf(outfile, "File %s is syntactically correct.\n", infilename);
         exit(1);

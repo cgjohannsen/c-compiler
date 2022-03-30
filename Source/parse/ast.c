@@ -5,19 +5,21 @@
 #include "ast.h"
 
 astnode_t * 
-init_astnode(asttype_t asttype, char *text)
+init_astnode(asttype_t asttype, char *text, int line_num)
 {
     astnode_t *node = (astnode_t *) malloc(sizeof(astnode_t));
 
     node->text = (char *) malloc(sizeof(char) * (strlen(text) + 1));
     strcpy(node->text, text);
 
+    node->line_num = line_num;
     node->left = NULL;
     node->right = NULL;
     node->type = asttype;
     node->is_array = false;
     node->is_const = false;
     node->is_struct = false;
+    node->arr_dim = -1;
 
     switch(asttype) {
         case _CHAR_LIT: 
@@ -156,22 +158,6 @@ free_ast(astnode_t *node)
     free_ast(node->right);
     free(node->text);
     free(node);
-}
-
-
-
-bool 
-is_inttype(asttype_t asttype)
-{
-    return asttype == _CHAR_LIT || asttype == _INT_LIT;
-}
-
-
-
-bool 
-is_numerictype(asttype_t asttype)
-{   
-    return asttype == _CHAR_LIT || asttype == _INT_LIT || asttype == _REAL_LIT;
 }
 
 

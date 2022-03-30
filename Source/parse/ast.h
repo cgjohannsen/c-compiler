@@ -80,15 +80,17 @@ typedef union astval {
 typedef struct astnode {
     struct astnode *left;
     struct astnode *right;
+    int line_num;
     asttype_t type;
     astval_t val;
     char *text;
+    int arr_dim;
     bool is_array;
     bool is_const;
     bool is_struct;
 } astnode_t;
 
-astnode_t *init_astnode(asttype_t asttype, char *text);
+astnode_t *init_astnode(asttype_t asttype, char *text, int line_num);
 
 void set_asttext(astnode_t *node, char *text);
 void set_astchar(astnode_t *node, char c);
@@ -102,9 +104,6 @@ int add_astsibling(astnode_t *node, astnode_t *sibling);
 
 void free_ast(astnode_t *root);
 
-bool is_inttype(asttype_t asttype);
-bool is_numerictype(asttype_t asttype);
-bool is_vartype(asttype_t asttype);
 bool is_lvalue(astnode_t *node);
 
 #endif

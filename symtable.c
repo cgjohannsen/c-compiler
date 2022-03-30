@@ -2,85 +2,64 @@
 
 #include "symtable.h"
 
+symtype_t *
+init_symtype(basicsymtype_t type, char *struct_name, bool is_const, bool is_array, int array_size)
+{
+    symtype_t *symtype = (symtype_t *) malloc(sizeof(symtype_t));
+
+    symtype->type = type;
+    
+    if(type == __STRUCT) {
+        symtype->struct_name = (char *) malloc(sizeof(char) * strlen(struct_name) + 1);
+        strcpy(symtype->struct_name, struct_name);
+    }
+
+    symtype->is_const = is_const;
+    symtype->is_array = is_array;
+    symtype->array_size = array_size;
+
+    return symtype;
+}
 
 void 
-init_table(symtable_t *symtable)
+add_sym(sym_t *sym, char *name, symtype_t *type)
 {
-    symtable_t->head = NULL;
-}
+    sym_t *new = (sym_t *) malloc(sizeof(sym_t));
 
+    new->name = (char *) malloc(sizeof(char) * strlen(name) + 1);
+    strcpy(new->name, name);
+
+    new->type = type;
+
+    if(sym == NULL) {
+        sym = new;
+    }
+
+    sym_t *cur = sym;
+    while(cur->right != NULL) {
+        cur = cur->right
+    }
+
+    cur->right = new;
+}
 
 
 void 
-add_entry(symtable_t *symtable, symentry_t *entry)
-{
-    symentry_t *cur = symtable->head;
+add_funsym(funsym_t *sym, char *name, symtype_t *ret_type);
 
-    if(cur == NULL) { // table is empty
-        symtable->head = entry;
-    }
 
-    // find end of linked list
-    while(cur->next != NULL) {
-        cur = cur->next;
-    }
+void 
+add_structsym(structsym_t *sym, char *name);
 
-    cur->next = entry;
-}
+
+void 
+add_funsymparam(funsym_t *sym, char *name, symtype_t *type);
+
+
+void 
+add_structsymmember(structsym_t *sym, char *name, symtype_t *type);
 
 
 
-void
-remove_entry(symtable_t *symtable, char *ident)
-{
-    symentry_t *cur = symtable->head;
-
-    if(cur == NULL) { // table is empty
-        return;
-    }
-
-    // find end of linked list
-    while(cur->next != NULL) {
-        // test against current entry
-        if(!strcomp(ident,cur->next->ident)) {
-            break;
-        }
-        cur = cur->next;
-    }
-
-    if(cur->next == NULL) { // no such entry in table
-        return;
-    }
-
-    // remove matched entry
-    cur->next = cur->next->next;
-}
-
-
-
-
-symentry_t *
-get_entry(symtable_t *symtable, char *ident)
-{
-    symentry_t *cur = symtable->head;
-
-    if(cur == NULL) { // table is empty
-        return cur;
-    }
-
-    // find end of linked list
-    while(cur->next != NULL) {
-        // test against current entry
-        if(!strcomp(ident,cur->next->ident)) {
-            break;
-        }
-        cur = cur->next;
-    }
-
-    if(cur->next == NULL) { // no such entry in table
-        return;
-    }
-
-    // remove matched entry
-    cur->next = cur->next->next;
-}
+void *
+get_sym(symtable_t *table, char *name);

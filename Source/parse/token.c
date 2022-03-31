@@ -4,7 +4,7 @@
 int 
 is_unaryop(tokentype_t type)
 {
-    return type == MINUS || type == BANG || type == TILDE;
+    return type == MINUS || type == BANG || type == TILDE || type == INCR || type == DECR;
 }
 
 

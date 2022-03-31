@@ -327,26 +327,16 @@ parse_term(parser_t *parser)
                 update_parser(parser);
                 update_parser(parser);
 
-                astnode_t *fun_args, *arg;
-                fun_args = init_astnode(_FUN_ARGS, parser->cur);
-                while(1) {
+                astnode_t *arg;
+                while(parser->cur->type != RPAR) {
                     arg = parse_expr(parser, 1);
-                    add_astchild(fun_args, arg);
+                    add_astchild(op, arg);
                     if(parser->cur->type == COMMA) {
                         update_parser(parser);
-                    } else if(parser->cur->type == RPAR) {
-                        update_parser(parser);
-                        break;
-                    } else {
-                        print_msg(PARSER_ERR, parser->lex->filename, 
-                            parser->cur->line_num, 0, parser->cur->text,
-                            "Expected ',' or ')'.");
-                        parser->status = 0;
-                        exit(1);
-                    }
+                    } 
                 }
+                update_parser(parser); // consume ')'
 
-                add_astchild(op,fun_args);
                 return op;
             } else {
                 expr = parse_lvalue(parser);
@@ -399,7 +389,7 @@ parse_term(parser_t *parser)
 astnode_t *
 parse_expr(parser_t *parser, int prec)
 {
-    astnode_t *term, *op, *expr1, *expr2;
+    astnode_t *term, *op, *op2, *expr1, *expr2;
 
     term = parse_term(parser);
 
@@ -407,21 +397,23 @@ parse_expr(parser_t *parser, int prec)
         case 1:
             if(is_assignop(parser->cur->type)) {
                 if(is_lvalue(term)) {
+                    op = init_astnode(_ASSIGN, parser->cur);
+
                     switch(parser->cur->type) {
                         case ASSIGN:
-                            op = init_astnode(_ASSIGN, parser->cur);
+                            op2 = NULL;
                             break;
                         case PLUSASSIGN:
-                            op = init_astnode(_ADD_ASSIGN, parser->cur);
+                            op2 = init_astnode(_ADD, parser->cur);
                             break;
                         case MINUSASSIGN:
-                            op = init_astnode(_SUB_ASSIGN, parser->cur);
+                            op2 = init_astnode(_SUB, parser->cur);
                             break;
                         case STARASSIGN:
-                            op = init_astnode(_MULT_ASSIGN, parser->cur);
+                            op2 = init_astnode(_MULT, parser->cur);
                             break;
                         case SLASHASSIGN:
-                            op = init_astnode(_DIV_ASSIGN, parser->cur);
+                            op2 = init_astnode(_DIV, parser->cur);
                             break;
                         default:
                             // impossible
@@ -431,8 +423,16 @@ parse_expr(parser_t *parser, int prec)
 
                     expr1 = parse_expr(parser, prec);
 
-                    add_astchild(op, term);
-                    add_astchild(op, expr1);
+                    if(op2 != NULL) {
+                        add_astchild(op2, term);
+                        add_astchild(op2, expr1);
+
+                        add_astchild(op, term);
+                        add_astchild(op, op2);
+                    } else {
+                        add_astchild(op, term);
+                        add_astchild(op, expr1);
+                    }
 
                     return op;
                 } else {
@@ -1309,11 +1309,14 @@ parse_funstatement(parser_t *parser)
 astnode_t *
 parse_funbody(parser_t *parser)
 {
-    astnode_t *fun_body;
+    astnode_t *fun_body, *statement;
     fun_body = init_astnode(_FUN_BODY, parser->cur);
 
     while(parser->cur->type != RBRACE) {
-        add_astchild(fun_body, parse_funstatement(parser));
+        statement = parse_funstatement(parser);
+        if(statement != NULL) {
+            add_astchild(fun_body, statement);
+        }
     }
 
     return fun_body;

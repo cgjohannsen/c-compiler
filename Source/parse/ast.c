@@ -21,6 +21,7 @@ init_astnode(asttype_t asttype, token_t *tok)
     node->is_const = false;
     node->is_struct = false;
     node->arr_dim = -1;
+    node->exprtype = __NONE;
 
     switch(asttype) {
         case _CHAR_LIT: 

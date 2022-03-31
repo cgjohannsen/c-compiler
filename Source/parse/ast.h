@@ -76,7 +76,8 @@ typedef enum exprtype {
     __INT,
     __REAL,
     __STRING,
-    __STRUCT
+    __STRUCT,
+    __NONE
 } exprtype_t;
 
 typedef union astval {

@@ -38,8 +38,8 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
                 "%s\n\t%s\n", filename, line_num, s, msg);
             break;
         case TYPE_ERR:
-            fprintf(stderr, "Type checking error in file %s line %d\n\t%s\n",
-                filename, line_num, msg);
+            fprintf(stderr, "Type checking error in file %s line %d\n",
+                filename, line_num);
             break;
         default:
         {

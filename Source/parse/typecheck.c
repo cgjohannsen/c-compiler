@@ -6,7 +6,6 @@
 #include "symtable.h"
 #include "typecheck.h"
 
-
 exprtype_t
 to_exprtype(char *type)
 {
@@ -135,6 +134,29 @@ print_exprtype(astnode_t *expr)
 /**
  *
  */
+char *
+str_exprtype(astnode_t *expr)
+{
+    switch(expr->exprtype) {
+        case __CHAR:
+            return expr->is_array ? "char[]" : "char" ;
+        case __INT:
+            return expr->is_array ? "int[]" : "int" ;
+        case __REAL:
+            return expr->is_array ? "float[]" : "float" ;
+        case __STRING:
+            return "char[]";
+        case __STRUCT:
+            return "struct";
+        default:
+            return "none";
+    }
+}
+
+
+/**
+ *
+ */
 void
 typecheck_expr(symtable_t *table, astnode_t *expr)
 {
@@ -161,17 +183,19 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs2);
 
             if(!is_numeric(lhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "First argument to ternary of invalid type.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tFirst argument %s of ternary not numeric type (%s)\n", 
+                    lhs->text, str_exprtype(lhs));
             }
 
             if(rhs->exprtype == rhs2->exprtype) {
                 expr->exprtype = rhs->exprtype;
-            } else if(widen(rhs->exprtype, rhs2->exprtype) != __NONE) {
+            } else if(widen(rhs->exprtype, rhs2->exprtype) != __NONE && !rhs->is_array && !rhs2->is_array) {
                 expr->exprtype = widen(rhs->exprtype, rhs2->exprtype);
             } else {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Second and third arguments to ternary operator of invalid types.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tArguments %s, %s of ternary of incomptaible types (%s, %s)\n", 
+                    rhs->text, rhs2->text, str_exprtype(rhs), str_exprtype(rhs2));
             }
 
             break;
@@ -180,15 +204,16 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs);
             
             if(lhs->is_const) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Attempting to change value of const variable.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tAttempting to change value of const variable (%s)\n", lhs->text);
             }
 
-            if(widen_to(rhs->exprtype, lhs->exprtype) != __NONE) {
+            if(widen_to(rhs->exprtype, lhs->exprtype) != __NONE && !lhs->is_array && !rhs->is_array) {
                 expr->exprtype = widen_to(rhs->exprtype, lhs->exprtype);
             } else {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Attempting to set variable to inconsistent type.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tAttempting to assign variable %s to incompatible type (%s, %s)\n", 
+                    lhs->text, str_exprtype(lhs), str_exprtype(rhs));
             }
 
             break;
@@ -197,39 +222,50 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _ARITH_NEG: // N -> N
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs->exprtype)) {
+            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
                 expr->exprtype = lhs->exprtype;
             } else {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for unary operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tOperand not of numeric type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             break;
         case _LOG_NEG: // N -> char
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs->exprtype)) {
+            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
                 expr->exprtype = __CHAR;
             } else {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for unary operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tOperand not of numeric type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             break;
         case _BIT_NEG: // I -> I
             typecheck_expr(table, lhs);
 
-            if(is_integral(lhs->exprtype)) {
+            if(is_integral(lhs->exprtype) && !lhs->is_array) {
                 expr->exprtype = lhs->exprtype;
             } else {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for unary operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tOperand not of integral type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             break;
         case _TYPE: // N -> type
             typecheck_expr(table, lhs);
-            expr->exprtype = to_exprtype(lhs->text);
+
+            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
+                expr->exprtype = __CHAR;
+            } else {
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tOperand not of numeric type for type cast (%s) (%s)\n", 
+                    expr->text, str_exprtype(lhs));
+            }
+
             break;
         case _EQ:
         case _NEQ:
@@ -243,13 +279,15 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs);
 
             if(!is_numeric(lhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for LHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             if(!is_numeric(rhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for RHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(rhs));
             }
 
             expr->exprtype = __CHAR;
@@ -263,13 +301,15 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs);
 
             if(!is_numeric(lhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for LHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tLHS not of numeric type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             if(!is_numeric(rhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for RHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tRHS not of numeric type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(rhs));
             }
 
             expr->exprtype = widen(lhs->exprtype, rhs->exprtype);
@@ -282,13 +322,15 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs);
 
             if(!is_integral(lhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for LHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(lhs));
             }
 
             if(!is_integral(rhs->exprtype)) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Invalid input type for RHS of operator.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
+                    expr->text, str_exprtype(rhs));
             }
 
             expr->exprtype = widen(lhs->exprtype, rhs->exprtype);
@@ -299,8 +341,9 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
 
             funsym = get_function(table, expr->text);
             if(funsym == NULL) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Function referenced before declaration.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\t 5\n");
+                exit(1);
             }
 
             astnode_t *param1;
@@ -310,23 +353,38 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             while(param1 != NULL && param2 != NULL) {
                 typecheck_expr(table, param1);
 
-                if(param1->exprtype != to_exprtype(param2->type->text)) {
-                    print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                        "Function parameter types mismatch.");
+                if(widen(param1->exprtype, to_exprtype(param2->type->text)) == __NONE) {
+                    print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                    fprintf(stderr, "\tParameter mismatch in call to %s.\n", expr->text);
+                    fprintf(stderr, "\tArgument types incompatible (%s, %s)\n", 
+                        str_exprtype(param1), str_exprtype(param2->var));
+                } else {
+                    param1->exprtype = widen(param1->exprtype, to_exprtype(param2->type->text));
                 }
 
                 param1 = param1->right;
                 param2 = param2->next;
             }
             if(param1 != NULL || param2 != NULL) {
-                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                    "Number of function parameters mismatch.");
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tParameter number mismatch in call to %s.\n", expr->text);
             }
 
             expr->exprtype = to_exprtype(funsym->ret_type->text);
 
             break;
         case _ARR_ACCESS:
+            typecheck_expr(table, lhs); // arr index
+            typecheck_expr(table, rhs); // arr variable
+
+            if(lhs->exprtype != __INT) {
+                print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                fprintf(stderr, "\tArray %s index not an integer (%s)\n", 
+                    rhs->text, str_exprtype(lhs));
+            }
+
+            expr->exprtype = rhs->exprtype;
+
             break;
         case _STRUCT_ACCESS:
             break;
@@ -337,8 +395,9 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             if(varsym == NULL) {
                 varsym = get_localvar(table, expr->text);
                 if(varsym == NULL) {
-                    print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", 
-                        "Variable referenced before declaration.");
+                    print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
+                    fprintf(stderr, "\t \n");
+                    exit(1);
                 }
             } 
 
@@ -378,8 +437,9 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
         case RETURN:
             typecheck_expr(table, statement->left);
             if(!is_sametype(statement->left, table->ret_type)) {
-                print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", 
-                    "Return type does not match function definition.");
+                print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
+                fprintf(stderr, "Return type does not match function definition (%s, %s)", 
+                    str_exprtype(statement->left), table->ret_type->text);
             }
             break;
         case IF:
@@ -515,8 +575,8 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl)
         sym = get_globalvar(table, var->text);
 
         if(sym != NULL) { // already declared
-            print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", 
-                "Global variable previously declared.");  
+            print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", "");
+            fprintf(stderr, "Global variable previously declared.\n");
         } else {
             add_globalvar(table, type, var);
 
@@ -525,12 +585,12 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl)
             fprintf(outfile, "\n");
         }
 
-        if(var->left != NULL) { // includes initialization
+        if(var->left != NULL && !var->is_array) { // includes initialization
             typecheck_expr(table, var->left);
 
             if(widen_to(var->left->exprtype, to_exprtype(type->text)) == __NONE) {
-                print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", 
-                    "Attempting to set variable to inconsistent type.");
+                print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", "");
+                fprintf(stderr, "Attempting to set variable to inconsistent type.\n");
             }
         }
 

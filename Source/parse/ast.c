@@ -176,5 +176,8 @@ is_lvalue(astnode_t *node)
         return false;
     }
 
+    if(node->type == _ARR_ACCESS) {
+        return is_lvalue(node->right);
+    } 
     return is_lvalue(node->left);
 }

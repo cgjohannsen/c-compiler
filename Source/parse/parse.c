@@ -293,7 +293,7 @@ parse_term(parser_t *parser)
             add_astchild(op, expr);
             return op;
         case LPAR:
-            if(is_typeorqualifier(parser->cur->type)) { // type cast
+            if(is_typeorqualifier(parser->next->type)) { // type cast
                 update_parser(parser);
                 op = parse_type(parser);
                 if(parser->cur->type == RPAR) {
@@ -1427,6 +1427,7 @@ parse_global(parser_t *parser)
                 update_parser(parser);
 
                 if(parser->cur->type == LBRAK) {
+                    var->is_array = true;
                     update_parser(parser);
                     if(parser->cur->type == INT_LIT) {
                         arr_dim = init_astnode(_ARR_DIM, parser->cur);

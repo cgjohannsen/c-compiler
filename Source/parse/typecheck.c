@@ -29,15 +29,17 @@ is_sametype(astnode_t *type1, astnode_t *type2)
 }
 
 bool
-is_numeric(exprtype_t type)
+is_numeric(astnode_t *type)
 {
-    return type == __CHAR || type == __INT || type == __REAL;
+    return (type->exprtype == __CHAR || type->exprtype == __INT || 
+        type->exprtype == __REAL) && !type->is_array;
 }
 
 bool
-is_integral(exprtype_t type)
+is_integral(astnode_t *type)
 {
-    return type == __CHAR || type == __INT;
+    return (type->exprtype == __CHAR || type->exprtype == __INT) &&
+        !type->is_array;
 }
 
 
@@ -182,7 +184,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, rhs);
             typecheck_expr(table, rhs2);
 
-            if(!is_numeric(lhs->exprtype)) {
+            if(!is_numeric(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tFirst argument %s of ternary not numeric type (%s)\n", 
                     lhs->text, str_exprtype(lhs));
@@ -222,7 +224,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _ARITH_NEG: // N -> N
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
+            if(is_numeric(lhs) && !lhs->is_array) {
                 expr->exprtype = lhs->exprtype;
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
@@ -234,7 +236,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _LOG_NEG: // N -> char
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
+            if(is_numeric(lhs) && !lhs->is_array) {
                 expr->exprtype = __CHAR;
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
@@ -246,7 +248,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _BIT_NEG: // I -> I
             typecheck_expr(table, lhs);
 
-            if(is_integral(lhs->exprtype) && !lhs->is_array) {
+            if(is_integral(lhs) && !lhs->is_array) {
                 expr->exprtype = lhs->exprtype;
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
@@ -258,7 +260,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _TYPE: // N -> type
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs->exprtype) && !lhs->is_array) {
+            if(is_numeric(lhs) && !lhs->is_array) {
                 expr->exprtype = __CHAR;
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
@@ -278,13 +280,13 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_numeric(lhs->exprtype)) {
+            if(!is_numeric(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
                     expr->text, str_exprtype(lhs));
             }
 
-            if(!is_numeric(rhs->exprtype)) {
+            if(!is_numeric(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
                     expr->text, str_exprtype(rhs));
@@ -300,13 +302,13 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_numeric(lhs->exprtype)) {
+            if(!is_numeric(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of numeric type for operator %s (%s)\n", 
                     expr->text, str_exprtype(lhs));
             }
 
-            if(!is_numeric(rhs->exprtype)) {
+            if(!is_numeric(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of numeric type for operator %s (%s)\n", 
                     expr->text, str_exprtype(rhs));
@@ -321,13 +323,13 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_integral(lhs->exprtype)) {
+            if(!is_integral(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
                     expr->text, str_exprtype(lhs));
             }
 
-            if(!is_integral(rhs->exprtype)) {
+            if(!is_integral(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
                     expr->text, str_exprtype(rhs));
@@ -342,7 +344,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             funsym = get_function(table, expr->text);
             if(funsym == NULL) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
-                fprintf(stderr, "\t 5\n");
+                fprintf(stderr, "\tFunction %s called before declaration.\n", expr->text);
                 exit(1);
             }
 
@@ -396,11 +398,12 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
                 varsym = get_localvar(table, expr->text);
                 if(varsym == NULL) {
                     print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
-                    fprintf(stderr, "\t \n");
+                    fprintf(stderr, "\tVariable %s referenced before declaration\n", expr->text);
                     exit(1);
                 }
             } 
 
+            expr->is_array = varsym->var->is_array;
             expr->is_const = varsym->type->is_const;
 
             expr->exprtype = to_exprtype(varsym->type->text);

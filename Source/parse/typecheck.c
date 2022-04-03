@@ -379,7 +379,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs); // arr index
             typecheck_expr(table, rhs); // arr variable
 
-            if(lhs->exprtype != __INT) {
+            if(widen_to(lhs->exprtype, __INT) == __NONE) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tArray %s index not an integer (%s)\n", 
                     rhs->text, str_exprtype(lhs));
@@ -398,7 +398,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
                 varsym = get_localvar(table, expr->text);
                 if(varsym == NULL) {
                     print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
-                    fprintf(stderr, "\tVariable %s referenced before declaration\n", expr->text);
+                    fprintf(stderr, "\tVariable %s referenced before declaration.\n", expr->text);
                     exit(1);
                 }
             } 

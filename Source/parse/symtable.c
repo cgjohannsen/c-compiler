@@ -136,12 +136,12 @@ add_globalvar(symtable_t *table, astnode_t *type, astnode_t *var)
     
     new = init_varsym(type, var);
 
-    if(table->local_vars == NULL) {
-        table->local_vars = new;
+    if(table->global_vars == NULL) {
+        table->global_vars = new;
         return true;
     }
 
-    cur = table->local_vars;
+    cur = table->global_vars;
     while(cur->next != NULL) {
         if(!strcmp(cur->name, var->text)) {
             // failed -- variable declaration already in table

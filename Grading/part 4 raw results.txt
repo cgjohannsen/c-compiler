@@ -1,0 +1,2795 @@
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+literals1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,6c2,6
+        | <     Line   4: expression has type const char
+        | <     Line   5: expression has type const char
+        | <     Line   6: expression has type const char
+        | <     Line   7: expression has type const char
+        | <     Line   8: expression has type const char
+        | ---
+        | > 	Line    4: expression has type char
+        | > 	Line    5: expression has type char
+        | > 	Line    6: expression has type char
+        | > 	Line    7: expression has type char
+        | > 	Line    8: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+literals2.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,5d1
+        | <     Line   4: expression has type int
+        | <     Line   5: expression has type int
+        | <     Line   6: expression has type int
+        | <     Line   7: expression has type int
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,5d1
+        | <     Line   4: expression has type const int
+        | <     Line   5: expression has type const int
+        | <     Line   6: expression has type const int
+        | <     Line   7: expression has type const int
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+literals3.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,6c2,6
+        | <     Line   4: expression has type const float
+        | <     Line   5: expression has type const float
+        | <     Line   6: expression has type const float
+        | <     Line   7: expression has type const float
+        | <     Line   8: expression has type const float
+        | ---
+        | > 	Line    4: expression has type float
+        | > 	Line    5: expression has type float
+        | > 	Line    6: expression has type float
+        | > 	Line    7: expression has type float
+        | > 	Line    8: expression has type float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+literals4.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,6c2,6
+        | <     Line   4: expression has type char[]
+        | <     Line   5: expression has type char[]
+        | <     Line   6: expression has type char[]
+        | <     Line   7: expression has type char[]
+        | <     Line   8: expression has type char[]
+        | ---
+        | > 	Line    4: expression has type 
+        | > 	Line    5: expression has type 
+        | > 	Line    6: expression has type 
+        | > 	Line    7: expression has type 
+        | > 	Line    8: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,6c2,6
+        | <     Line   4: expression has type const char[]
+        | <     Line   5: expression has type const char[]
+        | <     Line   6: expression has type const char[]
+        | <     Line   7: expression has type const char[]
+        | <     Line   8: expression has type const char[]
+        | ---
+        | > 	Line    4: expression has type 
+        | > 	Line    5: expression has type 
+        | > 	Line    6: expression has type 
+        | > 	Line    7: expression has type 
+        | > 	Line    8: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+idents1.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 8
+        | 	global float b duplicates global int b on line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 8
+        | 	Global variable 'b' duplicates global variable declared in
+        | 		file idents1.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents1.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+idents2.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents2.c line 21
+        | 	Variable 'x' has type void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents2.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents2.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file idents2.c line 16
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+idents3.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+idents4.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	parameter int a duplicates parameter int a on line 16
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	Parameter name already in use.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	Parameter name already in use.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	Parameter 'a' duplicates parameter declared in
+        | 		file idents4.c line 16
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	Parameter name already in use.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents4.c line 16
+        | 	Parameter name already in use.
+        ---------------------------------------------------------
+idents5.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 9c9
+        | <     Line  10: expression has type int[]
+        | ---
+        | > 	Line   10: expression has type int
+        | 11c11
+        | <     Line  12: expression has type char[]
+        | ---
+        | > 	Line   12: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+idents6.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	local int bad duplicates local int bad on line 23
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	Local variable previously declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	Local variable previously declared.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	Local variable 'bad' duplicates local variable declared in
+        | 		file idents6.c line 23
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	Local variable previously declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents6.c line 24
+        | 	Local variable previously declared.
+        ---------------------------------------------------------
+idents7.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 17
+        | 	Unknown variable 'B'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file idents7.c line 17
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 17
+        | 	Unknown identifier 'B'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file idents7.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file idents7.c line 17
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+idents8.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,49d0
+        | < Line   2: function void everything
+        | <     Line   2: parameter int a
+        | <     Line   4: local int b
+        | <     Line   5: local char c[17]
+        | <     Line   6: local float d
+        | <     Line   7: local int e
+        | <     Line   7: local int f[5]
+        | <     Line   7: local int g
+        | <     Line   9: expression has type int
+        | <     Line  10: expression has type int
+        | <     Line  11: expression has type char[]
+        | <     Line  12: expression has type float
+        | <     Line  13: expression has type int
+        | <     Line  14: expression has type int[]
+        | <     Line  15: expression has type int
+        | < Line  18: global float b
+        | < Line  18: global float a
+        | < Line  18: global float d
+        | < Line  20: function int still_good
+        | <     Line  20: parameter int a
+        | <     Line  20: parameter int b
+        | <     Line  20: parameter int c
+        | <     Line  20: parameter int e
+        | <     Line  20: parameter int f
+        | <     Line  20: parameter int g
+        | <     Line  22: local float h
+        | <     Line  22: local float i
+        | <     Line  22: local float j
+        | <     Line  23: local char k
+        | <     Line  25: expression has type int
+        | <     Line  26: expression has type int
+        | <     Line  27: expression has type int
+        | <     Line  28: expression has type float
+        | <     Line  29: expression has type int
+        | <     Line  30: expression has type int
+        | <     Line  31: expression has type int
+        | <     Line  32: expression has type float
+        | <     Line  33: expression has type float
+        | <     Line  34: expression has type float
+        | <     Line  35: expression has type char
+        | < Line  38: global int i
+        | < Line  38: global int j
+        | < Line  40: function void thing
+        | <     Line  40: parameter char a
+        | <     Line  42: expression has type char
+        | <     Line  43: expression has type float
+        | <     Line  44: expression has type float
+        | <     Line  45: expression has type int
+        | <     Line  46: expression has type int
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Type checking error in file idents8.c line 20
+        | 	Parameter name already in use.
+        | Type checking error in file idents8.c line 20
+        | 	Parameter name already in use.
+        | Type checking error in file idents8.c line 43
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+idents9.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 5c5
+        | <     Line   5: expression has type float[]
+        | ---
+        | > 	Line    5: expression has type float
+        | 10c10
+        | <     Line  12: expression has type char[]
+        | ---
+        | > 	Line   12: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+fcall1.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 8c8
+        | <     Line  19: expression has type void
+        | ---
+        | > 	Line   19: expression has type 
+        | 11c11
+        | <     Line  22: expression has type void
+        | ---
+        | > 	Line   22: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+fcall2.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Parameter mismatch in call to foo(int)
+        | 	Expected 1, received 0 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Parameter mismatch in call to int foo(int)
+        | 	Expected 1, received 0 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall2.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+fcall3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall3.c line 26
+        | 	Parameter mismatch in call to func1(int)
+        | 	Passed parameter #1 has type int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall3.c line 26
+        | 	Parameter mismatch in call to int func1(int)
+        | 	Passed parameter #1 has type int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+fcall4.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall4.c line 5
+        | 	Unknown function 'putc'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall4.c line 5
+        | 	Function referenced before declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall4.c line 5
+        | 	Function referenced before declaration.
+        ---------------------------------------------------------
+fcall5.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2c2
+        | <     Line  12: expression has type void
+        | ---
+        | > 	Line   12: expression has type 
+        | 5c5
+        | <     Line  16: expression has type void
+        | ---
+        | > 	Line   16: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+fcall6.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Parameter mismatch in call to thing(char, int, float)
+        | 	Expected 3, received 2 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Parameter mismatch in call to int thing(char, int, float)
+        | 	Expected 3, received 2 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall6.c line 27
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+fcall7.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Parameter mismatch in call to strange(int)
+        | 	Passed parameter #1 has type void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Parameter mismatch in call to void strange(int)
+        | 	Passed parameter #1 has type void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall7.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+fcall8.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Parameter mismatch in call to test(int, int, int, int)
+        | 	Expected 4, received 7 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Parameter mismatch in call to void test(int, int, int, int)
+        | 	Expected 4, received 7 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall8.c line 10
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+fcall9.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Parameter mismatch in call to test(int, int, int, int, int, int)
+        | 	Expected 6, received 3 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Parameter mismatch in call to void test(int, int, int, int, int, int)
+        | 	Expected 6, received 3 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file fcall9.c line 15
+        | 	Number of function parameters mismatch.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+return1.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return1.c line 24
+        | 	Return type mismatch: was void, expected char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+return2.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return2.c line 25
+        | 	Return type mismatch: was int, expected void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return2.c line 25
+        | 	Return type mismatch: was const int, expected void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+return3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return3.c line 27
+        | 	Return type mismatch: was float, expected int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return3.c line 27
+        | 	Return type mismatch: was const float, expected int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+return4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return4.c line 28
+        | 	Return type mismatch: was char[], expected float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file return4.c line 28
+        | 	Return type mismatch: was const char[], expected float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+proto1.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	function other_function prototype conflicts with earlier one on line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	Function return type does not match previous declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	Function return type does not match previous declaration.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	Function int other_function(float)
+        | 	conflicts with earlier prototype
+        | 	float other_function(float)
+        | 	defined in file proto1.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	Function return type does not match previous declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto1.c line 14
+        | 	Function return type does not match previous declaration.
+        ---------------------------------------------------------
+proto2.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	function thingy prototype conflicts with earlier one on line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	Number of function parameters does not match previous declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	Number of function parameters does not match previous declaration.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	Prototype int thingy(int, int, int)
+        | 	conflicts with earlier prototype
+        | 	int thingy(int, int)
+        | 	defined in file proto2.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	Number of function parameters does not match previous declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto2.c line 6
+        | 	Number of function parameters does not match previous declaration.
+        ---------------------------------------------------------
+proto3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto3.c line 4
+        | 	function print prototype conflicts with earlier one on line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto3.c line 4
+        | 	Function void print(float)
+        | 	conflicts with earlier prototype
+        | 	void print(int)
+        | 	defined in file proto3.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+proto4.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	function myfunc defined already on line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	Function already defined.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	Function already defined.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	Function 'myfunc' already defined in file proto4.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	Function already defined.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file proto4.c line 12
+        | 	Function already defined.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+unary1.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	operand for - should be numeric type, was void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	No match for unary operation - void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file unary1.c line 20
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+unary2.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+unary3.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	operand for ! should be numeric type, was void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	No match for unary operation ! void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file unary3.c line 4
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+unary4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary4.c line 6
+        | 	operand for ~ should be integer type, was int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file unary4.c line 6
+        | 	No match for unary operation ~ int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+cast1.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,10d0
+        | < Line   2: function void func
+        | <     Line   4: expression has type int
+        | <     Line   5: expression has type int
+        | <     Line   6: expression has type int
+        | <     Line   8: expression has type char
+        | <     Line   9: expression has type char
+        | <     Line  10: expression has type char
+        | <     Line  12: expression has type float
+        | <     Line  13: expression has type float
+        | <     Line  14: expression has type float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file cast1.c line 4 near text int
+        | 	Expected literal.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,10d0
+        | < Line   2: function void func
+        | <     Line   4: expression has type const int
+        | <     Line   5: expression has type const int
+        | <     Line   6: expression has type const int
+        | <     Line   8: expression has type const char
+        | <     Line   9: expression has type const char
+        | <     Line  10: expression has type const char
+        | <     Line  12: expression has type const float
+        | <     Line  13: expression has type const float
+        | <     Line  14: expression has type const float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file cast1.c line 4 near text int
+        | 	Expected literal.
+        ---------------------------------------------------------
+cast2.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,13d0
+        | < Line   2: global float a
+        | < Line   3: global int b
+        | < Line   4: global char c
+        | < Line   6: function void func
+        | <     Line   8: expression has type char
+        | <     Line   9: expression has type char
+        | <     Line  10: expression has type char
+        | <     Line  12: expression has type int
+        | <     Line  13: expression has type int
+        | <     Line  14: expression has type int
+        | <     Line  16: expression has type float
+        | <     Line  17: expression has type float
+        | <     Line  18: expression has type float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file cast2.c line 8 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+cast3.c in mode 4
+    Basic Implementation Comparison: [1;33mFirst error same line[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file cast3.c line 6
+        | 	Can't cast from int[] to char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file cast3.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file cast3.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;33mFirst error same line[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file cast3.c line 6
+        | 	Cannot cast expression of type int[] to char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file cast3.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file cast3.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+cast4.c in mode 4
+    Basic Implementation Comparison: [1;33mFirst error same line[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file cast4.c line 6
+        | 	Can't cast from void to char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file cast4.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file cast4.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;33mFirst error same line[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file cast4.c line 6
+        | 	Cannot cast expression of type void to char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file cast4.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file cast4.c line 6 near text char
+        | 	Expected literal.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+arith1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 5,9c5,9
+        | <     Line   8: expression has type const int
+        | <     Line   9: expression has type const int
+        | <     Line  10: expression has type const int
+        | <     Line  11: expression has type const int
+        | <     Line  12: expression has type const int
+        | ---
+        | > 	Line    8: expression has type int
+        | > 	Line    9: expression has type int
+        | > 	Line   10: expression has type int
+        | > 	Line   11: expression has type int
+        | > 	Line   12: expression has type int
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+arith2.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+arith3.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+arith4.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	Invalid operand types int + void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	Invalid input type for RHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith4.c line 10
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 11
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 12
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 13
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	No match for binary operation const int + void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	Invalid input type for RHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file arith4.c line 9
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith4.c line 10
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 11
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 12
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith4.c line 13
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+arith5.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith5.c line 8
+        | 	Invalid operand types int[] + int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith5.c line 8
+        | 	No match for binary operation int[] + int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+arith6.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	Invalid operand types char[] + char[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith6.c line 7
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith6.c line 7
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith6.c line 8
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	No match for binary operation const char[] + const char[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith6.c line 6
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith6.c line 7
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file arith6.c line 7
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file arith6.c line 8
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+logic1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+logic2.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+logic3.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+logic4.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,25c2,25
+        | <     Line   4: expression has type const char
+        | <     Line   5: expression has type const char
+        | <     Line   6: expression has type const char
+        | <     Line   7: expression has type const char
+        | <     Line   8: expression has type const char
+        | <     Line   9: expression has type const char
+        | <     Line  10: expression has type const char
+        | <     Line  11: expression has type const char
+        | <     Line  13: expression has type const char
+        | <     Line  14: expression has type const char
+        | <     Line  15: expression has type const char
+        | <     Line  16: expression has type const char
+        | <     Line  17: expression has type const char
+        | <     Line  18: expression has type const char
+        | <     Line  19: expression has type const char
+        | <     Line  20: expression has type const char
+        | <     Line  22: expression has type const char
+        | <     Line  23: expression has type const char
+        | <     Line  24: expression has type const char
+        | <     Line  25: expression has type const char
+        | <     Line  26: expression has type const char
+        | <     Line  27: expression has type const char
+        | <     Line  28: expression has type const char
+        | <     Line  29: expression has type const char
+        | ---
+        | > 	Line    4: expression has type char
+        | > 	Line    5: expression has type char
+        | > 	Line    6: expression has type char
+        | > 	Line    7: expression has type char
+        | > 	Line    8: expression has type char
+        | > 	Line    9: expression has type char
+        | > 	Line   10: expression has type char
+        | > 	Line   11: expression has type char
+        | > 	Line   13: expression has type char
+        | > 	Line   14: expression has type char
+        | > 	Line   15: expression has type char
+        | > 	Line   16: expression has type char
+        | > 	Line   17: expression has type char
+        | > 	Line   18: expression has type char
+        | > 	Line   19: expression has type char
+        | > 	Line   20: expression has type char
+        | > 	Line   22: expression has type char
+        | > 	Line   23: expression has type char
+        | > 	Line   24: expression has type char
+        | > 	Line   25: expression has type char
+        | > 	Line   26: expression has type char
+        | > 	Line   27: expression has type char
+        | > 	Line   28: expression has type char
+        | > 	Line   29: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+logic5.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	Invalid operand types void == void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file logic5.c line 8
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file logic5.c line 8
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file logic5.c line 9
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	No match for binary operation void == void
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file logic5.c line 7
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file logic5.c line 8
+        | 	Invalid input type for LHS of operator.
+        | Type checking error in file logic5.c line 8
+        | 	Invalid input type for RHS of operator.
+        | Type checking error in file logic5.c line 9
+        | 	Invalid input type for LHS of operator.
+        ---------------------------------------------------------
+logic6.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 8
+        | 	Invalid operand types float[] == float[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 8
+        | 	No match for binary operation float[] == float[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file logic6.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+assign1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+assign2.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+assign3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file assign3.c line 9
+        | 	Invalid assignment: int[] = int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file assign3.c line 9
+        | 	Assignment mismatch int[] = int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+assign4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file assign4.c line 5
+        | 	Invalid assignment: int[] = int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file assign4.c line 5
+        | 	Assignment mismatch int[] = const int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+inc1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+inc2.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,7d0
+        | < Line   4: function void tests
+        | <     Line   6: local int a
+        | <     Line   6: local int b
+        | <     Line   8: expression has type char
+        | <     Line   9: expression has type char
+        | <     Line  10: expression has type char
+        | <     Line  11: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file inc2.c line 8 near text ==
+        | 	Expected ';'
+        ---------------------------------------------------------
+inc3.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 8
+        | 	Operator ++ needs numeric operand; type was int[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 8
+        | 	No match for int[] ++
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file inc3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+inc4.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+array1.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1c1
+        | < Line   2: global int A[50]
+        | ---
+        | > Line    2: global int A
+        | 3,6c3,6
+        | <     Line   6: expression has type int[]
+        | <     Line   7: expression has type int
+        | <     Line   8: expression has type int
+        | <     Line   9: expression has type int
+        | ---
+        | > 	Line    6: expression has type int
+        | > 	Line    7: expression has type 
+        | > 	Line    8: expression has type 
+        | > 	Line    9: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Type checking error in file array1.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+array2.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1c1
+        | < Line   2: global float X[50]
+        | ---
+        | > Line    2: global float X
+        | 4,9c4,9
+        | <     Line   6: expression has type float[]
+        | <     Line   7: expression has type float
+        | <     Line   8: expression has type float
+        | <     Line   9: expression has type float
+        | <     Line  10: expression has type float
+        | <     Line  11: expression has type float
+        | ---
+        | > 	Line    6: expression has type float
+        | > 	Line    7: expression has type 
+        | > 	Line    8: expression has type 
+        | > 	Line    9: expression has type 
+        | > 	Line   10: expression has type 
+        | > 	Line   11: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Type checking error in file array2.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+array3.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file array3.c line 10
+        | 	Array index should be integer, was float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file array3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file array3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+array4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file array4.c line 8
+        | 	Variable 'A' is not an array
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+ternary1.c in mode 4
+    Basic Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+ternary2.c in mode 4
+    Basic Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 5,6c5,6
+        | <     Line  10: expression has type int[]
+        | <     Line  11: expression has type void
+        | ---
+        | > 	Line   10: expression has type int
+        | > 	Line   11: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+ternary3.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 7
+        | 	Invalid ternary operands int[] ? int : int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 7
+        | 	No match for ternary operation int[] ? int : int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file ternary3.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+ternary4.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 8
+        | 	Mismatched ternary operands char ? int[] : float[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file ternary4.c line 3
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 8
+        | 	No match for ternary operation char ? int[] : float[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file ternary4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file ternary4.c line 3
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+xc_widen1.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen1.c line 4
+        | 	Invalid assignment: int = char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_widen2.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen2.c line 6
+        | 	Invalid assignment: float = int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_widen3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen3.c line 4
+        | 	Mismatched operand types int + char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,4c2,4
+        | <     Line   4: expression has type const int
+        | <     Line   5: expression has type const float
+        | <     Line   6: expression has type const float
+        | ---
+        | > 	Line    4: expression has type int
+        | > 	Line    5: expression has type float
+        | > 	Line    6: expression has type float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_widen4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen4.c line 4
+        | 	Mismatched operand types int + float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_widen5.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen5.c line 7
+        | 	Array index should be integer, was char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 3,5c3,5
+        | <     Line   5: expression has type int[]
+        | <     Line   6: expression has type int
+        | <     Line   7: expression has type int
+        | ---
+        | > 	Line    5: expression has type int
+        | > 	Line    6: expression has type 
+        | > 	Line    7: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_widen6.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen6.c line 4
+        | 	Return type mismatch: was char, expected int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1a2
+        | > 	Line    4: expression has type 
+        | 2a4
+        | > 	Line    9: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_widen7.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen7.c line 7
+        | 	Parameter mismatch in call to foo(int)
+        | 	Passed parameter #1 has type char
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen7.c line 7
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen7.c line 7
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widen7.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widen7.c line 11
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,6c2,6
+        | <     Line   7: expression has type void
+        | <     Line   8: expression has type void
+        | <     Line  10: expression has type void
+        | <     Line  11: expression has type void
+        | <     Line  12: expression has type void
+        | ---
+        | > 	Line    7: expression has type 
+        | > 	Line    8: expression has type 
+        | > 	Line   10: expression has type 
+        | > 	Line   11: expression has type 
+        | > 	Line   12: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen7.c line 7
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widen7.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widen7.c line 11
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+xc_widen8.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen8.c line 5
+        | 	Mismatched operand types char != int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_widen9.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen9.c line 10
+        | 	Parameter mismatch in call to nope(int[])
+        | 	Passed parameter #1 has type char[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_widen9.c line 11 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file xc_widen9.c line 11 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widen9.c line 10
+        | 	Parameter mismatch in call to void nope(int[])
+        | 	Passed parameter #1 has type char[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_widen9.c line 11 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file xc_widen9.c line 11 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+xc_widenA.c in mode 4
+    Basic Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 9
+        | 	Parameter mismatch in call to crust(int, float)
+        | 	Passed parameter #2 has type int
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 9
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 9
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 12
+        | 	Number of function parameters mismatch.
+        | Type checking error in file xc_widenA.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 12
+        | 	Parameter mismatch in call to char foo()
+        | 	Expected 0, received 1 parameters
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 9
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_widenA.c line 9
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 10
+        | 	Function parameter types mismatch.
+        | Type checking error in file xc_widenA.c line 12
+        | 	Number of function parameters mismatch.
+        | Type checking error in file xc_widenA.c line 14
+        | 	Function parameter types mismatch.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+xc_init1.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init1.c line 2 near text =
+        | 	Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_init2.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init2.c line 4 near text =
+        | 	Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_init3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init3.c line 6 near text =
+        | 	Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_init4.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init4.c line 2 near text =
+        | 	Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init4.c line 8
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init4.c line 8
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init4.c line 8
+        | 	Initialization for 'z' has wrong type: float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init4.c line 8
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init4.c line 8
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+xc_init5.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_init5.c line 6 near text =
+        | 	Expected ',' or ';'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init5.c line 9
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init5.c line 9
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init5.c line 9
+        | 	Initialization for 'A' has wrong type: const float
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init5.c line 9
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_init5.c line 9
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+xc_const1.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const1.c line 2 near text const
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const1.c line 6
+        | 	Attempting to change value of const variable.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const1.c line 6
+        | 	Attempting to change value of const variable.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const1.c line 6
+        | 	Cannot assign to const variable 'pi'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const1.c line 6
+        | 	Attempting to change value of const variable.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const1.c line 6
+        | 	Attempting to change value of const variable.
+        ---------------------------------------------------------
+xc_const2.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const2.c line 2 near text const
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const2.c line 20
+        | 	Cannot modify const variable 'i'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_const3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const3.c line 2 near text const
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 4,5c4
+        | <     Line   4: expression has type const int
+        | <     Line   5: expression has type const int
+        | ---
+        | > 	Line    5: expression has type int
+        | 8,9c7,8
+        | <     Line   8: expression has type const int
+        | <     Line   9: expression has type const char
+        | ---
+        | > 	Line    8: expression has type int
+        | > 	Line    9: expression has type char
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_const4.c in mode 4
+    Basic Implementation Comparison: [1;33mFirst error same line[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const4.c line 2 near text const
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file xc_const4.c line 6
+        | 	Invalid input type for unary operator.
+        | Type checking error in file xc_const4.c line 6
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const4.c line 6
+        | 	Cannot modify const item A[]
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const4.c line 2
+        | 	Attempting to set variable to inconsistent type.
+        | Type checking error in file xc_const4.c line 6
+        | 	Invalid input type for unary operator.
+        | Type checking error in file xc_const4.c line 6
+        | 	Invalid input type for unary operator.
+        ---------------------------------------------------------
+xc_const5.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_const5.c line 2 near text const
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const5.c line 17
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_const5.c line 17
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,10d0
+        | < Line   2: global const float pi
+        | < Line   4: function float radians
+        | <     Line   4: parameter float degrees
+        | < Line   9: function float pi_f
+        | < Line  14: function void tests
+        | <     Line  16: local float x
+        | <     Line  17: expression has type float
+        | <     Line  18: expression has type float
+        | <     Line  19: expression has type float
+        | <     Line  21: expression has type const float
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Type checking error in file xc_const5.c line 17
+        | 	Variable referenced before declaration.
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+xc_struct1.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct1.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+xc_struct2.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct2.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct2.c line 12
+        | 	Global struct previously declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct2.c line 12
+        | 	Global struct previously declared.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct2.c line 12
+        | 	Struct 'basic' already declared in file xc_struct2.c line 2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct2.c line 12
+        | 	Global struct previously declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct2.c line 12
+        | 	Global struct previously declared.
+        ---------------------------------------------------------
+xc_struct3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct3.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 6a7
+        | > 	Line   10: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct4.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct4.c line 4 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 15,17c15,17
+        | <     Line  25: expression has type struct pair
+        | <     Line  26: expression has type struct window
+        | <     Line  27: expression has type struct screen
+        | ---
+        | > 	Line   25: expression has type 
+        | > 	Line   26: expression has type 
+        | > 	Line   27: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct5.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct5.c line 4 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 18,20c18,20
+        | <     Line  25: expression has type struct pair
+        | <     Line  26: expression has type struct window
+        | <     Line  27: expression has type struct screen
+        | ---
+        | > 	Line   25: expression has type 
+        | > 	Line   26: expression has type 
+        | > 	Line   27: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct6.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct6.c line 4 near text struct
+        | 	Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 10c10
+        | <     Line  15: expression has type struct local
+        | ---
+        | > 	Line   15: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct7.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct7.c line 4 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct7.c line 12
+        | 	Struct type never declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct7.c line 12
+        | 	Struct type never declared.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;36mFirst error line+text[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct7.c line 12
+        | 	Unknown struct 'missing'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct7.c line 12
+        | 	Struct type never declared.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct7.c line 12
+        | 	Struct type never declared.
+        ---------------------------------------------------------
+xc_struct8.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct8.c line 4 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct8.c line 11
+        | 	Unknown struct 'missing'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_struct9.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_struct9.c line 4 near text struct
+        | 	Expected identifier (within expression)
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_struct9.c line 14
+        | 	Unknown struct 'local'
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_structA.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_structA.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 6a7
+        | > 	Line    9: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.1
+  | 	Date: 2-9-2022
+ 
+xc_member1.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member1.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member1.c line 20 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file xc_member1.c line 20 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,13d0
+        | < Line   2: global struct stack
+        | <     Line   3: member int data[100]
+        | <     Line   4: member int top
+        | < Line   7: global struct stack S
+        | < Line   9: function void test
+        | <     Line  11: expression has type struct stack
+        | <     Line  12: expression has type int
+        | <     Line  13: expression has type int[]
+        | <     Line  14: expression has type int
+        | < Line  17: function void push
+        | <     Line  17: parameter int x
+        | <     Line  20: expression has type int
+        | < Line  23: function int pop
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Parser error in file xc_member1.c line 20 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+xc_member2.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member2.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_member2.c line 24
+        | 	Unknown member 'z' in struct thing2
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_member3.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member3.c line 4 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 15,34c15,34
+        | <     Line  25: expression has type struct pair
+        | <     Line  27: expression has type int
+        | <     Line  28: expression has type int
+        | <     Line  30: expression has type struct window
+        | <     Line  31: expression has type struct pair
+        | <     Line  32: expression has type int
+        | <     Line  33: expression has type int
+        | <     Line  34: expression has type struct pair
+        | <     Line  35: expression has type int
+        | <     Line  36: expression has type int
+        | <     Line  37: expression has type char[]
+        | <     Line  38: expression has type char
+        | <     Line  40: expression has type struct screen
+        | <     Line  41: expression has type int
+        | <     Line  42: expression has type struct window[]
+        | <     Line  43: expression has type struct window
+        | <     Line  44: expression has type struct pair
+        | <     Line  45: expression has type int
+        | <     Line  46: expression has type char[]
+        | <     Line  47: expression has type char
+        | ---
+        | > 	Line   25: expression has type 
+        | > 	Line   27: expression has type 
+        | > 	Line   28: expression has type 
+        | > 	Line   30: expression has type 
+        | > 	Line   31: expression has type 
+        | > 	Line   32: expression has type 
+        | > 	Line   33: expression has type 
+        | > 	Line   34: expression has type 
+        | > 	Line   35: expression has type 
+        | > 	Line   36: expression has type 
+        | > 	Line   37: expression has type 
+        | > 	Line   38: expression has type 
+        | > 	Line   40: expression has type 
+        | > 	Line   41: expression has type 
+        | > 	Line   42: expression has type 
+        | > 	Line   43: expression has type 
+        | > 	Line   44: expression has type 
+        | > 	Line   45: expression has type 
+        | > 	Line   46: expression has type 
+        | > 	Line   47: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+xc_member4.c in mode 4
+    Basic Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 18 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 18 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Type checking error in file xc_member4.c line 36
+        | 	Unknown member 'what' in struct pair
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 18 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Parser error in file xc_member4.c line 18 near text =
+        | 	Expected l-value on lhs of assignment operator.
+        ---------------------------------------------------------
+xc_member5.c in mode 4
+    Basic Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Parser error in file xc_member5.c line 2 near text struct
+        | 	Expected type
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+    Extra Credit Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 34,55c34,55
+        | <     Line  53: expression has type struct program
+        | <     Line  54: expression has type int
+        | <     Line  55: expression has type struct module[]
+        | <     Line  56: expression has type struct module
+        | <     Line  57: expression has type struct function[]
+        | <     Line  58: expression has type struct function
+        | <     Line  59: expression has type char[]
+        | <     Line  60: expression has type struct stmt[]
+        | <     Line  61: expression has type struct stmt
+        | <     Line  62: expression has type struct location
+        | <     Line  63: expression has type char[]
+        | <     Line  64: expression has type char
+        | <     Line  66: expression has type struct formula
+        | <     Line  67: expression has type int
+        | <     Line  68: expression has type struct node[]
+        | <     Line  69: expression has type struct node
+        | <     Line  70: expression has type char
+        | <     Line  71: expression has type struct rational
+        | <     Line  72: expression has type struct bigint
+        | <     Line  73: expression has type int
+        | <     Line  74: expression has type char[]
+        | <     Line  75: expression has type char
+        | ---
+        | > 	Line   53: expression has type 
+        | > 	Line   54: expression has type 
+        | > 	Line   55: expression has type 
+        | > 	Line   56: expression has type 
+        | > 	Line   57: expression has type 
+        | > 	Line   58: expression has type 
+        | > 	Line   59: expression has type 
+        | > 	Line   60: expression has type 
+        | > 	Line   61: expression has type 
+        | > 	Line   62: expression has type 
+        | > 	Line   63: expression has type 
+        | > 	Line   64: expression has type 
+        | > 	Line   66: expression has type 
+        | > 	Line   67: expression has type 
+        | > 	Line   68: expression has type 
+        | > 	Line   69: expression has type 
+        | > 	Line   70: expression has type 
+        | > 	Line   71: expression has type 
+        | > 	Line   72: expression has type 
+        | > 	Line   73: expression has type 
+        | > 	Line   74: expression has type 
+        | > 	Line   75: expression has type 
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------

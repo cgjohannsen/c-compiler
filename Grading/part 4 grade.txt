@@ -1,0 +1,228 @@
+
+Run as
+  ../Check_4.sh "run compiler" [options] files
+
+Type checking errors should be descriptive, and generally line numbers
+should match or at least be close.
+
+
+
+	4/4 README.txt
+		How to build the compiler and documentation. Updated to show which part 3
+		features are implemented.
+
+
+	12/12 developers.pdf
+		New section for part 4, that explains the purpose of each source file, the main data
+		structures used (or how they were updated), and gives a high-level overview of how
+		the various features are implemented.
+
+
+	4/4 Building
+		How easy was it for the graders to build your compiler and documentation? For
+		full credit, simply running â€œmakeâ€ should build both the documentation and the
+		compiler executable, and running â€œmake cleanâ€ should remove all generated files.
+
+	4/4 Works with script
+		Does the -o switch work? Is your output formatted correctly?
+
+	10/10 Still works in modes 0, 1, and 3
+
+
+
+
+Type checking test files
+  2.8/4   Literals
+      literals?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  7.2/9   Identifiers
+      idents?.c
+
+	0 pass = 0.0 points
+	1 pass = 3.6 points
+	2 pass = 4.5 points
+	3 pass = 5.4 points
+	4 pass = 6.3 points
+	5 pass = 7.2 points
+	6 pass = 7.92 points
+	7 pass = 8.46 points
+	8 pass = 8.82 points
+	9 pass = 9.0 points
+
+  8.82/9   Function calls
+      fcall?.c
+
+	0 pass = 0.0 points
+	1 pass = 3.6 points
+	2 pass = 4.5 points
+	3 pass = 5.4 points
+	4 pass = 6.3 points
+	5 pass = 7.2 points
+	6 pass = 7.92 points
+	7 pass = 8.46 points
+	8 pass = 8.82 points
+	9 pass = 9.0 points
+
+  0/4   Function returns
+      return?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  3.6/4   Detects duplicate or mismatched function prototypes
+      proto?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  3.6/4   Unary operators
+      unary?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  2.8/4   Casts
+      cast?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  5.76/6   Binary operators: arithmetic
+      arith?.c
+
+	0 pass = 0 points
+	1 pass = 2.4 points
+	2 pass = 3.6 points
+	3 pass = 4.56 points
+	4 pass = 5.28 points
+	5 pass = 5.76 points
+	6 pass = 6.0 points
+
+  6/6   Binary operators: comparison and logic
+      logic?.c
+
+	0 pass = 0 points
+	1 pass = 2.4 points
+	2 pass = 3.6 points
+	3 pass = 4.56 points
+	4 pass = 5.28 points
+	5 pass = 5.76 points
+	6 pass = 6.0 points
+
+  2.8/4   Assignment and update operators
+      assign?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  1.6/4   Increment and decrement
+      inc?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  2.8/4   Array indexing
+      array?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+  1.6/4   Ternary operator
+      ternary?.c
+
+	0 pass = 0.0 points
+	1 pass = 1.6 points
+	2 pass = 2.8 points
+	3 pass = 3.6 points
+	4 pass = 4.0 points
+
+
+Extra credit
+
+  4.4/5   Widening
+      xc_widen?.c  (10 files)
+
+	0 pass = 0.0 points
+	1 pass = 2.0 points
+	2 pass = 2.4 points
+	3 pass = 2.8 points
+	4 pass = 3.2 points
+	5 pass = 3.6 points
+	6 pass = 4.0 points
+	7 pass = 4.4 points
+	8 pass = 4.7 points
+	9 pass = 4.9 points
+	10 pass = 5.0 points
+
+
+  5/5   Initializations
+      xc_init?.c
+
+	0 pass = 0.0 points
+	1 pass = 2.0 points
+	2 pass = 3.2 points
+	3 pass = 4.1 points
+	4 pass = 4.7 points
+	5 pass = 5.0 points
+
+  2.0/5   Constants
+      xc_const?.c
+
+	0 pass = 0.0 points
+	1 pass = 2.0 points
+	2 pass = 3.2 points
+	3 pass = 4.1 points
+	4 pass = 4.7 points
+	5 pass = 5.0 points
+
+ 7.2/10   User-defined structs
+      xc_struct?.c
+
+	0 pass = 0.0 points
+	1 pass = 4.0 points
+	2 pass = 4.8 points
+	3 pass = 5.6 points
+	4 pass = 6.4 points
+	5 pass = 7.2 points
+	6 pass = 8.0 points
+	7 pass = 8.8 points
+	8 pass = 9.4 points
+	9 pass = 9.8 points
+	10 pass = 10.0 points
+
+  0/5   Struct member selection
+      xc_member?.c
+
+	0 pass = 0.0 points
+	1 pass = 2.0 points
+	2 pass = 3.2 points
+	3 pass = 4.1 points
+	4 pass = 4.7 points
+	5 pass = 5.0 points

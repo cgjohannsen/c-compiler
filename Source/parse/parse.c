@@ -255,7 +255,7 @@ parse_lvalue(parser_t *parser)
         }
     } else {
         print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
-            0, parser->cur->text, "Expected identifier.");
+            0, parser->cur->text, "Expected identifier");
         parser->status = 0;
         exit(1);
     }
@@ -311,7 +311,7 @@ parse_term(parser_t *parser)
                 } else {
                     print_msg(PARSER_ERR, parser->lex->filename, 
                         parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected ')'.");
+                        "Expected ')'");
                     parser->status = 0;
                     exit(1);
                 }
@@ -323,7 +323,7 @@ parse_term(parser_t *parser)
                     return expr;
                 } else {
                     print_msg(PARSER_ERR, parser->lex->filename, 
-                       parser->cur->line_num,0,parser->cur->text,"Expected ')'.");
+                       parser->cur->line_num,0,parser->cur->text,"Expected ')'");
                     parser->status = 0;
                     exit(1);
                 }
@@ -335,26 +335,46 @@ parse_term(parser_t *parser)
                 update_parser(parser);
 
                 astnode_t *arg;
-                while(parser->cur->type != RPAR) {
+                if(parser->cur->type != RPAR) { // non-empty args list
                     arg = parse_expr(parser, 1);
                     add_astchild(op, arg);
-                    if(parser->cur->type == COMMA) {
+
+                    while(parser->cur->type == COMMA) {
+                        if(parser->next->type == RPAR) {
+                            print_msg(PARSER_ERR, parser->lex->filename, 
+                                parser->cur->line_num,0,parser->cur->text,
+                                "Expected expression in function call");
+                            parser->status = 0;
+                            exit(1);
+                        }
                         update_parser(parser);
-                    } 
+                        arg = parse_expr(parser, 1);
+                        add_astchild(op, arg);
+                    }
                 }
+
+                if(parser->cur->type != RPAR) {
+                    print_msg(PARSER_ERR, parser->lex->filename, 
+                       parser->cur->line_num,0,parser->cur->text,"Expected ')'");
+                    parser->status = 0;
+                    exit(1);
+                }
+
                 update_parser(parser); // consume ')'
 
                 return op;
-            } else {
+            } else { // l-value
                 expr = parse_lvalue(parser);
-                
+
                 if(parser->cur->type == INCR) {
                     op = init_astnode(_INCR, parser->cur);
                     add_astchild(op, expr);
+                    update_parser(parser);
                     return op;
                 } else if(parser->cur->type == DECR) {
                     op = init_astnode(_DECR, parser->cur);
                     add_astchild(op, expr);
+                    update_parser(parser);
                     return op;
                 } else {
                     return expr;
@@ -365,7 +385,7 @@ parse_term(parser_t *parser)
                 return parse_literal(parser);
             } else {
                 print_msg(PARSER_ERR, parser->lex->filename, 
-                    parser->cur->line_num,0,parser->cur->text,"Expected ')'.");
+                    parser->cur->line_num,0,parser->cur->text,"Expected term");
                 parser->status = 0;
                 exit(1);
             }
@@ -477,7 +497,7 @@ parse_expr(parser_t *parser, int prec)
                 } else {
                     print_msg(PARSER_ERR, parser->lex->filename, 
                         parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected ':'.");
+                        "Expected ':'");
                     parser->status = 0;
                     exit(1);
                 }

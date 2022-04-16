@@ -80,7 +80,7 @@ iterate_cur(lexer_t *lex)
 
 /**
  * Appends the current char to the input token if the token has available size. 
- * Also resizes the size of the text for the token if necesary
+ * Also resizes the size of the text for the token if necessary
  *
  * @param lex relevant lexer
  * @param tok token to append the current char to
@@ -112,7 +112,7 @@ append_char(lexer_t *lex, token_t *tok)
 }
 
 /**
- * Consumes a c-style comment (i.e. same style as this commnent)/. Tracks
+ * Consumes a c-style comment (i.e. same style as this commnent). Tracks
  * newlines and does not append any characters to the current token. Returns
  * an error if EOF is found before comment close. Once end of the comment is 
  * found, reenters consume().
@@ -125,35 +125,37 @@ append_char(lexer_t *lex, token_t *tok)
 int 
 consume_c_comment(lexer_t *lex, token_t *tok) 
 {
-    iterate_cur(lex);
-
-    if(*lex->cur == 0) { // check if *cur is EOF
-        print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "", 
-            "Unclosed comment.");
-        return 0;
-    }
-
-    if(*lex->cur == '\n') { // keep track of line numbers
-        (lex->line_num)++;
-    }
-
-    if(*lex->cur == '*') {
+    while(1) {
         iterate_cur(lex);
 
         if(*lex->cur == 0) { // check if *cur is EOF
-            print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "",         
+            print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', "", 
                 "Unclosed comment.");
             return 0;
         }
 
-        if(*lex->cur == '/') { // end of comment -- reenter consume
+        if(*lex->cur == '\n') { // keep track of line numbers
+            (lex->line_num)++;
+        }
+
+        if(*lex->cur == '*') {
             iterate_cur(lex);
-            tok->line_num = lex->line_num; // update token line num
-            return consume(lex, tok);
+
+            if(*lex->cur == 0) { // check if *cur is EOF
+                print_msg(LEXER_ERR, lex->filename, tok->line_num, ' ', 
+                    "", "Unclosed comment.");
+                return 0;
+            }
+
+            if(*lex->cur == '/') { // end of comment -- reenter consume
+                iterate_cur(lex);
+                tok->line_num = lex->line_num; // update token line num
+                return consume(lex, tok);
+            }
         }
     }
 
-    return consume_c_comment(lex, tok);
+    return 0;
 }
 
 /**
@@ -409,6 +411,12 @@ consume_string(lexer_t *lex, token_t *tok)
 {
     append_char(lex, tok);
 
+    if(*lex->cur == 0) { // check for EOF before string closed
+        print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "",
+            "EOF reached before string closed.");
+        return 1;
+    }
+
     if(*lex->cur == '\\') {  // check if cur is escape char
         append_char(lex, tok); 
     
@@ -434,7 +442,7 @@ consume_string(lexer_t *lex, token_t *tok)
         return 0;
     }
 
-    if(!isprint(*lex->cur)) { // cur is not printable -- not valid for string
+    if(!isprint(*lex->cur) && !isspace(*lex->cur)) { // cur is not printable
         print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, "",
             "Invalid symbol inside string literal, ignoring.");
         iterate_cur(lex); // skip invalid character
@@ -607,7 +615,7 @@ consume(lexer_t *lex, token_t *tok)
                 append_char(lex, tok);
                 break;
             }
-            tok->type = PIPE;
+            tok->type = AMP;
             break;
         case '!': 
             append_char(lex, tok);

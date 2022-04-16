@@ -16,7 +16,7 @@ void g()
 {
     A;
     int b[50];
-    f(b, 5) + printf("Hello world!\n");
+    //f(b, 5) + printf("Hello world!\n");
     int c;
     c = b[b[0]++]++;
     return;

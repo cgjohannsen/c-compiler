@@ -13,6 +13,7 @@ typedef struct varsym {
     char *name;
     astnode_t *type;
     astnode_t *var;
+    bool is_init;
 } varsym_t;
 
 typedef struct funsym {

@@ -428,7 +428,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
  *
  */
 void
-typecheck_statement(symtable_t *table, astnode_t *statement)
+typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 {
     astnode_t *cur;
 
@@ -451,13 +451,13 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
 
             cur = statement->left->right->left; // if-body
             while(cur != NULL) {
-                typecheck_statement(table, cur);
+                typecheck_statement(table, cur, output);
                 cur = cur->right;
             }
 
             cur = statement->left->right->right->left; // else-body
             while(cur != NULL) {
-                typecheck_statement(table, cur);
+                typecheck_statement(table, cur, output);
                 cur = cur->right;
             }
 
@@ -471,7 +471,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
             
             cur = statement->left->right->left; // for-body
             while(cur != NULL) {
-                typecheck_statement(table, cur);
+                typecheck_statement(table, cur, output);
                 cur = cur->right;
             }
 
@@ -482,7 +482,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
             
             cur = statement->left->right->left; // while-body
             while(cur != NULL) {
-                typecheck_statement(table, cur);
+                typecheck_statement(table, cur, output);
                 cur = cur->right;
             }
             
@@ -490,7 +490,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
         case DO:
             cur = statement->left->right->left; // do-body
             while(cur != NULL) {
-                typecheck_statement(table, cur);
+                typecheck_statement(table, cur, output);
                 cur = cur->right;
             }
 
@@ -500,9 +500,11 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
             break;
         default:
             typecheck_expr(table, statement);
-            fprintf(outfile, "\tLine %*d: expression has type ", 4, statement->line_num);
-            print_exprtype(statement);
-            fprintf(outfile, "\n");
+            if(output) {
+                fprintf(outfile, "\tLine %*d: expression has type ", 4, statement->line_num);
+                print_exprtype(statement);
+                fprintf(outfile, "\n");
+            }
             break; 
     }
 }
@@ -512,7 +514,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement)
  *
  */
 void
-typecheck_localvardecl(symtable_t *table, astnode_t *var_decl)
+typecheck_localvardecl(symtable_t *table, astnode_t *var_decl, bool output)
 {
     astnode_t *type, *var;
 
@@ -536,9 +538,12 @@ typecheck_localvardecl(symtable_t *table, astnode_t *var_decl)
         } else {
             add_localvar(table, type, var);
 
-            fprintf(outfile, "\tLine %*d: local ", 4, var->line_num);
-            print_var(type, var);
-            fprintf(outfile, "\n");
+            if(output) {
+                fprintf(outfile, "\tLine %*d: local ", 4, var->line_num);
+                print_var(type, var);
+                fprintf(outfile, "\n");    
+            }
+            
         }
 
         if(var->left != NULL) { // includes initialization
@@ -559,7 +564,7 @@ typecheck_localvardecl(symtable_t *table, astnode_t *var_decl)
  *
  */
 void
-typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl)
+typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl, bool output)
 {
     astnode_t *type, *var;
 
@@ -583,9 +588,11 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl)
         } else {
             add_globalvar(table, type, var);
 
-            fprintf(outfile, "Line %*d: global ", 4, var->line_num);
-            print_var(type, var);
-            fprintf(outfile, "\n");
+            if(output) {
+                fprintf(outfile, "Line %*d: global ", 4, var->line_num);
+                print_var(type, var);
+                fprintf(outfile, "\n");
+            }
         }
 
         if(var->left != NULL && !var->is_array) { // includes initialization
@@ -606,7 +613,7 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl)
  *
  */
 void
-typecheck_localtypedecl(symtable_t *table, astnode_t *type_decl)
+typecheck_localtypedecl(symtable_t *table, astnode_t *type_decl, bool output)
 {
     structsym_t *sym;
     sym = get_localstruct(table, type_decl->text);
@@ -616,27 +623,30 @@ typecheck_localtypedecl(symtable_t *table, astnode_t *type_decl)
             "Local struct previously declared.");  
     } else {
         add_localstruct(table, type_decl);
-        fprintf(outfile, "\tLine %*d: local struct %s\n", 4, type_decl->line_num, type_decl->text);
+        if(output) {
+            fprintf(outfile, "\tLine %*d: local struct %s\n", 4, type_decl->line_num, type_decl->text);
+        }
     }
 
+    if(output) {
+        astnode_t *var_decl, *type, *var;
+        var_decl = type_decl->left;
 
-    astnode_t *var_decl, *type, *var;
-    var_decl = type_decl->left;
+        while(var_decl != NULL) { // cycle thru member declarations
+            type = var_decl->left;
+            var = type->right;
 
-    while(var_decl != NULL) { // cycle thru member declarations
-        type = var_decl->left;
-        var = type->right;
+            while(var != NULL) { // cycle thru each variable
+                fprintf(outfile, "\t\tLine %*d: member ", 4, var->line_num);
+                print_var(type, var);
+                fprintf(outfile, "\n");
 
-        while(var != NULL) { // cycle thru each variable
-            fprintf(outfile, "\t\tLine %*d: member ", 4, var->line_num);
-            print_var(type, var);
-            fprintf(outfile, "\n");
+                var = var->right;
+            }
 
-            var = var->right;
-        }
-
-        var_decl = var_decl->right;
-    } 
+            var_decl = var_decl->right;
+        } 
+    }
 }
 
 
@@ -644,7 +654,7 @@ typecheck_localtypedecl(symtable_t *table, astnode_t *type_decl)
  *
  */
 void
-typecheck_globaltypedecl(symtable_t *table, astnode_t *type_decl)
+typecheck_globaltypedecl(symtable_t *table, astnode_t *type_decl, bool output)
 {
     structsym_t *sym;
     sym = get_globalstruct(table, type_decl->text);
@@ -654,26 +664,30 @@ typecheck_globaltypedecl(symtable_t *table, astnode_t *type_decl)
             "Global struct previously declared.");  
     } else {
         add_globalstruct(table, type_decl);
-        fprintf(outfile, "Line %*d: global struct %s\n", 4, type_decl->line_num, type_decl->text);
+        if(output) {
+            fprintf(outfile, "Line %*d: global struct %s\n", 4, type_decl->line_num, type_decl->text);
+        }
     }
 
-    astnode_t *var_decl, *type, *var;
-    var_decl = type_decl->left;
+    if(output) {
+        astnode_t *var_decl, *type, *var;
+        var_decl = type_decl->left;
 
-    while(var_decl != NULL) { // cycle thru member declarations
-        type = var_decl->left;
-        var = type->right;
+        while(var_decl != NULL) { // cycle thru member declarations
+            type = var_decl->left;
+            var = type->right;
 
-        while(var != NULL) { // cycle thru each variable
-            fprintf(outfile, "\tLine %*d: member ", 4, var->line_num);
-            print_var(type, var);
-            fprintf(outfile, "\n");
+            while(var != NULL) { // cycle thru each variable
+                fprintf(outfile, "\tLine %*d: member ", 4, var->line_num);
+                print_var(type, var);
+                fprintf(outfile, "\n");
 
-            var = var->right;
-        }
+                var = var->right;
+            }
 
-        var_decl = var_decl->right;
-    } 
+            var_decl = var_decl->right;
+        } 
+    }
 }
 
 
@@ -681,18 +695,18 @@ typecheck_globaltypedecl(symtable_t *table, astnode_t *type_decl)
  *
  */
 void
-typecheck_funbody(symtable_t *table, astnode_t *fun_body)
+typecheck_funbody(symtable_t *table, astnode_t *fun_body, bool output)
 {
     astnode_t *statement;
 
     statement = fun_body->left;
     while(statement != NULL) {
         if(statement->type == _VAR_DECL) {
-            typecheck_localvardecl(table, statement);
+            typecheck_localvardecl(table, statement, output);
         } else if(statement->type == _TYPE_DECL) {
-            typecheck_localtypedecl(table, statement);
+            typecheck_localtypedecl(table, statement, output);
         } else {
-            typecheck_statement(table, statement);
+            typecheck_statement(table, statement, output);
         }
 
         statement = statement->right;
@@ -704,7 +718,7 @@ typecheck_funbody(symtable_t *table, astnode_t *fun_body)
  *
  */
 void 
-typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def)
+typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool output)
 {
     astnode_t *ret_type, *ident, *args;
 
@@ -762,7 +776,8 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def)
         }
           
     }
-    if(is_def) {
+
+    if(output && is_def) {
         fprintf(outfile, "Line %*d: function ", 4, fun_decl->line_num);
         print_var(ret_type, ident);
         fprintf(outfile, "\n");   
@@ -772,7 +787,7 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def)
     param = args->left;
 
     while(param != NULL) {
-        if(is_def) {
+        if(output && is_def) {
             fprintf(outfile, "\tLine %*d: parameter ", 4, param->line_num);
             print_var(param, param->right);
             fprintf(outfile, "\n");
@@ -793,14 +808,14 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def)
  *
  */
  void
-typecheck_fundef(symtable_t *table, astnode_t *fun_def)
+typecheck_fundef(symtable_t *table, astnode_t *fun_def, bool output)
 {
     astnode_t *fun_decl, *fun_body;
     fun_decl = fun_def->left;
     fun_body = fun_decl->right;
 
-    typecheck_fundecl(table, fun_decl, true);
-    typecheck_funbody(table, fun_body);
+    typecheck_fundecl(table, fun_decl, true, output);
+    typecheck_funbody(table, fun_body, output);
 
     free_locals(table);
 }
@@ -810,26 +825,27 @@ typecheck_fundef(symtable_t *table, astnode_t *fun_def)
  *
  */
 void
-typecheck_program(symtable_t *table, astnode_t *program)
+typecheck_program(symtable_t *table, astnode_t *program, bool output)
 {
     astnode_t *global;
     global = program->left;
 
-
     while(global != NULL) {
         switch(global->type) {
             case _TYPE_DECL:
-                typecheck_globaltypedecl(table, global);
+                typecheck_globaltypedecl(table, global, output);
                 break;
             case _VAR_DECL:
-                typecheck_globalvardecl(table, global);
+                typecheck_globalvardecl(table, global, output);
                 break;
             case _FUN_DECL:
-                typecheck_fundecl(table, global, false);
+                typecheck_fundecl(table, global, false, output);
                 free_locals(table);
                 break;
             case _FUN_DEF:
-                typecheck_fundef(table, global);
+                typecheck_fundef(table, global, output);
+                break;
+            default: // impossible
                 break;
         }
         global = global->right;
@@ -851,7 +867,7 @@ typecheck(char *filename)
     init_parser(filename, &parser);
     program = parse_program(&parser);
 
-    typecheck_program(table, program);
+    typecheck_program(table, program, true);
 
     free_symtable(table);
 

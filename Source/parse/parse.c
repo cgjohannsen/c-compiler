@@ -140,6 +140,13 @@ parse_funparams(parser_t *parser)
 
         if(parser->cur->type == COMMA) {
             update_parser(parser);
+            if(!is_typeorqualifier(parser->cur->type)) {
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
+                    "Expected type name.");
+                parser->status = 0;
+                exit(1);
+            }
         }
     }
 
@@ -354,7 +361,14 @@ parse_term(parser_t *parser)
                 }
             }
         default:
-            return parse_literal(parser);
+            if(is_literal(parser->cur->type)) {
+                return parse_literal(parser);
+            } else {
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num,0,parser->cur->text,"Expected ')'.");
+                parser->status = 0;
+                exit(1);
+            }
     }
 }
 
@@ -448,7 +462,7 @@ parse_expr(parser_t *parser, int prec)
                 op = init_astnode(_ITE, parser->cur);
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, 3);
+                expr1 = parse_expr(parser, prec);
 
                 if(parser->cur->type == COLON) {
                     update_parser(parser);
@@ -473,7 +487,7 @@ parse_expr(parser_t *parser, int prec)
                 op = init_astnode(_LOG_OR, parser->cur);
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -485,7 +499,7 @@ parse_expr(parser_t *parser, int prec)
                 op = init_astnode(_LOG_AND, parser->cur);
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -497,7 +511,7 @@ parse_expr(parser_t *parser, int prec)
                 op = init_astnode(_BIT_OR, parser->cur);
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -509,7 +523,7 @@ parse_expr(parser_t *parser, int prec)
                 op = init_astnode(_BIT_AND, parser->cur);
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -525,7 +539,7 @@ parse_expr(parser_t *parser, int prec)
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -547,7 +561,7 @@ parse_expr(parser_t *parser, int prec)
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -563,7 +577,7 @@ parse_expr(parser_t *parser, int prec)
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -582,7 +596,7 @@ parse_expr(parser_t *parser, int prec)
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec+1);
+                expr1 = parse_expr(parser, prec);
 
                 add_astchild(op, term);
                 add_astchild(op, expr1);
@@ -1533,7 +1547,6 @@ parse(char *filename)
 
     init_parser(filename, &parser);
     program = parse_program(&parser);
-
 
     if(parser.status > 0) {
         fprintf(outfile, "File %s is syntactically correct.\n", filename);

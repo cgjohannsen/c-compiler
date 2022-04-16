@@ -6,6 +6,7 @@
 #include "parse/lexer.h"
 #include "parse/parse.h"
 #include "parse/typecheck.h"
+#include "gen.h"
 
 const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
                     "\tmode\t\tinteger from 0-5 specifying mode to run\n"
@@ -110,6 +111,11 @@ int main(int argc, char **argv)
 
   if(mode == 4) {
     typecheck(filename);
+    exit(0);
+  }
+
+  if(mode == 5) {
+    gen_code(filename);
     exit(0);
   }
 

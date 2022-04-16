@@ -183,6 +183,8 @@ parse_literal(parser_t *parser)
             exit(1);
     }
 
+    literal->is_const = true;
+
     update_parser(parser);
     
     return literal;

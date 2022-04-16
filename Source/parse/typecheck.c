@@ -111,6 +111,10 @@ print_var(astnode_t *type, astnode_t *var)
 void
 print_exprtype(astnode_t *expr)
 {
+    if(expr->is_const) {
+        fprintf(outfile, "const ");
+    }
+
     switch(expr->exprtype) {
         case __CHAR:
             fprintf(outfile, "char");
@@ -167,7 +171,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
     if(expr == NULL) {
         return;
     }
-    
+
     if(expr->left != NULL) {
         lhs = expr->left;
         if(lhs->right != NULL) {
@@ -418,6 +422,9 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _REAL_LIT:
             expr->exprtype = __REAL;
             break;
+        case _STR_LIT:
+            expr->exprtype = __STRING;
+            break;
         default: // fail
             break;
     }
@@ -433,11 +440,10 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
     astnode_t *cur;
 
     switch(statement->type) {
-        case SEMI:
-        case BREAK:
-        case CONTINUE:
+        case _BREAK:
+        case _CONTINUE:
             break;
-        case RETURN:
+        case _RETURN:
             typecheck_expr(table, statement->left);
             if(!is_sametype(statement->left, table->ret_type)) {
                 print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
@@ -445,7 +451,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
                     str_exprtype(statement->left), table->ret_type->text);
             }
             break;
-        case IF:
+        case _IF_STATEMENT:
             cur = statement->left->left; // if-cond
             typecheck_expr(table, cur);
 
@@ -462,7 +468,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             }
 
             break;
-        case FOR:
+        case _FOR_STATEMENT:
             cur = statement->left->left; // for-params
             while(cur != NULL) {
                 typecheck_expr(table, cur);
@@ -476,7 +482,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             }
 
             break;
-        case WHILE:
+        case _WHILE_STATEMENT:
             cur = statement->left->left; // while-cond
             typecheck_expr(table, cur);
             
@@ -487,7 +493,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             }
             
             break;
-        case DO:
+        case _DO_STATEMENT:
             cur = statement->left->right->left; // do-body
             while(cur != NULL) {
                 typecheck_statement(table, cur, output);

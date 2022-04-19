@@ -108,23 +108,28 @@ bool
 add_localvar(symtable_t *table, astnode_t *type, astnode_t *var)
 {
     varsym_t *new, *cur;
+    int i = 0; // local index for code generation
     
     new = init_varsym(type, var);
 
     if(table->local_vars == NULL) {
         table->local_vars = new;
+        new->idx = i;
         return true;
     }
 
     cur = table->local_vars;
+    i++;
     while(cur->next != NULL) {
         if(!strcmp(cur->name, var->text)) {
             // failed -- variable declaration already in table
             return false;
         }
         cur = cur->next;
+        i++;
     }
     cur->next = new;
+    new->idx = i;
 
     return true;
 }

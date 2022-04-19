@@ -4,7 +4,7 @@
 #include "token.h"
 #include "stdbool.h"
 
-typedef enum asttype {
+typedef enum nodetype {
     _PROGRAM,
     _VAR_DECL,
     _TYPE_DECL,
@@ -69,45 +69,30 @@ typedef enum asttype {
     _STR_LIT,
     _VAR, 
     _TYPE
-} asttype_t;
+} nodetype_t;
 
-typedef enum exprtype {
-    __CHAR,
-    __INT,
-    __REAL,
-    __STRING,
-    __STRUCT,
-    __NONE
-} exprtype_t;
-
-typedef union astval {
-    char c;
-    int i;
-    float f;
-} astval_t;
+typedef struct ctype {
+    char *name;
+    bool is_array;
+    bool is_const;
+    bool is_struct;
+} ctype_t;
 
 typedef struct astnode {
     struct astnode *left;
     struct astnode *right;
     char *filename;
     int line_num;
-    asttype_t type;
-    astval_t val;
-    exprtype_t exprtype;
+    nodetype_t node_type;
+    ctype_t ctype;
     char *text;
     int arr_dim;
-    bool is_array;
-    bool is_const;
-    bool is_struct;
 } astnode_t;
 
-astnode_t *init_astnode(asttype_t asttype, token_t *tok);
+astnode_t *init_astnode(nodetype_t asttype, token_t *tok);
 
 void set_asttext(astnode_t *node, char *text);
-void set_astchar(astnode_t *node, char c);
-void set_astint(astnode_t *node, int i);
-void set_astfloat(astnode_t *node, float f);
-void set_aststring(astnode_t *node, char *s);
+void set_ctypename(astnode_t *node, char *name);
 
 int add_astchild(astnode_t *parent, astnode_t *child);
 int add_astchildleft(astnode_t *parent, astnode_t *child);
@@ -116,5 +101,12 @@ int add_astsibling(astnode_t *node, astnode_t *sibling);
 void free_ast(astnode_t *root);
 
 bool is_lvalue(astnode_t *node);
+bool is_samectype(astnode_t *type1, astnode_t *type2);
+bool is_numctype(astnode_t *type);
+bool is_intctype(astnode_t *type);
+
+char *get_ctypestr(astnode_t *node);
+
+void copy_ctype(astnode_t *source, astnode_t *result);
 
 #endif

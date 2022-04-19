@@ -14,6 +14,7 @@ typedef struct varsym {
     astnode_t *type;
     astnode_t *var;
     bool is_init;
+    int idx;
 } varsym_t;
 
 typedef struct funsym {

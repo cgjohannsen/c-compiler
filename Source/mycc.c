@@ -16,7 +16,7 @@ const char *usage = "Usage: mycc -mode [-o outfile] [-h] infile\n"
 const char *version = "My C compiler\n"
                       "\tAuthor: Chris Johannsen\n"
                       "\tEmail: cgjohann@iastate.edu\n"
-                      "\tVersion: 0.1\n"
+                      "\tVersion: 0.5\n"
                       "\tDate: 2-9-2022\n";
 
 FILE *outfile;

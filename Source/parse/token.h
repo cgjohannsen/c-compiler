@@ -108,7 +108,7 @@ typedef union tokenvalue
 
 typedef struct token 
 {
-    tokentype_t type;
+    tokentype_t tok_type;
     char *text;
     int text_size;
     int text_max_size;

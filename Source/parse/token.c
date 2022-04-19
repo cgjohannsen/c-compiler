@@ -50,7 +50,7 @@ void
 print_token(token_t *tok) 
 {
     fprintf(outfile, "File %s Line %*d Token %*d Text %s\n", 
-        tok->filename, 5, tok->line_num, 3, tok->type, tok->text);
+        tok->filename, 5, tok->line_num, 3, tok->tok_type, tok->text);
 }
 
 /**

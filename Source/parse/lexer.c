@@ -35,7 +35,7 @@ isoctal(int c)
 int
 is_valid_size(lexer_t *lex, token_t *tok)
 {
-    if(tok->type == STR_LIT) {
+    if(tok->tok_type == STR_LIT) {
         if(tok->text_size == MAX_STR_SIZE) { // only print once token
             print_msg(LEXER_WRN, lex->filename, lex->line_num, *lex->cur, "",
                 "Max string length reached, truncating.");
@@ -205,14 +205,14 @@ consume_slash(lexer_t *lex, token_t *tok)
     }
 
     if(*(lex->cur+1) == '=') {
-        tok->type = SLASHASSIGN;
+        tok->tok_type = SLASHASSIGN;
         append_char(lex, tok);
         append_char(lex, tok);
         return 0;
     }
 
     append_char(lex, tok);
-    tok->type = SLASH;
+    tok->tok_type = SLASH;
     return 0;    
 }
 
@@ -297,14 +297,14 @@ consume_int(lexer_t *lex, token_t *tok)
 
     if(*lex->cur == '.') { // token is REAL_LIT w frac part
         if(status) { // check if truncated before '.'
-            tok->type = REAL_LIT;
+            tok->tok_type = REAL_LIT;
         }
         return consume_real_frac(lex, tok);
     }
     
     if(*lex->cur == 'e' || *lex->cur == 'E') { // token is REAL_LIT w exp
         if(status) { // check if truncated before any of 'e', 'E'
-            tok->type = REAL_LIT;
+            tok->tok_type = REAL_LIT;
         }
         if(*(lex->cur+1) == '-' || *(lex->cur+1) == '+') {
             append_char(lex, tok);
@@ -317,7 +317,7 @@ consume_int(lexer_t *lex, token_t *tok)
             "Invalid character as part of integer literal.");
     }
     
-    tok->type = INT_LIT;
+    tok->tok_type = INT_LIT;
     return 0;
 }
 
@@ -392,7 +392,7 @@ consume_ident(lexer_t *lex, token_t *tok)
         consume_ident(lex, tok);
     }
 
-    tok->type = IDENT;
+    tok->tok_type = IDENT;
     return 0;
 }
 
@@ -478,156 +478,156 @@ consume(lexer_t *lex, token_t *tok)
 
     switch(*lex->cur) {
         case 0:
-            tok->type = END; 
+            tok->tok_type = END; 
             break;
         case ',':
-            tok->type = COMMA;
+            tok->tok_type = COMMA;
             append_char(lex, tok);
             break;
         case '.':
             if(isdigit(*(lex->cur+1))) { // lexeme of the form .[0-9]+
                 return consume_real_frac(lex, tok);
             }
-            tok->type = DOT;
+            tok->tok_type = DOT;
             append_char(lex, tok);
             break;
         case ';':
-            tok->type = SEMI;
+            tok->tok_type = SEMI;
             append_char(lex, tok);
             break;
         case '(':
-            tok->type = LPAR;
+            tok->tok_type = LPAR;
             append_char(lex, tok);
             break;
         case ')':
-            tok->type = RPAR;
+            tok->tok_type = RPAR;
             append_char(lex, tok);
             break;
         case '[':
-            tok->type = LBRAK;
+            tok->tok_type = LBRAK;
             append_char(lex, tok);
             break;
         case ']':
-            tok->type = RBRAK;
+            tok->tok_type = RBRAK;
             append_char(lex, tok);
             break;
         case '{':
-            tok->type = LBRACE;
+            tok->tok_type = LBRACE;
             append_char(lex, tok);
             break;
         case '}':
-            tok->type = RBRACE;
+            tok->tok_type = RBRACE;
             append_char(lex, tok);
             break;
         case '>':
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = GEQ;
+                tok->tok_type = GEQ;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = GT;
+            tok->tok_type = GT;
             break;
         case '<':
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = LEQ;
+                tok->tok_type = LEQ;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = LT;
+            tok->tok_type = LT;
             break;
         case '=': 
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = EQ;
+                tok->tok_type = EQ;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = ASSIGN;
+            tok->tok_type = ASSIGN;
             break;
         case '+': 
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = PLUSASSIGN;
+                tok->tok_type = PLUSASSIGN;
                 append_char(lex, tok);
                 break;
             }
             if(*lex->cur == '+') {
-                tok->type = INCR;
+                tok->tok_type = INCR;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = PLUS;
+            tok->tok_type = PLUS;
             break;
         case '-': 
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = MINUSASSIGN;
+                tok->tok_type = MINUSASSIGN;
                 append_char(lex, tok);
                 break;
             }
             if(*lex->cur == '-') {
-                tok->type = DECR;
+                tok->tok_type = DECR;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = MINUS;
+            tok->tok_type = MINUS;
             break;
         case '*': 
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = STARASSIGN;
+                tok->tok_type = STARASSIGN;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = STAR;
+            tok->tok_type = STAR;
             break;
         case '%': 
-            tok->type = MOD;
+            tok->tok_type = MOD;
             append_char(lex, tok);
             break;
         case ':':
-            tok->type = COLON;
+            tok->tok_type = COLON;
             append_char(lex, tok);
             break;
         case '?':
-            tok->type = QUEST;
+            tok->tok_type = QUEST;
             append_char(lex, tok);
             break;
         case '~': 
-            tok->type = TILDE;
+            tok->tok_type = TILDE;
             append_char(lex, tok);
             break;
         case '|': 
             append_char(lex, tok);
             if(*lex->cur == '|') {
-                tok->type = DPIPE;
+                tok->tok_type = DPIPE;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = PIPE;
+            tok->tok_type = PIPE;
             break;
         case '&': 
             append_char(lex, tok);
             if(*lex->cur == '&') {
-                tok->type = DAMP;
+                tok->tok_type = DAMP;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = AMP;
+            tok->tok_type = AMP;
             break;
         case '!': 
             append_char(lex, tok);
             if(*lex->cur == '=') {
-                tok->type = NEQ;
+                tok->tok_type = NEQ;
                 append_char(lex, tok);
                 break;
             }
-            tok->type = BANG;
+            tok->tok_type = BANG;
             break;
         case '\'': 
-            tok->type = CHAR_LIT;
+            tok->tok_type = CHAR_LIT;
             if(*(lex->cur+1) == '\\') {
                 switch(*(lex->cur+2)) {
                     case 'a':
@@ -694,7 +694,7 @@ consume(lexer_t *lex, token_t *tok)
             break;
         case '/': return consume_slash(lex, tok);
         case '"': 
-            tok->type = STR_LIT; 
+            tok->tok_type = STR_LIT; 
             return consume_string(lex, tok);
         case '0':
             if(*(lex->cur+1) == 'x' || *(lex->cur+1) == 'X') { // form 0[xX]
@@ -709,14 +709,14 @@ consume(lexer_t *lex, token_t *tok)
                 // append '0x' or '0X' to lexeme
                 append_char(lex, tok);
                 append_char(lex, tok);
-                tok->type = INT_LIT;
+                tok->tok_type = INT_LIT;
 
                 return consume_hex(lex, tok);
             } 
             
             if(isoctal(*(lex->cur+1))) { // check if next char is digit 1-7
                 append_char(lex, tok); // append '0' to lexeme
-                tok->type = INT_LIT;
+                tok->tok_type = INT_LIT;
 
                 return consume_octal(lex, tok);
             }
@@ -725,7 +725,7 @@ consume(lexer_t *lex, token_t *tok)
                 // append '0.' to lexeme
                 append_char(lex, tok); 
                 append_char(lex, tok);
-                tok->type = REAL_LIT;
+                tok->tok_type = REAL_LIT;
 
                 return consume_real_frac(lex, tok);
             } 
@@ -765,87 +765,87 @@ keyword_check(token_t *tok)
     switch(h) {
         case VOID_HASH:
             if(strcmp(tok->value.s,"void") == 0) {
-                tok->type = TYPE;
+                tok->tok_type = TYPE;
             }
             break;
         case CHAR_HASH:
             if(strcmp(tok->value.s,"char") == 0) {
-                tok->type = TYPE;
+                tok->tok_type = TYPE;
             }
             break;
         case INT_HASH:
             if(strcmp(tok->value.s,"int") == 0) {
-                tok->type = TYPE;
+                tok->tok_type = TYPE;
             }
             break;
         case FLOAT_HASH:
             if(strcmp(tok->value.s,"float") == 0) {
-                tok->type = TYPE;
+                tok->tok_type = TYPE;
             }
             break;
         case CONST_HASH:
             if(strcmp(tok->value.s,"const") == 0) {
-                tok->type = CONST;
+                tok->tok_type = CONST;
             }
             break;
         case STRUCT_HASH: 
             if(strcmp(tok->value.s,"struct") == 0) {
-                tok->type = STRUCT;
+                tok->tok_type = STRUCT;
             }
             break;
         case FOR_HASH:       
             if(strcmp(tok->value.s,"for") == 0) {
-                tok->type = FOR;
+                tok->tok_type = FOR;
             }
             break;
         case WHILE_HASH:     
             if(strcmp(tok->value.s,"while") == 0) {
-                tok->type = WHILE;
+                tok->tok_type = WHILE;
             }
             break;
         case DO_HASH:
             if(strcmp(tok->value.s,"do") == 0) {
-                tok->type = DO;
+                tok->tok_type = DO;
             }
             break;
         case IF_HASH:
             if(strcmp(tok->value.s,"if") == 0) {
-                tok->type = IF;
+                tok->tok_type = IF;
             }
             break;
         case ELSE_HASH:
             if(strcmp(tok->value.s,"else") == 0) {
-                tok->type = ELSE;
+                tok->tok_type = ELSE;
             }
             break;
         case BREAK_HASH:
             if(strcmp(tok->value.s,"break") == 0) {
-                tok->type = BREAK;
+                tok->tok_type = BREAK;
             }
             break;
         case CONTINUE_HASH:
             if(strcmp(tok->value.s,"continue") == 0) {
-                tok->type = CONTINUE;
+                tok->tok_type = CONTINUE;
             }
             break;
         case RETURN_HASH: 
             if(strcmp(tok->value.s,"return") == 0) {
-                tok->type = RETURN;
+                tok->tok_type = RETURN;
             }
             break;
         case SWITCH_HASH:
             if(strcmp(tok->value.s,"switch") == 0) {
-                tok->type = SWITCH;
+                tok->tok_type = SWITCH;
             }
             break;
         case CASE_HASH: 
             if(strcmp(tok->value.s,"case") == 0) {
-                tok->type = CASE;
+                tok->tok_type = CASE;
             }
             break;
         case DEFAULT_HASH: 
             if(strcmp(tok->value.s,"default") == 0) {
-                tok->type = DEFAULT;
+                tok->tok_type = DEFAULT;
             }
             break;
         default: break; // else is a true identifier
@@ -872,7 +872,7 @@ next_token(lexer_t *lex)
 
     consume(lex, tok);
 
-    switch(tok->type) {
+    switch(tok->tok_type) {
         case CHAR_LIT:  tok->value.c = *(tok->text); break;
         case INT_LIT:   tok->value.i = atoi(tok->text); break;
         case REAL_LIT:  tok->value.d = atof(tok->text); break;
@@ -942,7 +942,7 @@ tokenize(char *filename)
     lex = init_lexer(filename);
 
     tok = next_token(lex);
-    while(tok->type != END) { // get tokens until EOF
+    while(tok->tok_type != END) { // get tokens until EOF
         print_token(tok);
         free_token(tok);
         tok = next_token(lex);

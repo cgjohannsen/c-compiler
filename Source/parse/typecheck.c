@@ -6,81 +6,49 @@
 #include "symtable.h"
 #include "typecheck.h"
 
-exprtype_t
-to_exprtype(char *type)
-{
-    if(!strcmp(type, "char")) {
-        return __CHAR;
-    } else if(!strcmp(type, "int")) {
-        return __INT;
-    } else if(!strcmp(type, "float")) {
-        return __REAL;
-    }
-    return __STRUCT;
-}
-
-bool
-is_sametype(astnode_t *type1, astnode_t *type2)
-{
-    return type1->is_const == type2->is_const &&
-           type1->is_array == type2->is_array && 
-           type1->is_struct == type2->is_struct &&
-           !strcmp(type1->text, type2->text);
-}
-
-bool
-is_numeric(astnode_t *type)
-{
-    return (type->exprtype == __CHAR || type->exprtype == __INT || 
-        type->exprtype == __REAL) && !type->is_array;
-}
-
-bool
-is_integral(astnode_t *type)
-{
-    return (type->exprtype == __CHAR || type->exprtype == __INT) &&
-        !type->is_array;
-}
-
 
 /**
  *
  */
-exprtype_t
-widen_to(exprtype_t source, exprtype_t target)
-{
-    if(source == target) {
-        return source;
+bool
+widen_to(astnode_t *source, astnode_t *target, astnode_t *result)
+{   
+    char *src_name, *trg_name;
+
+    src_name = source->ctype.name;
+    trg_name = target->ctype.name;
+
+    if(!strcmp(src_name, trg_name)) {
+        set_ctypename(result, src_name);
+        return false;
     }
 
-    if(source == __CHAR && target == __INT) {
-        return __INT;
-    } else if(source == __CHAR && target == __REAL) {
-        return __REAL;
-    } else if(source == __INT && target == __REAL) {
-        return __REAL;
-    }
-
-    return __NONE;
-}
-
-/**
- *
- */
-exprtype_t
-widen(exprtype_t type1, exprtype_t type2)
-{
-    exprtype_t ret;
-    
-    ret = widen_to(type1, type2);
-    if(ret == __NONE) {
-        ret = widen_to(type2, type1);
-        if(ret == __NONE) {
-            ret = __NONE;
+    if(!strcmp(source->ctype.name, "char")) {
+        if(!strcmp(target->ctype.name, "int") || !strcmp(target->ctype.name, "float")) {
+            set_ctypename(result, trg_name);
+            return false;
         }
+    } else if(!strcmp(src_name, "int") && !strcmp(trg_name, "float")) {
+        set_ctypename(result, trg_name);
+        return false;
     }
 
-    return ret;
+    return true;
+}
+
+/**
+ * return true on failure, false otherwise
+ */
+bool
+widen(astnode_t *type1, astnode_t *type2, astnode_t *result)
+{
+    if(widen_to(type1, type2, result)) { 
+        // if type1 to type2 fails, try reciprocal
+        return widen_to(type2, type1, result);
+    }
+
+    // success
+    return false; 
 }
 
 
@@ -90,72 +58,17 @@ widen(exprtype_t type1, exprtype_t type2)
 void
 print_var(astnode_t *type, astnode_t *var)
 {
-    if(type->is_const) {
+    if(type->ctype.is_const) {
         fprintf(outfile, "const ");
     }
-    if(type->is_struct) {
+    if(type->ctype.is_struct) {
         fprintf(outfile, "struct ");
     }
     fprintf(outfile, "%s %s", type->text, var->text);
-    if(var->is_array && var->arr_dim > -1) {
+    if(var->ctype.is_array && var->arr_dim > -1) {
         fprintf(outfile, "[%d]", var->arr_dim);
-    } else if(var->is_array) { // function paramter -- default arr_dim = -1
+    } else if(var->ctype.is_array) { // function paramter -- default arr_dim = -1
         fprintf(outfile, "[]");
-    }
-}
-
-
-/**
- *
- */
-void
-print_exprtype(astnode_t *expr)
-{
-    if(expr->is_const) {
-        fprintf(outfile, "const ");
-    }
-
-    switch(expr->exprtype) {
-        case __CHAR:
-            fprintf(outfile, "char");
-            break;
-        case __INT:
-            fprintf(outfile, "int");
-            break;
-        case __REAL:
-            fprintf(outfile, "float");
-            break;
-        case __STRING:
-            fprintf(outfile, "char[]");
-            break;
-        default:
-            break;
-    }
-    if(expr->is_array) {
-        fprintf(outfile, "[]");
-    }
-}
-
-
-/**
- *
- */
-char *
-str_exprtype(astnode_t *expr)
-{
-    switch(expr->exprtype) {
-        case __CHAR:
-            return expr->is_array ? "char[]" : "char" ;
-        case __INT:
-            return expr->is_array ? "int[]" : "int" ;
-        case __REAL:
-            return expr->is_array ? "float[]" : "float" ;
-        case __STRING:
-            return "char[]";
-        case __STRUCT:
-            return "struct";
-        default:
-            return "none";
     }
 }
 
@@ -182,26 +95,22 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         }
     }
 
-    switch(expr->type) {
+    switch(expr->node_type) {
         case _ITE:
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
             typecheck_expr(table, rhs2);
 
-            if(!is_numeric(lhs)) {
+            if(!is_numctype(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tFirst argument %s of ternary not numeric type (%s)\n", 
-                    lhs->text, str_exprtype(lhs));
+                    lhs->text, lhs->ctype.name);
             }
 
-            if(rhs->exprtype == rhs2->exprtype) {
-                expr->exprtype = rhs->exprtype;
-            } else if(widen(rhs->exprtype, rhs2->exprtype) != __NONE && !rhs->is_array && !rhs2->is_array) {
-                expr->exprtype = widen(rhs->exprtype, rhs2->exprtype);
-            } else {
+            if(!widen(rhs, rhs2, expr)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tArguments %s, %s of ternary of incomptaible types (%s, %s)\n", 
-                    rhs->text, rhs2->text, str_exprtype(rhs), str_exprtype(rhs2));
+                    rhs->text, rhs2->text, rhs2->ctype.name, rhs2->ctype.name);
             }
 
             break;
@@ -209,17 +118,15 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
             
-            if(lhs->is_const) {
+            if(lhs->ctype.is_const) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tAttempting to change value of const variable (%s)\n", lhs->text);
             }
 
-            if(widen_to(rhs->exprtype, lhs->exprtype) != __NONE && !lhs->is_array && !rhs->is_array) {
-                expr->exprtype = widen_to(rhs->exprtype, lhs->exprtype);
-            } else {
+            if(!widen_to(rhs, lhs, expr)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tAttempting to assign variable %s to incompatible type (%s, %s)\n", 
-                    lhs->text, str_exprtype(lhs), str_exprtype(rhs));
+                    lhs->text, lhs->ctype.name, rhs->ctype.name);
             }
 
             break;
@@ -228,48 +135,48 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _ARITH_NEG: // N -> N
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs) && !lhs->is_array) {
-                expr->exprtype = lhs->exprtype;
+            if(is_numctype(lhs) && !lhs->ctype.is_array) {
+                set_ctypename(expr, lhs->ctype.name);
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tOperand not of numeric type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
             break;
         case _LOG_NEG: // N -> char
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs) && !lhs->is_array) {
-                expr->exprtype = __CHAR;
+            if(is_numctype(lhs) && !lhs->ctype.is_array) {
+                set_ctypename(expr, "char");
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tOperand not of numeric type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
             break;
         case _BIT_NEG: // I -> I
             typecheck_expr(table, lhs);
 
-            if(is_integral(lhs) && !lhs->is_array) {
-                expr->exprtype = lhs->exprtype;
+            if(is_intctype(lhs) && !lhs->ctype.is_array) {
+                set_ctypename(expr, lhs->ctype.name);
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tOperand not of integral type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
             break;
         case _TYPE: // N -> type
             typecheck_expr(table, lhs);
 
-            if(is_numeric(lhs) && !lhs->is_array) {
-                expr->exprtype = __CHAR;
+            if(is_numctype(lhs) && !lhs->ctype.is_array) {
+                set_ctypename(expr, "char");
             } else {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tOperand not of numeric type for type cast (%s) (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
             break;
@@ -284,19 +191,19 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_numeric(lhs)) {
+            if(!is_numctype(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
-            if(!is_numeric(rhs)) {
+            if(!is_numctype(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(rhs));
+                    expr->text, rhs->ctype.name);
             }
 
-            expr->exprtype = __CHAR;
+            set_ctypename(expr, "char");
 
             break;
         case _ADD:
@@ -306,19 +213,19 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_numeric(lhs)) {
+            if(!is_numctype(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of numeric type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
-            if(!is_numeric(rhs)) {
+            if(!is_numctype(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of numeric type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(rhs));
+                    expr->text, rhs->ctype.name);
             }
 
-            expr->exprtype = widen(lhs->exprtype, rhs->exprtype);
+            widen(rhs, lhs, expr);
 
             break;
         case _MOD:
@@ -327,19 +234,19 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             typecheck_expr(table, lhs);
             typecheck_expr(table, rhs);
 
-            if(!is_integral(lhs)) {
+            if(!is_intctype(lhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tLHS not of integral type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(lhs));
+                    expr->text, lhs->ctype.name);
             }
 
-            if(!is_integral(rhs)) {
+            if(!is_intctype(rhs)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tRHS not of integral type for operator %s (%s)\n", 
-                    expr->text, str_exprtype(rhs));
+                    expr->text, rhs->ctype.name);
             }
 
-            expr->exprtype = widen(lhs->exprtype, rhs->exprtype);
+            widen(rhs, lhs, expr);
 
             break;
         case _FUN_CALL:
@@ -359,37 +266,35 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             while(param1 != NULL && param2 != NULL) {
                 typecheck_expr(table, param1);
 
-                if(widen(param1->exprtype, to_exprtype(param2->type->text)) == __NONE) {
+                if(widen_to(param1, param2->type, param1)) {
                     print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                     fprintf(stderr, "\tParameter mismatch in call to %s.\n", expr->text);
                     fprintf(stderr, "\tArgument types incompatible (%s, %s)\n", 
-                        str_exprtype(param1), str_exprtype(param2->var));
-                } else {
-                    param1->exprtype = widen(param1->exprtype, to_exprtype(param2->type->text));
-                }
+                        param1->ctype.name, param2->type->ctype.name);
+                } 
 
                 param1 = param1->right;
                 param2 = param2->next;
             }
             if(param1 != NULL || param2 != NULL) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
-                fprintf(stderr, "\tParameter number mismatch in call to %s.\n", expr->text);
+                fprintf(stderr, "\tParameter number mismatch in call to %s\n", expr->text);
             }
 
-            expr->exprtype = to_exprtype(funsym->ret_type->text);
+            copy_ctype(funsym->ret_type, expr);
 
             break;
         case _ARR_ACCESS:
             typecheck_expr(table, lhs); // arr index
             typecheck_expr(table, rhs); // arr variable
 
-            if(widen_to(lhs->exprtype, __INT) == __NONE) {
+            if(strcmp(lhs->ctype.name, "char") && strcmp(lhs->ctype.name, "int")) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tArray %s index not an integer (%s)\n", 
-                    rhs->text, str_exprtype(lhs));
+                    rhs->text, lhs->ctype.name);
             }
 
-            expr->exprtype = rhs->exprtype;
+            set_ctypename(expr, rhs->ctype.name);
 
             break;
         case _STRUCT_ACCESS:
@@ -397,9 +302,9 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
         case _VAR:
             varsym_t *varsym;
 
-            varsym = get_globalvar(table, expr->text);
+            varsym = get_localvar(table, expr->text);
             if(varsym == NULL) {
-                varsym = get_localvar(table, expr->text);
+                varsym = get_globalvar(table, expr->text);
                 if(varsym == NULL) {
                     print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                     fprintf(stderr, "\tVariable %s referenced before declaration.\n", expr->text);
@@ -407,23 +312,24 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
                 }
             } 
 
-            expr->is_array = varsym->var->is_array;
-            expr->is_const = varsym->type->is_const;
-
-            expr->exprtype = to_exprtype(varsym->type->text);
+            copy_ctype(varsym->type, expr);
 
             break;
         case _CHAR_LIT:
-            expr->exprtype = __CHAR;
+            set_ctypename(expr, "char");
+            expr->ctype.is_const = true;
             break;
         case _INT_LIT:
-            expr->exprtype = __INT;
+            set_ctypename(expr, "int");
+            expr->ctype.is_const = true;
             break;
         case _REAL_LIT:
-            expr->exprtype = __REAL;
+            set_ctypename(expr, "float");
+            expr->ctype.is_const = true;
             break;
         case _STR_LIT:
-            expr->exprtype = __STRING;
+            set_ctypename(expr, "char[]");
+            expr->ctype.is_const = true;
             break;
         default: // fail
             break;
@@ -439,16 +345,24 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 {
     astnode_t *cur;
 
-    switch(statement->type) {
+    switch(statement->node_type) {
         case _BREAK:
         case _CONTINUE:
             break;
         case _RETURN:
-            typecheck_expr(table, statement->left);
-            if(!is_sametype(statement->left, table->ret_type)) {
-                print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
-                fprintf(stderr, "Return type does not match function definition (%s, %s)", 
-                    str_exprtype(statement->left), table->ret_type->text);
+            if(!strcmp(table->ret_type->text, "void")) {
+                if(statement->left != NULL) { // return type is void, expression is not
+                    print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
+                    fprintf(stderr, "Return type does not match function definition (%s, %s)\n", 
+                        statement->left->ctype.name, table->ret_type->text);
+                }
+            } else { // return type not void
+                typecheck_expr(table, statement->left);
+                if(is_samectype(statement->left, table->ret_type)) {
+                    print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
+                    fprintf(stderr, "Return type does not match function definition (%s, %s)\n", 
+                        statement->left->ctype.name, table->ret_type->text);
+                }
             }
             break;
         case _IF_STATEMENT:
@@ -508,7 +422,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             typecheck_expr(table, statement);
             if(output) {
                 fprintf(outfile, "\tLine %*d: expression has type ", 4, statement->line_num);
-                print_exprtype(statement);
+                
                 fprintf(outfile, "\n");
             }
             break; 
@@ -528,7 +442,7 @@ typecheck_localvardecl(symtable_t *table, astnode_t *var_decl, bool output)
     var = type->right;
 
     // check if struct type has been declared yet
-    if(type->is_struct && get_localstruct(table, type->text) == NULL && 
+    if(type->ctype.is_struct && get_localstruct(table, type->text) == NULL && 
             get_globalstruct(table, type->text) == NULL) {
         print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", 
             "Struct type never declared.");  
@@ -555,7 +469,7 @@ typecheck_localvardecl(symtable_t *table, astnode_t *var_decl, bool output)
         if(var->left != NULL) { // includes initialization
             typecheck_expr(table, var->left);
 
-            if(widen_to(var->left->exprtype, to_exprtype(type->text)) == __NONE) {
+            if(widen_to(var->left, type, var->left)) {
                 print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", 
                     "Attempting to set variable to inconsistent type.");
             }
@@ -578,7 +492,7 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl, bool output)
     var = type->right;
 
     // check if struct type has been declared yet
-    if(type->is_struct && get_localstruct(table, type->text) == NULL && 
+    if(type->ctype.is_struct && get_localstruct(table, type->text) == NULL && 
             get_globalstruct(table, type->text) == NULL) {
         print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", 
             "Struct type never declared.");  
@@ -601,10 +515,10 @@ typecheck_globalvardecl(symtable_t *table, astnode_t *var_decl, bool output)
             }
         }
 
-        if(var->left != NULL && !var->is_array) { // includes initialization
+        if(var->left != NULL && !var->ctype.is_array) { // includes initialization
             typecheck_expr(table, var->left);
 
-            if(widen_to(var->left->exprtype, to_exprtype(type->text)) == __NONE) {
+            if(widen_to(var->left, type, var->left)) {
                 print_msg(TYPE_ERR, var->filename, var->line_num, 0, "", "");
                 fprintf(stderr, "Attempting to set variable to inconsistent type.\n");
             }
@@ -707,9 +621,9 @@ typecheck_funbody(symtable_t *table, astnode_t *fun_body, bool output)
 
     statement = fun_body->left;
     while(statement != NULL) {
-        if(statement->type == _VAR_DECL) {
+        if(statement->node_type == _VAR_DECL) {
             typecheck_localvardecl(table, statement, output);
-        } else if(statement->type == _TYPE_DECL) {
+        } else if(statement->node_type == _TYPE_DECL) {
             typecheck_localtypedecl(table, statement, output);
         } else {
             typecheck_statement(table, statement, output);
@@ -760,7 +674,7 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         type2 = sym->param;
 
         while(type1 != NULL && type2 != NULL) {
-            if(!is_sametype(type1, type2->type)) {
+            if(!is_sametype(type1, type2->node_type)) {
                 print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
                     "Parameter type does not match previous declaration.");
             }
@@ -837,7 +751,7 @@ typecheck_program(symtable_t *table, astnode_t *program, bool output)
     global = program->left;
 
     while(global != NULL) {
-        switch(global->type) {
+        switch(global->node_type) {
             case _TYPE_DECL:
                 typecheck_globaltypedecl(table, global, output);
                 break;

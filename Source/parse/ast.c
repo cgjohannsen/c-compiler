@@ -5,37 +5,24 @@
 #include "ast.h"
 
 astnode_t * 
-init_astnode(asttype_t asttype, token_t *tok)
+init_astnode(nodetype_t asttype, token_t *tok)
 {
     astnode_t *node = (astnode_t *) malloc(sizeof(astnode_t));
 
-    node->text = (char *) malloc(sizeof(char) * (strlen(tok->text) + 1));
+    node->text = (char *) malloc(strlen(tok->text) + 1);
+    node->ctype.name = (char *) malloc(strlen(tok->text) + 1);
+
     strcpy(node->text, tok->text);
 
     node->filename = tok->filename;
     node->line_num = tok->line_num;
     node->left = NULL;
     node->right = NULL;
-    node->type = asttype;
-    node->is_array = false;
-    node->is_const = false;
-    node->is_struct = false;
+    node->node_type = asttype;
+    node->ctype.is_array = false;
+    node->ctype.is_const = false;
+    node->ctype.is_struct = false;
     node->arr_dim = -1;
-    node->exprtype = __NONE;
-
-    switch(asttype) {
-        case _CHAR_LIT: 
-            node->val.c = *(tok->text);
-            break;
-        case _INT_LIT:
-            node->val.i = atoi(tok->text);
-            break;
-        case _REAL_LIT:
-            node->val.f = atof(tok->text);
-            break;
-        default:
-            break;
-    }
 
     return node;
 }
@@ -45,34 +32,21 @@ init_astnode(asttype_t asttype, token_t *tok)
 void 
 set_asttext(astnode_t *node, char *text)
 {
-    node->text = (char *) realloc(node->text,sizeof(char) * (strlen(text) + 1));
+    node->text = (char *) realloc(node->text, strlen(text) + 1);
     strcpy(node->text, text);
 }
 
 
-
 void 
-set_astchar(astnode_t *node, char c)
+set_ctypename(astnode_t *node, char *name)
 {
-    node->val.c = c;
+    if(node == NULL) {
+        return;
+    }
+
+    node->ctype.name = (char *) realloc(node->ctype.name, strlen(name) + 1);
+    strcpy(node->ctype.name, name);
 }
-
-
-
-void 
-set_astint(astnode_t *node, int i)
-{
-    node->val.i = i;
-}
-
-
-
-void 
-set_astfloat(astnode_t *node, float f)
-{
-    node->val.f = f;
-}
-
 
 
 int 
@@ -156,6 +130,10 @@ free_ast(astnode_t *node)
         return;
     }
 
+    if(node->ctype.name != NULL) {
+        free(node->ctype.name);
+    }
+
     free_ast(node->left);
     free_ast(node->right);
     free(node->text);
@@ -171,13 +149,50 @@ is_lvalue(astnode_t *node)
         return true;
     }
 
-    if(node->type != _ARR_ACCESS && node->type != _STRUCT_ACCESS && 
-        node->type != _VAR || node->right != NULL) {
+    if(node->node_type != _ARR_ACCESS && node->node_type != _STRUCT_ACCESS && 
+        node->node_type != _VAR || node->right != NULL) {
         return false;
     }
 
-    if(node->type == _ARR_ACCESS) {
+    if(node->node_type == _ARR_ACCESS) {
         return is_lvalue(node->right);
     } 
     return is_lvalue(node->left);
+}
+
+
+bool
+is_samectype(astnode_t *type1, astnode_t *type2)
+{
+    return type1->ctype.is_const == type2->ctype.is_const &&
+           type1->ctype.is_array == type2->ctype.is_array && 
+           !strcmp(type1->ctype.name, type2->ctype.name);
+}
+
+
+bool
+is_numctype(astnode_t *type)
+{
+    return (!(strcmp(type->ctype.name, "char")) ||
+            !(strcmp(type->ctype.name, "int")) ||
+            !(strcmp(type->ctype.name, "float"))) &&
+            !type->ctype.is_array;
+}
+
+
+bool
+is_intctype(astnode_t *type)
+{
+    return (!(strcmp(type->ctype.name, "char")) ||
+            !(strcmp(type->ctype.name, "int"))) &&
+            !type->ctype.is_array;
+}
+
+
+void 
+copy_ctype(astnode_t *source, astnode_t *result)
+{
+    set_ctypename(result, source->ctype.name);
+    result->ctype.is_array = source->ctype.is_array;
+    result->ctype.is_const = source->ctype.is_const;
 }

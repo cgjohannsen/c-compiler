@@ -13,7 +13,7 @@
 
 // Global variables
 char *classname, *filename, *basefilename;
-char buffer[512];
+char buffer[2056];
 
 
 char *
@@ -175,7 +175,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
             break;
-        case _ADD: // TODO
+        case _ADD:
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
 
@@ -185,7 +185,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             add_instr(list, ADD, buffer, 0);
             
             break;
-        case _SUB: // TODO
+        case _SUB:
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
 
@@ -195,7 +195,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             add_instr(list, SUB, buffer, 0);
 
             break;
-        case _MULT: // TODO
+        case _MULT:
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
 
@@ -205,7 +205,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             add_instr(list, MUL, buffer, 0);
 
             break;
-        case _DIV: // TODO
+        case _DIV:
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
 
@@ -215,7 +215,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             add_instr(list, DIV, buffer, 0);
 
             break;
-        case _MOD: // TODO
+        case _MOD: 
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
 
@@ -234,14 +234,48 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             gen_expr(table, rhs, list);
             break;
         case _FUN_CALL: // TODO
-            gen_expr(table, lhs, list);
+            funsym_t *funsym;
+            astnode_t *arg;
+            int num_params = 0;
+
+            funsym = get_function(table, expr->text);
+            arg = lhs;
+
+            while(arg != NULL) {
+                gen_expr(table, arg, list);
+                arg = arg->right;
+                num_params += 1;
+            }            
+
+            // build instruction
+            sprintf(buffer, "invokestatic Method %s %s (", classname, 
+                expr->text);
+
+            varsym_t *param;
+            param = funsym->param;
+
+            int instr_len = strlen(buffer);
+            while(param != NULL) {
+                java_type = get_staticjavatype(param->type->ctype.name);
+                buffer[instr_len] = java_type;
+                instr_len += 1;
+                param = param->next;
+            }
+            buffer[instr_len] = ')';
+
+            java_type = get_staticjavatype(funsym->ret_type->ctype.name);
+            buffer[instr_len+1] = java_type;
+            buffer[instr_len+2] = '\0';
+
+            add_instr(list, INVOKESTATIC, buffer, num_params);
+
             break;
         case _ARR_ACCESS: // TODO
             gen_expr(table, lhs, list);
             break;
         case _STRUCT_ACCESS:
             break;
-        case _VAR: // TODO
+        case _VAR:
             sym = get_localvar(table, expr->text);
             if(sym != NULL) {
                 java_type = get_javatype(sym->type->ctype.name);
@@ -257,14 +291,14 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
                 add_instr(list, GETSTATIC, buffer, 0);
             }
             break;
-        case _CHAR_LIT: // TODO
+        case _CHAR_LIT: 
             char c = expr->text[1];
 
             sprintf(buffer, "bipush %d", c);
             add_instr(list, BIPUSH, buffer, 0);
 
             break;
-        case _INT_LIT: // TODO
+        case _INT_LIT: 
             int i = atoi(expr->text);
 
             if(i == -1) {
@@ -279,7 +313,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             }
 
             break;
-        case _REAL_LIT: // TODO
+        case _REAL_LIT: 
             float f = atof(expr->text);
 
             if(f == 0.0) {
@@ -337,7 +371,7 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
         case _DO_STATEMENT:
             break;
         default:
-            sprintf(buffer, ";; expression %s %d\n", classname, 
+            sprintf(buffer, ";; expression %s %d", classname, 
                 statement->line_num);
             add_instr(list, COMMENT, buffer, 0);
             gen_expr(table, statement, list);

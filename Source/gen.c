@@ -74,7 +74,7 @@ print_instrlist(instrlist_t *list)
     cur = list->head;
 
     while(cur != NULL) {
-        fprintf(stderr, "\t\t%s\n", cur->text);
+        fprintf(outfile, "\t\t%s\n", cur->text);
         cur = cur->next;
     }
 }
@@ -433,7 +433,7 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
     list = init_instrlist();
 
     // print function header
-    fprintf(stderr, ".method public static %s : (", ident->text);
+    fprintf(outfile, ".method public static %s : (", ident->text);
     astnode_t *arg_type, *arg_var;
     arg_type = args->left;
 
@@ -442,9 +442,9 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
         arg_var = arg_type->right;
         
         if(arg_type->right->ctype.is_array) {
-            fprintf(stderr, "[");
+            fprintf(outfile, "[");
         }
-        fprintf(stderr, "%c", get_staticjavatype(arg_type->text));        
+        fprintf(outfile, "%c", get_staticjavatype(arg_type->text));        
 
         add_localvar(table, arg_type, arg_var);
 
@@ -458,9 +458,9 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
     
     // print return type
     if(ret_type->ctype.is_array) {
-        fprintf(stderr, "[");
+        fprintf(outfile, "[");
     }
-    fprintf(stderr, ")%c\n", get_staticjavatype(ret_type->text));
+    fprintf(outfile, ")%c\n", get_staticjavatype(ret_type->text));
 
     table->ret_type = ret_type;
 
@@ -468,14 +468,14 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
     gen_funbody(table, fun_body, list);
 
     // print stack and local info
-    fprintf(stderr, "\t.code stack %d locals %d\n", list->min_stack_size, 
+    fprintf(outfile, "\t.code stack %d locals %d\n", list->min_stack_size, 
         table->num_locals);
 
     // print instruction list
     print_instrlist(list);
 
     // print function footer
-    fprintf(stderr, "\t.end code\n.end method\n\n");
+    fprintf(outfile, "\t.end code\n.end method\n\n");
 
     free_instrlist(list);
     free_locals(table);
@@ -494,11 +494,11 @@ gen_globalvar(symtable_t *table, astnode_t *var_decl)
     char java_type = get_staticjavatype(type->text);
 
     while(var != NULL) {
-        fprintf(stderr, ".field public static %s ", var->text); 
+        fprintf(outfile, ".field public static %s ", var->text); 
         if(var->ctype.is_array) {
-            fprintf(stderr, "[");
+            fprintf(outfile, "[");
         }
-        fprintf(stderr, "%c\n\n", java_type);
+        fprintf(outfile, "%c\n\n", java_type);
         var = var->right;
     }
 }
@@ -570,10 +570,10 @@ gen_clinit(symtable_t *table)
         global = global->next;
     }
 
-    fprintf(stderr, ".method <clinit> : ()V\n");
-    fprintf(stderr, "\t.code stack %d locals 0\n", list->min_stack_size);
+    fprintf(outfile, ".method <clinit> : ()V\n");
+    fprintf(outfile, "\t.code stack %d locals 0\n", list->min_stack_size);
     print_instrlist(list);
-    fprintf(stderr, "\t.end code\n.end method\n\n");
+    fprintf(outfile, "\t.end code\n.end method\n\n");
 
     free_instrlist(list);
 }
@@ -583,7 +583,7 @@ gen_clinit(symtable_t *table)
 void
 gen_header()
 {
-    fprintf(stderr, ".class public %s\n.super java/lang/Object\n\n", 
+    fprintf(outfile, ".class public %s\n.super java/lang/Object\n\n", 
         classname);
 }
 
@@ -592,11 +592,11 @@ gen_header()
 void
 gen_footer(symtable_t *table)
 {
-    fprintf(stderr, "; Special methods\n\n");
+    fprintf(outfile, "; Special methods\n\n");
 
     gen_clinit(table);
 
-    fprintf(stderr,
+    fprintf(outfile,
         ".method <init> : ()V\n"
             "\t.code stack 1 locals 1\n"
                 "\t\taload_0\n"

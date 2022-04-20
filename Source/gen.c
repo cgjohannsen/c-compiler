@@ -55,6 +55,7 @@ void
 print_instrlist(instrlist_t *list)
 {
     instr_t *cur;
+    cur = list->head;
 
     while(cur != NULL) {
         fprintf(outfile, "\t\t%s\n", cur->text);
@@ -320,6 +321,10 @@ gen_clinit(symtable_t *table)
     list = init_instrlist();
 
     global = table->global_vars;
+
+    if(global == NULL) { // no globals, no need for clinit
+        return;
+    }
 
     while(global != NULL) {
         var = global->var;

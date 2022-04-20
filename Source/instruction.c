@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "instruction.h"
 
@@ -22,6 +23,7 @@ init_instrlist()
 
     list = (instrlist_t *) malloc(sizeof(instrlist_t));
 
+    list->min_stack_size = 0;
     list->stack_size = 0;
     list->num_locals = 0;
     list->len = 0;

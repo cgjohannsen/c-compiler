@@ -112,6 +112,10 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
         case _ASSIGN: // TODO
             gen_expr(table, rhs, list);
 
+            // for "dumb" stack: duplicate before each store
+            sprintf(buffer, "dup");
+            add_instr(list, DUP, buffer, 0);
+
             // will store value at top of stack in LHS
             // 4 cases to handle: is_local X is_array
 
@@ -123,7 +127,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
                     gen_expr(table, rhs->left, list);
 
                 } else { // local var
-                    sprintf(buffer, "%cstore %d", java_type, sym->idx);
+                    sprintf(buffer, "%cstore %d ; store to %s", java_type, sym->idx,
+                        sym->var->text);
                     add_instr(list, STORE, buffer, 0);
                 }
 
@@ -300,7 +305,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
         case _CHAR_LIT: 
             char c = expr->text[1];
 
-            sprintf(buffer, "bipush %d", c);
+            sprintf(buffer, "bipush %hhu", c);
             add_instr(list, BIPUSH, buffer, 0);
 
             break;
@@ -381,6 +386,9 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
                 statement->line_num);
             add_instr(list, COMMENT, buffer, 0);
             gen_expr(table, statement, list);
+            // for "dumb" stack: throw away unnecessary result
+            sprintf(buffer, "pop");
+            add_instr(list, POP, buffer, 0);
             break; 
     }
 }

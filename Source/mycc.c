@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 
     gen_code(tmpfilename);
 
-    remove(tmpfilename);
+    //remove(tmpfilename);
     free(tmpfilename);
 
     exit(0);

@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #define MAX_FILE_SIZE 5000000 // 5MB
-#define BUFFER_SIZE   1000    // 1kb 
+#define BUFFER_SIZE   4096 
 
 extern FILE *outfile;
 

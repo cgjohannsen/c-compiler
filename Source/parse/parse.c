@@ -467,8 +467,8 @@ parse_expr(parser_t *parser, int prec)
                     expr1 = parse_expr(parser, prec);
 
                     if(op2 != NULL) {
-                        add_astchild(op2, term);
                         add_astchild(op2, expr1);
+                        add_astchild(op2, term);
 
                         add_astchild(op, term);
                         add_astchild(op, op2);
@@ -481,7 +481,7 @@ parse_expr(parser_t *parser, int prec)
                 } else {
                     print_msg(PARSER_ERR, parser->lex->filename, 
                         parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected l-value on lhs of assignment operator.");
+                        "Expected l-value on LHS of assignment operator");
                     parser->status = 0;
                     exit(1);
                 }

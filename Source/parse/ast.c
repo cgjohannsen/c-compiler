@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "../util/io.h"
 #include "ast.h"
 
 astnode_t * 
@@ -195,4 +196,17 @@ copy_ctype(astnode_t *source, astnode_t *result)
     set_ctypename(result, source->ctype.name);
     result->ctype.is_array = source->ctype.is_array;
     result->ctype.is_const = source->ctype.is_const;
+}
+
+
+void 
+print_ctype(astnode_t *node)
+{
+    if(node->ctype.is_const) {
+        fprintf(outfile, "const ");
+    }
+    fprintf(outfile, "%s", node->ctype.name);
+    if(node->ctype.is_array) {
+        fprintf(outfile, "[]");
+    }
 }

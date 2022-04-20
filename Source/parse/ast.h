@@ -105,8 +105,8 @@ bool is_samectype(astnode_t *type1, astnode_t *type2);
 bool is_numctype(astnode_t *type);
 bool is_intctype(astnode_t *type);
 
-char *get_ctypestr(astnode_t *node);
-
 void copy_ctype(astnode_t *source, astnode_t *result);
+
+void print_ctype(astnode_t *node);
 
 #endif

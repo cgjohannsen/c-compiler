@@ -179,6 +179,7 @@ parse_literal(parser_t *parser)
             break;
         case STR_LIT:
             literal = init_astnode(_STR_LIT, parser->cur);
+            literal->ctype.is_array = true;
             break;
         default:
             print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
@@ -206,13 +207,14 @@ parse_lvalue(parser_t *parser)
     var = init_astnode(_VAR, parser->cur);
 
     if(parser->cur->tok_type == IDENT) {
-        update_parser(parser);
-
-        if(parser->cur->tok_type == LBRAK) { // array access
-            update_parser(parser);
-
+        if(parser->next->tok_type == LBRAK) { // array access
             astnode_t *arr_access;
             arr_access = init_astnode(_ARR_ACCESS, parser->cur);
+
+            var->ctype.is_array = true;
+
+            update_parser(parser);
+            update_parser(parser);
 
             astnode_t *arr_expr;
             arr_expr = parse_expr(parser, 1);
@@ -243,8 +245,8 @@ parse_lvalue(parser_t *parser)
             } else { // only array access
                 return arr_access;
             }
-        }
-        if(parser->cur->tok_type == DOT) { // struct access
+        } else if(parser->next->tok_type == DOT) { // struct access
+            update_parser(parser);
             update_parser(parser);
 
             astnode_t *struct_access;
@@ -257,8 +259,9 @@ parse_lvalue(parser_t *parser)
 
             return struct_access;
         } else { // only a variable
+            update_parser(parser);
             return var;
-        }
+        } 
     } else {
         print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
             0, parser->cur->text, "Expected identifier");

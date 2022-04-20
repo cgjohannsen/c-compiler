@@ -13,23 +13,18 @@
 bool
 widen_to(astnode_t *source, astnode_t *target, astnode_t *result)
 {   
-    char *src_name, *trg_name;
-
-    src_name = source->ctype.name;
-    trg_name = target->ctype.name;
-
-    if(!strcmp(src_name, trg_name)) {
-        set_ctypename(result, src_name);
+    if(!strcmp(source->ctype.name, target->ctype.name)) {
+        set_ctypename(result, source->ctype.name);
         return false;
     }
 
     if(!strcmp(source->ctype.name, "char")) {
         if(!strcmp(target->ctype.name, "int") || !strcmp(target->ctype.name, "float")) {
-            set_ctypename(result, trg_name);
+            set_ctypename(result, target->ctype.name);
             return false;
         }
-    } else if(!strcmp(src_name, "int") && !strcmp(trg_name, "float")) {
-        set_ctypename(result, trg_name);
+    } else if(!strcmp(source->ctype.name, "int") && !strcmp(target->ctype.name, "float")) {
+        set_ctypename(result, target->ctype.name);
         return false;
     }
 
@@ -107,7 +102,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
                     lhs->text, lhs->ctype.name);
             }
 
-            if(!widen(rhs, rhs2, expr)) {
+            if(widen(rhs, rhs2, expr)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tArguments %s, %s of ternary of incomptaible types (%s, %s)\n", 
                     rhs->text, rhs2->text, rhs2->ctype.name, rhs2->ctype.name);
@@ -123,7 +118,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
                 fprintf(stderr, "\tAttempting to change value of const variable (%s)\n", lhs->text);
             }
 
-            if(!widen_to(rhs, lhs, expr)) {
+            if(widen_to(rhs, lhs, expr)) {
                 print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
                 fprintf(stderr, "\tAttempting to assign variable %s to incompatible type (%s, %s)\n", 
                     lhs->text, lhs->ctype.name, rhs->ctype.name);
@@ -268,7 +263,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
 
                 if(widen_to(param1, param2->type, param1)) {
                     print_msg(TYPE_ERR, expr->filename, expr->line_num, 0, "", "");
-                    fprintf(stderr, "\tParameter mismatch in call to %s.\n", expr->text);
+                    fprintf(stderr, "\tParameter mismatch in call to %s\n", expr->text);
                     fprintf(stderr, "\tArgument types incompatible (%s, %s)\n", 
                         param1->ctype.name, param2->type->ctype.name);
                 } 
@@ -328,7 +323,8 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             expr->ctype.is_const = true;
             break;
         case _STR_LIT:
-            set_ctypename(expr, "char[]");
+            set_ctypename(expr, "char");
+            expr->ctype.is_array = true;
             expr->ctype.is_const = true;
             break;
         default: // fail
@@ -350,20 +346,19 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
         case _CONTINUE:
             break;
         case _RETURN:
-            if(!strcmp(table->ret_type->text, "void")) {
-                if(statement->left != NULL) { // return type is void, expression is not
-                    print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
-                    fprintf(stderr, "Return type does not match function definition (%s, %s)\n", 
-                        statement->left->ctype.name, table->ret_type->text);
-                }
-            } else { // return type not void
+            if(statement->left != NULL) {
                 typecheck_expr(table, statement->left);
-                if(is_samectype(statement->left, table->ret_type)) {
+                if(widen_to(statement->left, table->ret_type, statement)) {
                     print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
-                    fprintf(stderr, "Return type does not match function definition (%s, %s)\n", 
+                    fprintf(stderr, "\tReturn type does not match function definition (%s, %s)\n", 
                         statement->left->ctype.name, table->ret_type->text);
                 }
+            } else if(strcmp(table->ret_type->text, "void")) {
+                print_msg(TYPE_ERR, statement->filename, statement->line_num, 0, "", "");
+                fprintf(stderr, "\tReturn type does not match function definition (%s, %s)\n", 
+                    statement->left->ctype.name, table->ret_type->text);
             }
+
             break;
         case _IF_STATEMENT:
             cur = statement->left->left; // if-cond
@@ -422,7 +417,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             typecheck_expr(table, statement);
             if(output) {
                 fprintf(outfile, "\tLine %*d: expression has type ", 4, statement->line_num);
-                
+                print_ctype(statement);
                 fprintf(outfile, "\n");
             }
             break; 
@@ -662,7 +657,7 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         }
 
         // check return type
-        if(!is_sametype(fun_decl->left, sym->ret_type)) {
+        if(!is_samectype(fun_decl->left, sym->ret_type)) {
             print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
                 "Function return type does not match previous declaration.");
         }
@@ -674,7 +669,7 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         type2 = sym->param;
 
         while(type1 != NULL && type2 != NULL) {
-            if(!is_sametype(type1, type2->node_type)) {
+            if(!is_samectype(type1, type2->var)) {
                 print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
                     "Parameter type does not match previous declaration.");
             }
@@ -738,6 +733,7 @@ typecheck_fundef(symtable_t *table, astnode_t *fun_def, bool output)
     typecheck_funbody(table, fun_body, output);
 
     free_locals(table);
+    table->ret_type = NULL;
 }
 
 

@@ -75,6 +75,7 @@ init_funsym(astnode_t *fun_decl, bool is_def)
 
     new->is_def = is_def;
     new->ret_type = ret_type;
+    new->param = NULL;
     new->next = NULL;
 
     new->name = (char *) malloc(sizeof(char) * strlen(ident->text) + 1);
@@ -221,7 +222,7 @@ add_function(symtable_t *table, astnode_t *fun_decl, bool is_def)
 
     if(table->functions == NULL) {
         table->functions = new;
-        return true;  
+        return true;
     }
 
     cur = table->functions;

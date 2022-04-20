@@ -78,7 +78,9 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
         }
         cur->next = new;
     }
-    
+
+    new->next = NULL;
+
     // maintain current stack size
     switch(type) {
         case INVOKESTATIC:
@@ -103,7 +105,7 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
         case SIPUSH:
         case LDC:
         case FCONST:
-        case LCONST:
+        case ICONST:
         case ALOAD:
         case GETSTATIC:
         case NEWARRAY:

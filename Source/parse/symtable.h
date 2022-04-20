@@ -32,6 +32,7 @@ typedef struct structsym {
 } structsym_t;
 
 typedef struct symtable {
+    int num_locals;
     varsym_t *global_vars;
     varsym_t *local_vars;
     structsym_t *global_structs;

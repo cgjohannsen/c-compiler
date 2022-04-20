@@ -16,7 +16,7 @@ typedef enum instrtype {
     SIPUSH,
     LDC,
     FCONST,
-    LCONST,
+    ICONST,
     ALOAD,
     ASTORE,
     GETSTATIC,
@@ -32,7 +32,8 @@ typedef enum instrtype {
     F2I,
     I2F,
     I2C,
-    OTHER
+    OTHER,
+    COMMENT
 } instrtype_t;
 
 typedef struct instr {

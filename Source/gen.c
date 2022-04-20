@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "util/io.h"
 #include "parse/parse.h"
@@ -11,33 +12,48 @@
 
 
 // Global variables
-char *classname, *filename;
+char *classname, *filename, *basefilename;
+char buffer[512];
 
 
 char *
-get_basefilename(char *filename)
+get_classname(char *filename)
 {
-    char *base, *pch1, *pch2;
+    char *class, *pch1, *pch2;
 
-    base = (char *) malloc(sizeof(char) * strlen(filename));
+    class = (char *) malloc(sizeof(char) * strlen(filename));
 
     pch1 = strchr(filename, '.');
     pch2 = strrchr(filename, '/');
     
     if(pch2 == NULL) {
-        strncpy(base, filename, pch1-filename);
-        base[pch1-filename+1] = '\0'; // manually add NULL character
+        strncpy(class, filename, pch1-filename);
+        class[pch1-filename-1] = '\0'; // manually add NULL character
     } else {
-        strncpy(base, pch2+1, pch1-filename);
-        base[pch1-filename+1] = '\0'; // manually add NULL character
+        strncpy(class, pch2+1, pch1-filename);
+        class[pch1-pch2-1] = '\0'; // manually add NULL character
     }
 
-    return base;
+    return class;
+}
+
+char
+get_javatype(char *type) 
+{
+    if(!strcmp(type, "char")) {
+        return 'c';
+    } else if(!strcmp(type, "int")) {
+        return 'i';
+    } else if(!strcmp(type, "float")) {
+        return 'f';
+    } else {
+        return 'v';
+    }
 }
 
 
 char
-get_javatype(char *type) 
+get_staticjavatype(char *type) 
 {
     if(!strcmp(type, "char")) {
         return 'C';
@@ -58,7 +74,7 @@ print_instrlist(instrlist_t *list)
     cur = list->head;
 
     while(cur != NULL) {
-        fprintf(outfile, "\t\t%s\n", cur->text);
+        fprintf(stderr, "\t\t%s\n", cur->text);
         cur = cur->next;
     }
 }
@@ -66,39 +82,83 @@ print_instrlist(instrlist_t *list)
 
 
 /** 
- * returns minimum required stack size
+ *
  */ 
-int
+void
 gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
 {
-
-
     // append instructions to list
+    astnode_t *lhs, *rhs, *rhs2;
+    varsym_t *sym;
+    char java_type;
+
+    if(expr == NULL) {
+        return;
+    }
+
+    if(expr->left != NULL) {
+        lhs = expr->left;
+        if(lhs->right != NULL) {
+            rhs = lhs->right;
+            if(rhs->right != NULL) {
+                rhs2 = rhs->right;
+            }
+        }
+    }
 
     switch(expr->node_type) {
         case _ITE:
             break;
         case _ASSIGN: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, rhs, list);
+
+            // will store value at top of stack in LHS
+            // 4 cases to handle: is_local X is_array
+
+            sym = get_localvar(table, lhs->text);
+            if(sym != NULL) { // local
+                java_type = get_javatype(sym->type->ctype.name);
+
+                if(sym->type->ctype.is_array) { // local array
+                    gen_expr(table, rhs->left, list);
+
+                } else { // local var
+                    sprintf(buffer, "%cstore %d", java_type, sym->idx);
+                    add_instr(list, STORE, buffer, 0);
+                }
+
+            } else { // global
+                sym = get_globalvar(table, lhs->text);
+                java_type = get_staticjavatype(sym->type->ctype.name);
+
+                if(sym->type->ctype.is_array) { // global array
+                    gen_expr(table, rhs->left, list);
+
+                } else { // global var
+                    sprintf(buffer, "putstatic Field %s %s %c", classname, 
+                        lhs->text, java_type);
+                    add_instr(list, PUTSTATIC, buffer, 0);
+                }
+            }
+ 
             break;
         case _INCR: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _DECR: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _ARITH_NEG: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _LOG_NEG: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _BIT_NEG: // TODO 
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _TYPE: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _EQ:
         case _NEQ:
@@ -108,58 +168,134 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
         case _LT:
             break;
         case _LOG_AND: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
             break;
         case _LOG_OR: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
             break;
         case _ADD: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
 
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cadd", java_type);
+            add_instr(list, ADD, buffer, 0);
+            
             break;
         case _SUB: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%csub", java_type);
+            add_instr(list, SUB, buffer, 0);
+
             break;
         case _MULT: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cmul", java_type);
+            add_instr(list, MUL, buffer, 0);
+
             break;
         case _DIV: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cdiv", java_type);
+            add_instr(list, DIV, buffer, 0);
+
             break;
         case _MOD: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%crem", java_type);
+            add_instr(list, REM, buffer, 0);
+
             break;
         case _BIT_AND: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
             break;
         case _BIT_OR: // TODO
-            gen_expr(table, expr->left, list);
-            gen_expr(table, expr->right, list);
+            gen_expr(table, lhs, list);
+            gen_expr(table, rhs, list);
             break;
         case _FUN_CALL: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _ARR_ACCESS: // TODO
-            gen_expr(table, expr->left, list);
+            gen_expr(table, lhs, list);
             break;
         case _STRUCT_ACCESS:
             break;
         case _VAR: // TODO
+            sym = get_localvar(table, expr->text);
+            if(sym != NULL) {
+                java_type = get_javatype(sym->type->ctype.name);
+
+                sprintf(buffer, "%cload%c%d ; load from %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, LOAD, buffer, 0);
+            } else {
+                sym = get_globalvar(table, expr->text);
+
+                sprintf(buffer, "getstatic Field %s %s %c", classname, 
+                    expr->text, get_staticjavatype(sym->type->ctype.name));
+                add_instr(list, GETSTATIC, buffer, 0);
+            }
             break;
         case _CHAR_LIT: // TODO
+            char c = expr->text[1];
+
+            sprintf(buffer, "bipush %d", c);
+            add_instr(list, BIPUSH, buffer, 0);
 
             break;
         case _INT_LIT: // TODO
+            int i = atoi(expr->text);
+
+            if(i == -1) {
+                sprintf(buffer, "iconst_m1");
+                add_instr(list, ICONST, buffer, 0);
+            } else if(i >= 0 && i <= 5) {
+                sprintf(buffer, "iconst_%d", i);
+                add_instr(list, ICONST, buffer, 0);
+            } else {
+                sprintf(buffer, "ldc %d", i);
+                add_instr(list, LDC, buffer, 0);
+            }
+
             break;
         case _REAL_LIT: // TODO
+            float f = atof(expr->text);
+
+            if(f == 0.0) {
+                sprintf(buffer, "fconst_0");
+                add_instr(list, FCONST, buffer, 0);
+            } else if(f == 1.0) {
+                sprintf(buffer, "fconst_1");
+                add_instr(list, FCONST, buffer, 0);
+            } else if(f == 2.0) {
+                sprintf(buffer, "fconst_2");
+                add_instr(list, FCONST, buffer, 0);
+            } else {
+                sprintf(buffer, "ldc %f", f);
+                add_instr(list, LDC, buffer, 0);
+            }
+
             break;
         case _STR_LIT: // TODO
             break;
@@ -176,15 +312,34 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
     switch(statement->node_type) {
         case _BREAK:
         case _CONTINUE:
+            break;
         case _RETURN:
+            sprintf(buffer, ";; return %s %d", classname, statement->line_num);
+            add_instr(list, COMMENT, buffer, 0);
+            
+            if(statement->left != NULL) {
+                char java_type;
+                java_type = get_javatype(statement->left->ctype.name);
+
+                gen_expr(table, statement->left, list);
+
+                sprintf(buffer, "%creturn", java_type);
+                add_instr(list, RET, buffer, 0);
+            } else {
+                sprintf(buffer, "return");
+                add_instr(list, RET, buffer, 0);
+            }
+            
+            break;
         case _IF_STATEMENT:
         case _FOR_STATEMENT:
         case _WHILE_STATEMENT:
         case _DO_STATEMENT:
             break;
         default:
-            fprintf(outfile, "\t\t;; expression %s %d\n", filename, 
+            sprintf(buffer, ";; expression %s %d\n", classname, 
                 statement->line_num);
+            add_instr(list, COMMENT, buffer, 0);
             gen_expr(table, statement, list);
             break; 
     }
@@ -205,7 +360,7 @@ gen_funbody(symtable_t *table, astnode_t *fun_body, instrlist_t *list)
         } else if(statement->node_type == _TYPE_DECL) {
             ; // ignore
         } else {
-            gen_expr(table, statement, list);
+            gen_statement(table, statement, list);
         }
 
         statement = statement->right;
@@ -219,6 +374,7 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
 {
     astnode_t *fun_decl, *fun_body, *ret_type, *ident, *args;
     instrlist_t *list;
+    int idx;
 
     fun_decl = fun_def->left;
     fun_body = fun_decl->right;
@@ -229,24 +385,34 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
     list = init_instrlist();
 
     // print function header
-    fprintf(outfile, ".method public static %s : (", ident->text);
-    astnode_t *arg_type;
+    fprintf(stderr, ".method public static %s : (", ident->text);
+    astnode_t *arg_type, *arg_var;
     arg_type = args->left;
 
-    // print argument types
+    // print argument types, assign first indexes
     while(arg_type != NULL) {
+        arg_var = arg_type->right;
+        
         if(arg_type->right->ctype.is_array) {
-            fprintf(outfile, "[");
+            fprintf(stderr, "[");
         }
-        fprintf(outfile, "%c", get_javatype(arg_type->text));        
+        fprintf(stderr, "%c", get_staticjavatype(arg_type->text));        
+
+        add_localvar(table, arg_type, arg_var);
+
+        sprintf(buffer, ";; parameter %d %s %s %d", table->num_locals-1, 
+            arg_var->text, classname, arg_var->line_num);
+        add_instr(list, COMMENT, buffer, 0);
+
         arg_type = arg_type->right->right;
     }
+
     
     // print return type
     if(ret_type->ctype.is_array) {
-        fprintf(outfile, "[");
+        fprintf(stderr, "[");
     }
-    fprintf(outfile, ")%c\n", get_javatype(ret_type->text));
+    fprintf(stderr, ")%c\n", get_staticjavatype(ret_type->text));
 
     table->ret_type = ret_type;
 
@@ -254,16 +420,17 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
     gen_funbody(table, fun_body, list);
 
     // print stack and local info
-    fprintf(outfile, "\t.code stack %d locals %d\n", list->stack_size, 
-        list->num_locals);
+    fprintf(stderr, "\t.code stack %d locals %d\n", list->min_stack_size, 
+        table->num_locals);
 
     // print instruction list
     print_instrlist(list);
 
     // print function footer
-    fprintf(outfile, "\t.end code\n.end method\n\n");
+    fprintf(stderr, "\t.end code\n.end method\n\n");
 
     free_instrlist(list);
+    free_locals(table);
 }
 
 
@@ -276,11 +443,14 @@ gen_globalvar(symtable_t *table, astnode_t *var_decl)
     type = var_decl->left;
     var = type->right;
 
-    char java_type = get_javatype(type->text);
+    char java_type = get_staticjavatype(type->text);
 
     while(var != NULL) {
-        fprintf(outfile, ".field public static %s %c%c\n", var->text, 
-            var->ctype.is_array ? '[' : ' ' , java_type);
+        fprintf(stderr, ".field public static %s ", var->text); 
+        if(var->ctype.is_array) {
+            fprintf(stderr, "[");
+        }
+        fprintf(stderr, "%c\n\n", java_type);
         var = var->right;
     }
 }
@@ -316,7 +486,6 @@ gen_clinit(symtable_t *table)
     instrlist_t *list;
     varsym_t *global;
     astnode_t *var, *type;
-    char buffer[256];
 
     list = init_instrlist();
 
@@ -339,13 +508,13 @@ gen_clinit(symtable_t *table)
                 add_instr(list, NEWARRAY, buffer, 0);
 
                 sprintf(buffer, "putstatic Field %s %s [%c", classname, 
-                    var->text, get_javatype(type->text));
+                    var->text, get_staticjavatype(type->text));
                 add_instr(list, PUTSTATIC, buffer, 0);
             } else { // initialized global
                 gen_expr(table, var->left, list);
 
                 sprintf(buffer, "putstatic Field %s %s %c", classname, 
-                    var->text, get_javatype(type->text));
+                    var->text, get_staticjavatype(type->text));
                 add_instr(list, PUTSTATIC, buffer, 0);
             }
         }
@@ -353,10 +522,10 @@ gen_clinit(symtable_t *table)
         global = global->next;
     }
 
-    fprintf(outfile, ".method <clinit> : ()V\n");
-    fprintf(outfile, "\t.code stack %d locals 0\n", list->min_stack_size);
+    fprintf(stderr, ".method <clinit> : ()V\n");
+    fprintf(stderr, "\t.code stack %d locals 0\n", list->min_stack_size);
     print_instrlist(list);
-    fprintf(outfile, "\t.end code\n.end method\n\n");
+    fprintf(stderr, "\t.end code\n.end method\n\n");
 
     free_instrlist(list);
 }
@@ -366,7 +535,7 @@ gen_clinit(symtable_t *table)
 void
 gen_header()
 {
-    fprintf(outfile, ".class public %s\n.super java/lang/Object\n\n", 
+    fprintf(stderr, ".class public %s\n.super java/lang/Object\n\n", 
         classname);
 }
 
@@ -375,11 +544,11 @@ gen_header()
 void
 gen_footer(symtable_t *table)
 {
-    fprintf(outfile, "; Special methods\n\n");
+    fprintf(stderr, "; Special methods\n\n");
 
     gen_clinit(table);
 
-    fprintf(outfile,
+    fprintf(stderr,
         ".method <init> : ()V\n"
             "\t.code stack 1 locals 1\n"
                 "\t\taload_0\n"
@@ -405,16 +574,14 @@ gen_footer(symtable_t *table)
 
 
 int 
-gen_code(char *fname)
+gen_code(char *filename)
 {
     symtable_t *table;
     parser_t parser;
     astnode_t *program;
 
-    // initialize filename stuff
-    filename = (char *) malloc(sizeof(char) * strlen(fname) + 1);
-    strcpy(filename, fname);
-    classname = get_basefilename(filename);
+    // initialize classname stuff
+    classname = get_classname(filename);
 
     table = init_symtable();
     init_parser(filename, &parser);
@@ -429,7 +596,6 @@ gen_code(char *fname)
     gen_footer(table);
 
     free_symtable(table);
-    free(filename);
     free(classname);
 
     return 0;

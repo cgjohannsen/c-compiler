@@ -125,7 +125,7 @@ int is_assignop(tokentype_t);
 int is_typeorqualifier(tokentype_t);
 
 void print_token(token_t *);
-token_t * init_token(char *, int); 
+token_t * init_token(char *filename, int line_num); 
 void free_token(token_t *);
 
 #endif

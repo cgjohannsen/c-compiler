@@ -949,7 +949,6 @@ tokenize(char *filename)
     }
 
     free_token(tok);
-    fclose(lex->infile);
     free_lexer(lex);
 }
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include "io.h"
@@ -49,6 +50,39 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
     }
 }
 
+
+char *
+prepare_file(char *filename)
+{
+    FILE *fp_source, *fp_target;
+    size_t bytesread, byteswritten;
+    char buffer[4096], *tmpfilename;
+
+    tmpfilename = (char *) malloc(strlen(filename) + 4);
+    strcpy(tmpfilename, filename);
+    strcat(tmpfilename, ".tmp");
+
+    fp_source = fopen(filename, "r");
+    if(fp_source == NULL) {
+        print_msg(FILE_ERR, filename, 0, 0, "", "Could not open file");
+        exit(1);
+    }
+
+    fp_target = fopen(tmpfilename, "w");
+
+    fputs("int getchar();int putchar(char c);", fp_target);
+
+    while((bytesread = fread(buffer, sizeof(char), sizeof(buffer), fp_source)) > 0) {
+        fwrite(buffer, sizeof(char), bytesread, fp_target);
+    }
+
+    fclose(fp_source);
+    fclose(fp_target);
+
+    return tmpfilename;
+}
+
+
 /*
  * Opens filename, returns file ptr to said file. Prints error if file was not 
  * opened successfully
@@ -66,7 +100,7 @@ open_file(char *filename)
     fp = fopen(filename, "r");
     if(fp == NULL) {
         print_msg(FILE_ERR, filename, 0, 0, "", "Could not open file");
-        return NULL;
+        exit(1);
     }
 
     return fp;

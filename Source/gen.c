@@ -13,7 +13,7 @@
 
 // Global variables
 char *classname, *filename, *basefilename;
-char buffer[2056];
+char buffer[2048];
 
 
 char *
@@ -248,8 +248,14 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             }            
 
             // build instruction
-            sprintf(buffer, "invokestatic Method %s %s (", classname, 
-                expr->text);
+
+            // if getchar/putchar, classname is libc
+            if(!strcmp(expr->text, "putchar") || !strcmp(expr->text, "getchar")) {
+                sprintf(buffer, "invokestatic Method libc %s (", expr->text);
+            } else {
+                sprintf(buffer, "invokestatic Method %s %s (", classname, 
+                    expr->text);
+            }
 
             varsym_t *param;
             param = funsym->param;

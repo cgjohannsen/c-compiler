@@ -115,8 +115,16 @@ int main(int argc, char **argv)
   }
 
   if(mode == 5) {
-    gen_code(filename);
+    char *tmpfilename;
+    tmpfilename = prepare_file(filename);
+
+    gen_code(tmpfilename);
+
+    remove(tmpfilename);
+    free(tmpfilename);
+
     exit(0);
   }
+
 
 }

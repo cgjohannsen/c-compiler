@@ -47,10 +47,10 @@ CLEAN_LIST := $(TARGET_NAME) \
 
 # phony rules
 .PHONY: all
-all: $(TARGET_RELES) developers
+all: $(TARGET_NAME) developers
 
 .PHONY: mycc
-mycc: $(TARGET_RELES)
+mycc: $(TARGET_NAME)
 
 .PHONY: clean
 clean:

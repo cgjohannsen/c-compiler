@@ -21,7 +21,7 @@ get_classname(char *filename)
 {
     char *class, *pch1, *pch2;
 
-    class = (char *) malloc(sizeof(char) * strlen(filename));
+    class = (char *) malloc(strlen(filename));
 
     pch1 = strchr(filename, '.');
     pch2 = strrchr(filename, '/');
@@ -36,6 +36,25 @@ get_classname(char *filename)
 
     return class;
 }
+
+
+
+char *
+get_filename(char *filename)
+{
+    char *name, *pch;
+
+    name = (char *) malloc(strlen(filename));
+
+    pch = strrchr(filename, '.');
+
+    strncpy(name, filename, pch-filename);
+    name[pch-filename] = '\0';
+
+    return name;
+}
+
+
 
 char
 get_javatype(char *type) 
@@ -123,8 +142,9 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             if(sym != NULL) { // local
                 java_type = get_javatype(sym->type->ctype.name);
 
-                if(sym->type->ctype.is_array) { // local array
-                    gen_expr(table, rhs->left, list);
+                if(sym->var->ctype.is_array) { // local array
+                    gen_expr(table, rhs, list);
+
 
                 } else { // local var
                     sprintf(buffer, "%cstore %d ; store to %s", java_type, sym->idx,
@@ -137,8 +157,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
                 java_type = get_staticjavatype(sym->type->ctype.name);
 
                 if(sym->type->ctype.is_array) { // global array
-                    gen_expr(table, rhs->left, list);
-
+                    gen_expr(table, rhs, list);
                 } else { // global var
                     sprintf(buffer, "putstatic Field %s %s %c", classname, 
                         lhs->text, java_type);
@@ -149,12 +168,34 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
             break;
         case _INCR: // TODO
             gen_expr(table, lhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            add_instr(list, CONST, buffer, 0);
+            sprintf(buffer, "%cadd", java_type);
+            add_instr(list, ADD, buffer, 0);
+
             break;
         case _DECR: // TODO
             gen_expr(table, lhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            add_instr(list, CONST, buffer, 0);
+            sprintf(buffer, "%csub", java_type);
+            add_instr(list, SUB, buffer, 0);
+
             break;
         case _ARITH_NEG: // TODO
             gen_expr(table, lhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cneg", java_type);
+            add_instr(list, NEG, buffer, 0);
+
             break;
         case _LOG_NEG: // TODO
             gen_expr(table, lhs, list);
@@ -233,10 +274,22 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
         case _BIT_AND: // TODO
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cand", java_type);
+            add_instr(list, AND, buffer, 0);
+
             break;
         case _BIT_OR: // TODO
             gen_expr(table, lhs, list);
             gen_expr(table, rhs, list);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cor", java_type);
+            add_instr(list, AND, buffer, 0);
+
             break;
         case _FUN_CALL: // TODO
             funsym_t *funsym;
@@ -282,7 +335,34 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
 
             break;
         case _ARR_ACCESS: // TODO
-            gen_expr(table, lhs, list);
+            sym = get_localvar(table, expr->text);
+
+            if(sym != NULL) { // local array
+                java_type = get_javatype(sym->type->ctype.name);
+
+                sprintf(buffer, "aload%c%d ; load from %s", sym->idx > 3 ? ' ' : '_', 
+                    sym->idx, expr->text);
+                add_instr(list, LOAD, buffer, 0);
+
+                gen_expr(table, lhs, list);
+
+                sprintf(buffer, "%caload%c%d ; load from %s", java_type,
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, LOAD, buffer, 0);
+
+            } else { // global array
+                sym = get_globalvar(table, expr->text);
+                
+                java_type = get_javatype(sym->type->ctype.name);
+
+                sprintf(buffer, "getstatic Field %s %s %c", classname, 
+                    expr->text, java_type);
+                add_instr(list, GETSTATIC, buffer, 0);
+
+                gen_expr(table, lhs, list);
+
+            }
+
             break;
         case _STRUCT_ACCESS:
             break;
@@ -359,7 +439,7 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
         case _CONTINUE:
             break;
         case _RETURN:
-            sprintf(buffer, ";; return %s %d", classname, statement->line_num);
+            sprintf(buffer, ";; return %s %d", filename, statement->line_num);
             add_instr(list, COMMENT, buffer, 0);
             
             if(statement->left != NULL) {
@@ -396,6 +476,41 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
 
 
 void
+gen_localvar(symtable_t *table, astnode_t *var_decl, instrlist_t *list)
+{
+    astnode_t *type, *var;
+    varsym_t *sym;
+    char java_type;
+
+    type = var_decl->left;
+    var = type->right;
+
+    java_type = get_javatype(type->ctype.name);
+
+    while(var != NULL) {
+        varsym_t *sym;
+
+        add_localvar(table, type, var);
+        sym = get_localvar(table, var->text);
+
+        sprintf(buffer, ";; local %d %s %s %d", sym->idx, var->text, filename, var->line_num);
+        add_instr(list, COMMENT, buffer, 0);
+
+        if(var->left != NULL) { // includes initialization
+            gen_expr(table, var->left, list);
+
+            sprintf(buffer, "%cstore %d ; store to %s", java_type, sym->idx,
+                var->text);
+            add_instr(list, STORE, buffer, 0);
+        }
+
+        var = var->right;
+    }
+}
+
+
+
+void
 gen_funbody(symtable_t *table, astnode_t *fun_body, instrlist_t *list)
 {
     astnode_t *statement;
@@ -403,10 +518,9 @@ gen_funbody(symtable_t *table, astnode_t *fun_body, instrlist_t *list)
     statement = fun_body->left;
     while(statement != NULL) {
         if(statement->node_type == _VAR_DECL) {
-            //gen_localvar(table, statement, list);
-            ;
+            gen_localvar(table, statement, list);
         } else if(statement->node_type == _TYPE_DECL) {
-            ; // ignore
+            // ignore
         } else {
             gen_statement(table, statement, list);
         }
@@ -449,7 +563,7 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
         add_localvar(table, arg_type, arg_var);
 
         sprintf(buffer, ";; parameter %d %s %s %d", table->num_locals-1, 
-            arg_var->text, classname, arg_var->line_num);
+            arg_var->text, filename, arg_var->line_num);
         add_instr(list, COMMENT, buffer, 0);
 
         arg_type = arg_type->right->right;
@@ -622,17 +736,18 @@ gen_footer(symtable_t *table)
 
 
 int 
-gen_code(char *filename)
+gen_code(char *fname)
 {
     symtable_t *table;
     parser_t parser;
     astnode_t *program;
 
     // initialize classname stuff
-    classname = get_classname(filename);
+    classname = get_classname(fname);
+    filename = get_filename(fname);
 
     table = init_symtable();
-    init_parser(filename, &parser);
+    init_parser(fname, &parser);
     program = parse_program(&parser);
 
     typecheck_program(table, program, false);

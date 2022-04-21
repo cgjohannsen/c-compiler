@@ -10,6 +10,8 @@ typedef enum instrtype {
     DIV,
     REM,
     NEG,
+    AND,
+    OR,
     LOAD,
     STORE,
     BIPUSH,

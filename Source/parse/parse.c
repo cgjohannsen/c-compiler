@@ -448,15 +448,23 @@ parse_expr(parser_t *parser, int prec)
                             break;
                         case PLUSASSIGN:
                             op2 = init_astnode(_ADD, parser->cur);
+                            set_asttext(op2, "+");
+                            set_asttext(op, "=");
                             break;
                         case MINUSASSIGN:
                             op2 = init_astnode(_SUB, parser->cur);
+                            set_asttext(op2, "-");
+                            set_asttext(op, "=");
                             break;
                         case STARASSIGN:
                             op2 = init_astnode(_MULT, parser->cur);
+                            set_asttext(op2, "*");
+                            set_asttext(op, "=");
                             break;
                         case SLASHASSIGN:
                             op2 = init_astnode(_DIV, parser->cur);
+                            set_asttext(op2, "/");
+                            set_asttext(op, "=");
                             break;
                         default:
                             // impossible
@@ -466,15 +474,14 @@ parse_expr(parser_t *parser, int prec)
 
                     expr1 = parse_expr(parser, prec);
 
-                    if(op2 != NULL) {
-                        add_astchild(op2, expr1);
-                        add_astchild(op2, term);
-
-                        add_astchild(op, term);
-                        add_astchild(op, op2);
-                    } else {
+                    if(op2 == NULL) {
                         add_astchild(op, term);
                         add_astchild(op, expr1);
+                    } else {
+                        add_astchild(op2, term);
+                        add_astchild(op2, expr1);
+                        add_astchild(op, copy_astnode(term, true));
+                        add_astchild(op, op2);
                     }
 
                     return op;

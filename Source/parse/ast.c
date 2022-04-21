@@ -199,6 +199,38 @@ copy_ctype(astnode_t *source, astnode_t *result)
 }
 
 
+astnode_t *
+copy_astnode(astnode_t *node, bool is_top)
+{
+    if(node == NULL) {
+        return NULL;
+    }
+
+    astnode_t *copy = (astnode_t *) malloc(sizeof(astnode_t));
+
+    copy->text = (char *) malloc(strlen(node->text) + 1);
+    copy->ctype.name = (char *) malloc(strlen(node->text) + 1);
+
+    strcpy(copy->text, node->text);
+
+    copy->filename = node->filename;
+    copy->line_num = node->line_num;
+    copy->node_type = node->node_type;
+    copy->ctype.is_array = node->ctype.is_array;
+    copy->ctype.is_const = node->ctype.is_const;
+    copy->ctype.is_struct = node->ctype.is_struct;
+    copy->arr_dim = node->arr_dim;
+
+    // copy children/siblings
+    copy->left = copy_astnode(node->left, false);    
+    if(!is_top) {
+        copy->right = copy_astnode(node->right, false);    
+    }
+
+    return copy;
+}
+
+
 void 
 print_ctype(astnode_t *node)
 {
@@ -209,4 +241,39 @@ print_ctype(astnode_t *node)
     if(node->ctype.is_array) {
         fprintf(outfile, "[]");
     }
+}
+
+
+
+void
+print_astrec(astnode_t *node, int depth) 
+{
+    if(node == NULL) {
+        return;
+    }
+
+    int i = 0;
+
+    while(i < depth) {
+        fprintf(stderr, "\t");
+        i++;
+    }
+
+    fprintf(stderr, "%s\n", node->text);
+
+    astnode_t *child;
+    child = node->left;
+
+    while(child != NULL) {
+        print_astrec(child, depth+1);
+        child = child->right;
+    }
+}
+
+
+
+void
+print_ast(astnode_t *node)
+{
+    print_astrec(node, 0);
 }

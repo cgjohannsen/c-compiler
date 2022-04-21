@@ -106,7 +106,9 @@ bool is_numctype(astnode_t *type);
 bool is_intctype(astnode_t *type);
 
 void copy_ctype(astnode_t *source, astnode_t *result);
+astnode_t *copy_astnode(astnode_t *node, bool is_top);
 
 void print_ctype(astnode_t *node);
+void print_ast(astnode_t *node);
 
 #endif

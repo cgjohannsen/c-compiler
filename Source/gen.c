@@ -28,10 +28,10 @@ get_classname(char *filename)
     
     if(pch2 == NULL) {
         strncpy(class, filename, pch1-filename);
-        class[pch1-filename-1] = '\0'; // manually add NULL character
+        class[pch1-filename] = '\0'; // manually add NULL character
     } else {
         strncpy(class, pch2+1, pch1-filename);
-        class[pch1-pch2-1] = '\0'; // manually add NULL character
+        class[pch1-pch2] = '\0'; // manually add NULL character
     }
 
     return class;

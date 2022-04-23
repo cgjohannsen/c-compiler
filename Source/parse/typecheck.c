@@ -76,6 +76,10 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
 {
     astnode_t *lhs, *rhs, *rhs2;
 
+    lhs = NULL;
+    rhs = NULL;
+    rhs2 = NULL;
+
     if(expr == NULL) {
         return;
     }
@@ -650,7 +654,8 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         if(is_def) {
             if(sym->is_def) {
                 print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                    "Function already defined.");
+                    "Function already defined");
+                exit(1);
             } else {
                 sym->is_def = true;
             }
@@ -659,7 +664,8 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         // check return type
         if(!is_samectype(fun_decl->left, sym->ret_type)) {
             print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                "Function return type does not match previous declaration.");
+                "Function return type does not match previous declaration");
+            exit(1);
         }
 
         // check params
@@ -671,13 +677,15 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         while(type1 != NULL && type2 != NULL) {
             if(!is_samectype(type1, type2->var)) {
                 print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                    "Parameter type does not match previous declaration.");
+                    "Parameter type does not match previous declaration");
+                exit(1);
             }
 
             if(!add_localvar(table, type1, type1->right)) {
                 // parameter already exists
                 print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                    "Parameter name already in use.");
+                    "Parameter name already in use");
+                exit(1);
             }
             free_locals(table);
 
@@ -687,7 +695,8 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
 
         if((type1 == NULL && type2 != NULL) || (type1 != NULL && type2 == NULL)) {
             print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                    "Number of function parameters does not match previous declaration.");
+                    "Number of function parameters does not match previous declaration");
+            exit(1);
         }
           
     }
@@ -711,7 +720,8 @@ typecheck_fundecl(symtable_t *table, astnode_t *fun_decl, bool is_def, bool outp
         if(!add_localvar(table, param, param->right)) {
             // parameter already exists
             print_msg(TYPE_ERR, fun_decl->filename, fun_decl->line_num, 0, "", 
-                "Parameter name already in use.");
+                "Parameter name already in use");
+            exit(1);
         }
 
         param = param->right->right;
@@ -780,6 +790,7 @@ typecheck(char *filename)
     astnode_t *program;
 
     table = init_symtable();
+
     init_parser(filename, &parser);
     program = parse_program(&parser);
 

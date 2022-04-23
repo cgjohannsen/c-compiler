@@ -105,6 +105,77 @@ init_funsym(astnode_t *fun_decl, bool is_def)
     return new;
 }
 
+
+symtable_t *
+init_symtable()
+{
+    symtable_t *table;
+
+    table = (symtable_t *) malloc(sizeof(symtable_t));
+
+    table->num_locals = 0;
+    table->global_vars = NULL;
+    table->local_vars = NULL;
+    table->global_structs = NULL;
+    table->local_structs = NULL;
+    table->functions = NULL;
+    table->ret_type = NULL;
+
+    // initialize function sym table with getchar, putchar
+    token_t *token;
+    astnode_t *fun_decl, *ret_type, *ident, *args, *arg_type, *arg_var;
+
+    token = init_token("libc", 1);
+
+    // add getchar
+    fun_decl = init_astnode(_FUN_DECL, token);
+    ret_type = init_astnode(_TYPE, token);
+    ident = init_astnode(_VAR, token);
+    args = init_astnode(_FUN_ARGS, token);
+
+    set_asttext(fun_decl, "getchar");
+    set_asttext(ident, "getchar");
+    set_asttext(ret_type, "int");
+
+    set_ctypename(ret_type, "int");
+
+    add_astchild(fun_decl, ret_type);
+    add_astchild(fun_decl, ident);
+    add_astchild(fun_decl, args);
+
+    add_function(table, fun_decl, false);
+
+    // add putchar
+    fun_decl = init_astnode(_FUN_DECL, token);
+    ret_type = init_astnode(_TYPE, token);
+    ident = init_astnode(_VAR, token);
+    args = init_astnode(_FUN_PARAMS, token);
+    arg_type = init_astnode(_TYPE, token);
+    arg_var = init_astnode(_VAR, token);
+
+    set_asttext(fun_decl, "putchar");
+    set_asttext(ident, "putchar");
+    set_asttext(ret_type, "int");
+    set_asttext(arg_type, "int");
+    set_asttext(arg_var, "c");
+
+    set_ctypename(ret_type, "int");
+    set_ctypename(arg_type, "int");
+
+
+    add_astchild(fun_decl, ret_type);
+    add_astchild(fun_decl, ident);
+    add_astchild(fun_decl, args);
+    add_astchild(args, arg_type);
+    add_astchild(args, arg_var);
+
+    add_function(table, fun_decl, false);
+
+    return table;
+}
+
+
+
 bool
 add_localvar(symtable_t *table, astnode_t *type, astnode_t *var)
 {
@@ -320,22 +391,6 @@ get_function(symtable_t *table, char *name)
     }
 
     return NULL;
-}
-
-
-symtable_t *
-init_symtable()
-{
-    symtable_t *table;
-
-    table = (symtable_t *) malloc(sizeof(symtable_t));
-
-    table->num_locals = 0;
-    table->global_vars = NULL;
-    table->local_vars = NULL;
-    table->global_structs = NULL;
-    table->local_structs = NULL;
-    table->functions = NULL;
 }
 
 

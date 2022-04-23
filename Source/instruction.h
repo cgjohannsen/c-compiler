@@ -1,6 +1,8 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
+#include <stdbool.h>
+
 #define MAX_INSTR_LEN 512
 
 typedef enum instrtype {
@@ -50,6 +52,7 @@ typedef struct instrlist {
     int num_locals;
     int len;
     instr_t *head;
+    bool has_return;
 } instrlist_t;
 
 instr_t *init_instr(char *text);

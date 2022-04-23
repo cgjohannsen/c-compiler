@@ -12,8 +12,9 @@
 
 
 // Global variables
-char *classname, *filename, *basefilename;
+char *classname, *filename;
 char buffer[2048];
+int mode;
 
 
 char *
@@ -28,30 +29,13 @@ get_classname(char *filename)
     
     if(pch2 == NULL) {
         strncpy(class, filename, pch1-filename);
-        class[pch1-filename] = '\0'; // manually add NULL character
+        class[pch1-filename-1] = '\0'; // manually add NULL character
     } else {
         strncpy(class, pch2+1, pch1-filename);
-        class[pch1-pch2] = '\0'; // manually add NULL character
+        class[pch1-pch2-1] = '\0'; // manually add NULL character
     }
 
     return class;
-}
-
-
-
-char *
-get_filename(char *filename)
-{
-    char *name, *pch;
-
-    name = (char *) malloc(strlen(filename));
-
-    pch = strrchr(filename, '.');
-
-    strncpy(name, filename, pch-filename);
-    name[pch-filename] = '\0';
-
-    return name;
 }
 
 
@@ -114,6 +98,9 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list)
     if(expr == NULL) {
         return;
     }
+
+    lhs = NULL;
+    rhs = NULL;
 
     if(expr->left != NULL) {
         lhs = expr->left;
@@ -454,6 +441,8 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
                 sprintf(buffer, "return");
                 add_instr(list, RET, buffer, 0);
             }
+
+            list->has_return = true;
             
             break;
         case _IF_STATEMENT:
@@ -580,6 +569,16 @@ gen_fun(symtable_t *table, astnode_t *fun_def)
 
     // construct instruction list
     gen_funbody(table, fun_body, list);
+
+    // check for return
+    if(strcmp(ret_type->text, "void")) { // non-void return
+        if(!list->has_return) {
+            print_msg(GEN_ERR, fun_body->filename, fun_body->line_num, 0, "", "");
+            fprintf(stderr, "\tMissing return in non-void function %s\n", 
+                fun_decl->text);
+            exit(1);
+        }
+    }
 
     // print stack and local info
     fprintf(outfile, "\t.code stack %d locals %d\n", list->min_stack_size, 
@@ -736,15 +735,17 @@ gen_footer(symtable_t *table)
 
 
 int 
-gen_code(char *fname)
+gen_code(char *fname, int m)
 {
     symtable_t *table;
     parser_t parser;
     astnode_t *program;
 
+    mode = m;
+
     // initialize classname stuff
+    filename = fname;
     classname = get_classname(fname);
-    filename = get_filename(fname);
 
     table = init_symtable();
     init_parser(fname, &parser);

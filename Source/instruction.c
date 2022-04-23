@@ -28,6 +28,7 @@ init_instrlist()
     list->num_locals = 0;
     list->len = 0;
     list->head = NULL;
+    list->has_return = false;
 }
 
 
@@ -62,24 +63,9 @@ void
 add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
 {
     instr_t *new, *cur;
+    int prev_stack_size;
 
-    new = (instr_t *) malloc(sizeof(instr_t));
-    new->text = (char *) malloc(sizeof(char) * strlen(text) + 1);
-
-    new->type = type;
-    strcpy(new->text, text);
-
-    if(list->head == NULL) {
-        list->head = new;
-    } else {
-        cur = list->head;
-        while(cur->next != NULL) {
-            cur = cur->next;
-        }
-        cur->next = new;
-    }
-
-    new->next = NULL;
+    prev_stack_size = list->stack_size;
 
     // maintain current stack size
     switch(type) {
@@ -123,7 +109,31 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
             break;
     }
 
+    // if stack underflow, don't add instruction
+    if(list->stack_size < 0) {
+        list->stack_size = prev_stack_size;
+        return;
+    }
+
     if(list->stack_size > list->min_stack_size) {
         list->min_stack_size = list->stack_size;
     }
+
+    new = (instr_t *) malloc(sizeof(instr_t));
+    new->text = (char *) malloc(sizeof(char) * strlen(text) + 1);
+
+    new->type = type;
+    strcpy(new->text, text);
+
+    if(list->head == NULL) {
+        list->head = new;
+    } else {
+        cur = list->head;
+        while(cur->next != NULL) {
+            cur = cur->next;
+        }
+        cur->next = new;
+    }
+
+    new->next = NULL;
 }

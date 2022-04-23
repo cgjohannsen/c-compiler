@@ -15,11 +15,11 @@ typedef enum msgcode {
     PARSER_ERR,
     PARSER_WRN,
     TYPE_ERR,
-    TYPE_WRN
+    TYPE_WRN,
+    GEN_ERR
 } msgcode_t;
 
 void print_msg(msgcode_t, char *, int, char, char *, char *);
-char *prepare_file(char *);
 FILE *open_file(char *);
 int refill_buffer(FILE *, char *);
 

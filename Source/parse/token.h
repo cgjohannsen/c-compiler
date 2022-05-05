@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX_LEXEME_SIZE   64
 #define MIN_LEXEME_SIZE   4
@@ -63,6 +64,7 @@ typedef enum tokentype
     REAL_LIT  = 304,
     STR_LIT   = 305,
     IDENT     = 306,
+    MACRO     = 307,
 
     // Symbols
 
@@ -114,8 +116,11 @@ typedef struct token
     int text_max_size;
     tokenvalue_t value;
     int line_num;
+    int include_depth;
+    int macro_depth;
     char *filename;
     FILE *file;
+    char *macro_name;
 } token_t;
 
 int is_unaryop(tokentype_t);
@@ -125,7 +130,7 @@ int is_assignop(tokentype_t);
 int is_typeorqualifier(tokentype_t);
 
 void print_token(token_t *);
-token_t * init_token(char *filename, int line_num); 
+token_t *init_token(char *, int, int, int); 
 void free_token(token_t *);
 
 #endif

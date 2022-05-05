@@ -1557,7 +1557,10 @@ parse_program(parser_t *parser)
 void
 init_parser(char *filename, parser_t *parser)
 {
-    parser->lex = init_lexer(filename);
+    macro_t *macros;
+    macros = NULL;
+
+    parser->lex = init_lexer(filename, 0, 0, macros, NULL);
     
     parser->status = 1;
 

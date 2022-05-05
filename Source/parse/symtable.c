@@ -125,7 +125,7 @@ init_symtable()
     token_t *token;
     astnode_t *fun_decl, *ret_type, *ident, *args, *arg_type, *arg_var;
 
-    token = init_token("libc", 1);
+    token = init_token("libc", 1, 0, 0);
 
     // add getchar
     fun_decl = init_astnode(_FUN_DECL, token);

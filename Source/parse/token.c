@@ -49,8 +49,24 @@ is_typeorqualifier(tokentype_t type)
 void 
 print_token(token_t *tok) 
 {
-    fprintf(outfile, "File %s Line %*d Token %*d Text %s\n", 
-        tok->filename, 5, tok->line_num, 3, tok->tok_type, tok->text);
+    int i = 0;
+    while(i < tok->include_depth+tok->macro_depth) {
+        fprintf(outfile, "..");
+        i++;
+    }
+
+    if(tok->tok_type == MACRO && tok->macro_name != NULL) {
+        fprintf(outfile, "Macro %s macro expansion\n", tok->macro_name);
+    } else if(tok->tok_type == MACRO) {
+        fprintf(outfile, "File %s Line %*d macro expansion\n", 
+            tok->filename, 5, tok->line_num);
+    } else if(tok->macro_name != NULL) {
+        fprintf(outfile, "Macro %s Token %*d Text %s\n",
+            tok->macro_name, 3, tok->tok_type, tok->text);
+    } else {
+        fprintf(outfile, "File %s Line %*d Token %*d Text %s\n", 
+            tok->filename, 5, tok->line_num, 3, tok->tok_type, tok->text);
+    }
 }
 
 /**
@@ -63,7 +79,7 @@ print_token(token_t *tok)
  * @return 
  */
 token_t * 
-init_token(char *filename, int line_num) 
+init_token(char *filename, int line_num, int include_depth, int macro_depth) 
 {
     token_t *tok = (token_t *) malloc(sizeof(token_t));
 
@@ -74,6 +90,9 @@ init_token(char *filename, int line_num)
     tok->text_max_size = MIN_LEXEME_SIZE;
     tok->filename = filename;
     tok->line_num = line_num;
+    tok->include_depth = include_depth;
+    tok->macro_depth = macro_depth;
+    tok->macro_name = NULL;
 
     return tok;
 }

@@ -1,11 +1,17 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "../util/hash.h"
 #include "../util/io.h"
 #include "lexer.h"
 
+bool preprocess = false;
+
+/**
+ *
+ */
 int
 add_macro(lexer_t *lex, char *name, char *text)
 {
@@ -16,6 +22,7 @@ add_macro(lexer_t *lex, char *name, char *text)
         lex->macros->text = (char *) malloc(strlen(text) + 1);
         strcpy(lex->macros->text, text);
         lex->macros->text[strlen(text)] = 0;
+        lex->macros->next = NULL;
         lex->macros->tmp = NULL;
         return 0;
     }
@@ -37,10 +44,76 @@ add_macro(lexer_t *lex, char *name, char *text)
     cur->next->text = (char *) malloc(strlen(text) + 1);
     strcpy(cur->next->text, text);
     cur->next->text[strlen(text)] = 0;
+    cur->next->next = NULL;
     cur->next->tmp = NULL;
 
     return 0;
 }
+
+/**
+ *
+ */
+int 
+is_macro(lexer_t *lex, char *name)
+{
+    if(lex->macros == NULL) {
+        return 0;
+    }
+
+    macro_t *cur;
+    cur = lex->macros;
+
+    while(cur->next != NULL) {
+        if(!strcmp(cur->name, name)) {
+            return 1;
+        }
+        cur = cur->next;
+    }
+
+    // handle case of a single macro
+    if(!strcmp(cur->name, name)) {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/**
+ *
+ */
+void 
+remove_macro(lexer_t *lex, char *name)
+{
+    if(lex->macros == NULL) {
+        return;
+    }
+
+    macro_t *cur, *next;
+    cur = lex->macros;
+    next = cur->next;
+
+    while(next != NULL) {
+        if(!strcmp(next->name, name)) {
+            free(next->text);
+            free(next->name);
+            cur->next = next->next;
+            free(next);
+            return;
+        }
+        cur = cur->next;
+        next = cur->next;
+    }
+
+    // case where only one macro defined
+    if(!strcmp(cur->name, name)) {
+        free(cur->text);
+        free(cur->name);
+        free(cur);
+        lex->macros = NULL;
+    }
+}
+
 
 /**
  * Determines if input is a valid octal character i.e. [0-7]
@@ -277,6 +350,24 @@ consume_preprocess_space(lexer_t *lex, token_t *tok)
 /**
  *
  */
+int
+consume_preprocess_end(lexer_t *lex, token_t *tok)
+{
+    consume_preprocess_space(lex, cur);
+
+    if(*lex->cur != '\n' && *lex->cur != 0) {
+        fprintf(stderr, "error, invalid character in preprocess directive\n");
+        exit(1);
+    }
+
+    iterate_cur(lex);
+
+    return 0;
+}
+
+/**
+ *
+ */
 int 
 consume_include(lexer_t *lex, token_t *tok) 
 {
@@ -382,6 +473,82 @@ consume_define(lexer_t *lex, token_t *tok)
     return consume(lex, tok);
 }
 
+/** 
+ *
+ */
+int 
+consume_undef(lexer_t *lex, token_t *tok)
+{
+    consume_preprocess_space(lex, tok);
+
+    // reset token text, use for macro name
+    tok->text[0] = '\0';
+    tok->text_size = 0;
+
+    consume_ident(lex, tok);
+
+    remove_macro(lex, tok->text);
+
+    // reset token text
+    tok->text[0] = '\0';
+    tok->text_size = 0;
+
+    consume_preprocess_end(lex, cur);
+
+    return consume(lex, tok);
+}
+
+/**
+ *
+ */
+int
+consume_ifdef(lexer_t *lex, token_t *tok, bool ifdef)
+{
+    consume_preprocess_space(lex, tok);
+
+    // reset token text, use for macro name
+    tok->text[0] = '\0';
+    tok->text_size = 0;
+
+    consume_ident(lex, tok);
+
+    if(!is_macro(lex, tok->text) && ifdef)) {
+        consume_preprocess_end(lex, cur);
+
+        // reset token text, use for directive
+        tok->text[0] = '\0';
+        tok->text_size = 0;
+
+        while(1) {
+            if(*lex->cur == '#') {
+                iterate_cur(lex);
+                consume_ident(lex, tok);
+
+                if(!strcmp(tok->text, "else")) {
+                    
+                } else if(!strcmp(tok->text, "endif")) {
+                    
+                }
+            }
+            
+            if(*lex->cur == 0) {
+                fprintf(stderr, "error, ifdef not closed\n");
+                exit(1);
+            }
+
+            iterate_cur(lex);
+        }
+    } else {
+
+    }
+
+    // reset token text
+    tok->text[0] = '\0';
+    tok->text_size = 0;
+
+    return consume(lex, tok);
+}
+
 /**
  *
  */
@@ -396,9 +563,9 @@ consume_directive(lexer_t *lex, token_t *tok)
     } else if(!strcmp(tok->text, "define")) {
         return consume_define(lex, tok);
     } else if(!strcmp(tok->text, "undef")) {
-
+        return consume_undef(lex, tok);
     } else if(!strcmp(tok->text, "ifdef")) {
-
+        return consume_ifdef(lex, tok, true);
     } else if(!strcmp(tok->text, "ifndef")) {
 
     } else if(!strcmp(tok->text, "else")) {
@@ -409,7 +576,8 @@ consume_directive(lexer_t *lex, token_t *tok)
         exit(1);
     } 
         
-    // error, unkown directive
+    fprintf(stderr, "error, unkown preprocess directive\n");
+    exit(1);
 }
 
 /**
@@ -419,9 +587,7 @@ int
 consume_preprocess(lexer_t *lex, token_t *tok)
 {
     iterate_cur(lex);
-
     consume_preprocess_space(lex, tok);
-
     return consume_directive(lex, tok);
 }
 
@@ -703,7 +869,14 @@ consume(lexer_t *lex, token_t *tok)
             tok->tok_type = END; 
             break;
         case '#':
-            return consume_preprocess(lex, tok);
+            if(preprocess) {
+                return consume_preprocess(lex, tok);
+            } else {
+                print_msg(LEXER_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "", "Invalid symbol, ignoring.");
+                iterate_cur(lex); // skip invalid character
+                return consume(lex, tok);
+            }
         case ',':
             tok->tok_type = COMMA;
             append_char(lex, tok);
@@ -1085,6 +1258,10 @@ keyword_check(lexer_t *lex, token_t *tok)
                         fprintf(stderr, "error, macro expansion cycle detected\n");
                         exit(1);
                     }
+                    if(lex->macro_depth >= 255) {
+                        fprintf(stderr, "error, macro expansion depth exceeded\n");
+                        exit(1);
+                    }
                     if(lex->cur_macro != NULL) {
                         cur->tmp_macro = lex->cur_macro;
                     } 
@@ -1238,10 +1415,12 @@ free_lexer(lexer_t *lex)
  * @return void
  */
 void 
-tokenize(char *filename) 
+tokenize(char *filename, bool p) 
 {
     lexer_t *lex;
     token_t *tok;
+
+    preprocess = p;
 
     lex = init_lexer(filename, 0, 0, NULL, NULL);
 

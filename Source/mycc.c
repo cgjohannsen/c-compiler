@@ -100,7 +100,12 @@ int main(int argc, char **argv)
   char *filename = argv[optind];
 
   if(mode == 1) {
-    tokenize(filename);
+    tokenize(filename, false);
+    exit(0);
+  }
+
+  if(mode == 2) {
+    tokenize(filename, true);
     exit(0);
   }
 

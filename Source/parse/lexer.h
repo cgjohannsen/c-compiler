@@ -36,14 +36,16 @@ typedef struct lexer {
 } lexer_t;
 
 int consume(lexer_t *, token_t *);
-token_t * next_token(lexer_t *);
+token_t *next_token(lexer_t *);
 
 int add_macro(lexer_t *, char *, char *);
+int is_macro(lexer_t *, char *);
+void remove_macro(lexer_t *, char *);
 void free_macros(macro_t *);
 
 lexer_t *init_lexer(char *, int, int, macro_t *, includes_t *);
 void free_lexer(lexer_t *);
 
-void tokenize(char *);
+void tokenize(char *, bool);
 
 #endif

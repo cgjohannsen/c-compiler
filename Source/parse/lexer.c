@@ -8,6 +8,41 @@
 #include "lexer.h"
 
 bool preprocess = false;
+bool in_else = false;
+
+/** 
+ *
+ */
+void 
+push_ifdef(ifdef_stack_t *stack, bool b)
+{
+    ifdef_t *new;
+    new = (ifdef_t *) malloc(sizeof(ifdef_t));
+    new->cond = b;
+    if(stack->size != 0) {
+        new->prev = stack->top;
+    } else {
+        new->prev = NULL;
+    }
+    stack->size++;
+    stack->top = new;
+}
+
+/**
+ *
+ */
+bool 
+pop_ifdef(ifdef_stack_t *stack)
+{
+    ifdef_t *tmp;
+    bool b;
+    tmp = stack->top;
+    stack->top = stack->top->prev;
+    stack->size--;
+    b = tmp->cond;
+    free(tmp);
+    return b;
+}
 
 /**
  *
@@ -339,7 +374,8 @@ consume_preprocess_space(lexer_t *lex, token_t *tok)
             consume_cpp_comment(lex, tok);
             return consume_preprocess_space(lex, tok);
         } else {
-            fprintf(stderr, "error, invalid character in preprocess directive\n");
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                "", "Invalid character in preprocess directive");
             exit(1);
         }
     }
@@ -353,10 +389,11 @@ consume_preprocess_space(lexer_t *lex, token_t *tok)
 int
 consume_preprocess_end(lexer_t *lex, token_t *tok)
 {
-    consume_preprocess_space(lex, cur);
+    consume_preprocess_space(lex, tok);
 
     if(*lex->cur != '\n' && *lex->cur != 0) {
-        fprintf(stderr, "error, invalid character in preprocess directive\n");
+        print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+            "", "Invalid character in preprocess directive");
         exit(1);
     }
 
@@ -385,7 +422,7 @@ consume_include(lexer_t *lex, token_t *tok)
         }
 
         if(*lex->cur != '"') {
-            fprintf(stderr, "error, invalid filename near %c\n", *lex->cur);
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', "", "Invalid filename");
             exit(1);
         }
 
@@ -393,7 +430,7 @@ consume_include(lexer_t *lex, token_t *tok)
     }
 
     if(lex->include_depth > 255) {
-        fprintf(stderr, "error, include_depth limit reached\n");
+        print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', "", "Include depth reached");
         exit(1);
     }
 
@@ -410,7 +447,7 @@ consume_include(lexer_t *lex, token_t *tok)
     inc = lex->includes;
     while(inc != NULL) {
         if(!strcmp(inc->filename, tok->text)) {
-            fprintf(stderr, "error, include cycle detected\n");
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', "", "Include cycle detected");
             exit(1);
         }
         inc = inc->prev;
@@ -420,7 +457,7 @@ consume_include(lexer_t *lex, token_t *tok)
     lexer_t *new_lex;
     token_t *new_tok;
 
-    new_lex = init_lexer(tok->text, lex->include_depth+1, lex->macro_depth, lex->macros, lex->includes);
+    new_lex = init_lexer(tok->text, true, lex->include_depth+1, lex->macro_depth, lex->macros, lex->includes);
 
     new_tok = next_token(new_lex);
     while(new_tok->tok_type != END) { // get tokens until EOF
@@ -435,7 +472,7 @@ consume_include(lexer_t *lex, token_t *tok)
     consume_preprocess_space(lex, tok);
 
     if(*lex->cur != '\n') {
-        fprintf(stderr, "error, invalid character after include directive %c\n", *lex->cur);
+        print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', "", "Invalid character following include directive");
         exit(1);
     }
 
@@ -493,7 +530,7 @@ consume_undef(lexer_t *lex, token_t *tok)
     tok->text[0] = '\0';
     tok->text_size = 0;
 
-    consume_preprocess_end(lex, cur);
+    consume_preprocess_end(lex, tok);
 
     return consume(lex, tok);
 }
@@ -512,8 +549,13 @@ consume_ifdef(lexer_t *lex, token_t *tok, bool ifdef)
 
     consume_ident(lex, tok);
 
-    if(!is_macro(lex, tok->text) && ifdef)) {
-        consume_preprocess_end(lex, cur);
+    bool cond = (is_macro(lex, tok->text) && ifdef) || 
+                (!is_macro(lex, tok->text) && !ifdef);
+
+    push_ifdef(lex->ifdef_stack, cond);
+
+    if(!cond) {
+        consume_preprocess_end(lex, tok);
 
         // reset token text, use for directive
         tok->text[0] = '\0';
@@ -522,24 +564,46 @@ consume_ifdef(lexer_t *lex, token_t *tok, bool ifdef)
         while(1) {
             if(*lex->cur == '#') {
                 iterate_cur(lex);
+                consume_preprocess_space(lex, tok);
                 consume_ident(lex, tok);
 
                 if(!strcmp(tok->text, "else")) {
-                    
+                    consume_preprocess_end(lex, tok);
+
+                    // reset token text
+                    tok->text[0] = '\0';
+                    tok->text_size = 0;
+
+                    in_else = true;
+
+                    return consume(lex, tok);
                 } else if(!strcmp(tok->text, "endif")) {
-                    
+                    consume_preprocess_end(lex, tok);
+
+                    // reset token text
+                    tok->text[0] = '\0';
+                    tok->text_size = 0;
+
+                    pop_ifdef(lex->ifdef_stack);
+
+                    in_else = false;
+
+                    return consume(lex, tok);
                 }
+
+                // reset token text
+                tok->text[0] = '\0';
+                tok->text_size = 0;
             }
             
             if(*lex->cur == 0) {
-                fprintf(stderr, "error, ifdef not closed\n");
+                print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                    "", "ifdef not closed");
                 exit(1);
             }
 
             iterate_cur(lex);
         }
-    } else {
-
     }
 
     // reset token text
@@ -567,16 +631,86 @@ consume_directive(lexer_t *lex, token_t *tok)
     } else if(!strcmp(tok->text, "ifdef")) {
         return consume_ifdef(lex, tok, true);
     } else if(!strcmp(tok->text, "ifndef")) {
-
+        return consume_ifdef(lex, tok, false);
     } else if(!strcmp(tok->text, "else")) {
-        fprintf(stderr, "error, else directive without matching ifdef/ifndef\n");
-        exit(1);
+        if(lex->ifdef_stack->size == 0) {
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                "", "#else without #if");
+            exit(1);
+        }
+
+        if(in_else) {
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                "", "second #else");
+            exit(1);
+        }
+
+        consume_preprocess_end(lex, tok);
+
+        // reset token text
+        tok->text[0] = '\0';
+        tok->text_size = 0;
+
+        in_else = true;
+
+        if(!lex->ifdef_stack->top->cond) {
+            return consume(lex, tok);
+        }
+
+        while(1) {
+            if(*lex->cur == '#') {
+                iterate_cur(lex);
+                consume_ident(lex, tok);
+
+                if(!strcmp(tok->text, "endif")) {
+                    consume_preprocess_end(lex, tok);
+
+                    // reset token text
+                    tok->text[0] = '\0';
+                    tok->text_size = 0;
+
+                    pop_ifdef(lex->ifdef_stack);
+
+                    in_else = false;
+
+                    return consume(lex, tok);
+                }
+
+                // reset token text
+                tok->text[0] = '\0';
+                tok->text_size = 0;
+            }
+            
+            if(*lex->cur == 0) {
+                print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                    "", "#if not closed");
+                exit(1);
+            }
+
+            iterate_cur(lex);
+        }
+
+        return consume(lex, tok);
     } else if(!strcmp(tok->text, "endif")) {
-        fprintf(stderr, "error, endif directive without matching ifdef/ifndef\n");
-        exit(1);
+        if(lex->ifdef_stack->size == 0) {
+            print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+                "", "#endif without #if");
+            exit(1);
+        }
+
+        // reset token text
+        tok->text[0] = '\0';
+        tok->text_size = 0;
+
+        pop_ifdef(lex->ifdef_stack);
+
+        in_else = false;
+
+        return consume(lex, tok);
     } 
         
-    fprintf(stderr, "error, unkown preprocess directive\n");
+    print_msg(PREPROCESS_ERR, lex->filename,  lex->line_num, ' ', 
+        "", "unknown preprocess directive");
     exit(1);
 }
 
@@ -866,6 +1000,12 @@ consume(lexer_t *lex, token_t *tok)
 
     switch(*lex->cur) {
         case 0:
+            if(lex->ifdef_stack->size > 0 || in_else) {
+                print_msg(PREPROCESS_ERR, lex->filename, lex->line_num, *lex->cur, 
+                    "", "#ifdef not closed");
+                exit(1);
+            }
+
             tok->tok_type = END; 
             break;
         case '#':
@@ -1356,8 +1496,10 @@ next_token(lexer_t *lex)
  * @return void
  */
 lexer_t *
-init_lexer(char *filename, int include_depth, int macro_depth, macro_t *macros, includes_t *includes)
+init_lexer(char *filename, bool p, int include_depth, int macro_depth, macro_t *macros, includes_t *includes)
 {
+    preprocess = p;
+
     lexer_t *lex;
 
     lex = (lexer_t *) malloc(sizeof(lexer_t));
@@ -1371,6 +1513,8 @@ init_lexer(char *filename, int include_depth, int macro_depth, macro_t *macros, 
     lex->macro_depth = macro_depth;
     lex->macros = macros;
     lex->cur_macro = NULL;
+    lex->ifdef_stack = (ifdef_stack_t *) malloc(sizeof(ifdef_stack_t));
+    lex->ifdef_stack->size = 0;
 
     includes_t *inc;
 
@@ -1401,6 +1545,7 @@ free_lexer(lexer_t *lex)
 {
     free(lex->includes->filename);
     free(lex->includes);
+    free(lex->ifdef_stack);
     free(lex);
 }
 
@@ -1420,9 +1565,7 @@ tokenize(char *filename, bool p)
     lexer_t *lex;
     token_t *tok;
 
-    preprocess = p;
-
-    lex = init_lexer(filename, 0, 0, NULL, NULL);
+    lex = init_lexer(filename, p, 0, 0, NULL, NULL);
 
     tok = next_token(lex);
     while(tok->tok_type != END) { // get tokens until EOF

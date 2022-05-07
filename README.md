@@ -20,15 +20,12 @@ To clean up all output files, run
 
     make clean
 
-Note that the output binary will be placed in the `Bin/` directory.
-
 ## Directory Structure
 
 - `Documentation/`: Holds documentation, particularly the developer's guide
 - `Grading/`: Directory for grader comments
 - `Source/`: Holds all the source code
 - `Test/`: Holds a set of test files to run over compiler
-- `Bin/`: Directory where the binary is outputted
 
 ## Features
 

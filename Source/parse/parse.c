@@ -1560,7 +1560,7 @@ init_parser(char *filename, parser_t *parser)
     macro_t *macros;
     macros = NULL;
 
-    parser->lex = init_lexer(filename, 0, 0, macros, NULL);
+    parser->lex = init_lexer(filename, true, 0, 0, macros, NULL);
     
     parser->status = 1;
 

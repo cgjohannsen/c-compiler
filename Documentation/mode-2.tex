@@ -1,0 +1,47 @@
+\subsection{Mode 2}
+\label{sec:mode-2}
+
+This mode corresponds to the preprocessor.
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Defining and undefining of macros
+    \item Inclusion of other files
+    \item Basic logic in the form of ifdefs
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+\textbf{Relevant Files:}
+
+\begin{itemize}
+    \item \verb|parse/lexer.c|: All features are expansions on the lexer
+\end{itemize}
+
+\noindent \textbf{Relevant Data Structures:}
+
+\begin{itemize}
+    \item \verb|include_t|: A double linked list to keep track of all file
+    inclusions (for cycle detection)
+    \item \verb|macro_t|: A linked list of currently defined macros
+    \item \verb|ifdef_t|: We use a stack to keep track of the current 
+\end{itemize}
+
+\noindent \textbf{Working Description:} The preprocessor can recognize
+preprocessor directives when it comes across a `\#' symbol. When it does, it
+dispatches to the corresponding function of the directive provided. 
+
+In the case of a file inclusion, the lexer will check if the file is already in
+the list of included files and if so outputs an error as this is a cycle.
+Otherwise, it generates a new lexer that then generates tokens in the new file.
+While storing the current state of the original file.
+
+For macro definitions and expansions, we use a linked list. We add and subtract
+from this list as macros are defined/undefined. Macro redefinition is not
+allowed. To expand a macro, the lexer's current character changes to the
+location of the macro text while the macro stores the location of the original
+expansion that the lexer goe back to after it is done.
+
+For ifdefs, the lexer uses a stack to keep track of whether the condition of the
+current ifdef was true. If so, it skips the next else directive. 

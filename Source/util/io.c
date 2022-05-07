@@ -34,6 +34,10 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
             fprintf(stderr, "Lexer warning in file %s line %d near text " 
                 "%c\n\t%s\n", filename, line_num, c, msg);
             break;
+        case PREPROCESS_ERR:
+            fprintf(stderr, "Preprocesseor in file %s line %d" 
+                "\n\t%s\n", filename, line_num, msg);
+            break;
         case PARSER_ERR:
             fprintf(stderr, "Parser error in file %s line %d near text " 
                 "%s\n\t%s\n", filename, line_num, s, msg);
@@ -47,10 +51,8 @@ print_msg(msgcode_t code, char *filename, int line_num, char c, char *s,
                 filename, line_num);
             break;
         default:
-        {
             fprintf(stderr, "Error in file %s line %d\n\t%s\n", 
                 filename, line_num, msg);
-        }
     }
 }
 

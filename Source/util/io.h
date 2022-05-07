@@ -12,6 +12,7 @@ typedef enum msgcode {
     FILE_ERR,
     LEXER_ERR,
     LEXER_WRN,
+    PREPROCESS_ERR,
     PARSER_ERR,
     PARSER_WRN,
     TYPE_ERR,

@@ -29,7 +29,7 @@ get_classname(char *filename)
     
     if(pch2 == NULL) {
         strncpy(class, filename, pch1-filename);
-        class[pch1-filename-1] = '\0'; // manually add NULL character
+        class[pch1-filename] = '\0'; // manually add NULL character
     } else {
         strncpy(class, pch2+1, pch1-filename);
         class[pch1-pch2-1] = '\0'; // manually add NULL character
@@ -183,6 +183,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
                         sprintf(buffer, "dup_x2");
                         add_instr(list, DUP, buffer, 0);
                     }
+                    java_type = get_javatype(sym->type->ctype.name);
 
                     // store value
                     sprintf(buffer, "%castore ; store to %s", java_type, 
@@ -332,10 +333,13 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
         case _FUN_CALL: // TODO
             funsym_t *funsym;
             astnode_t *arg;
-            int num_params = 0;
+            int num_params;
 
             funsym = get_function(table, expr->text);
             arg = lhs;
+
+            // if has return type, will push something onto stack
+            num_params = (funsym->ret_type != NULL) ? -1 : 0;
 
             while(arg != NULL) {
                 gen_expr(table, arg, list, false);
@@ -370,6 +374,12 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             buffer[instr_len+2] = '\0';
 
             add_instr(list, INVOKESTATIC, buffer, num_params);
+
+            // if top-level and non-void return, will not need result
+            if(is_top && strcmp(funsym->ret_type->ctype.name, "void")) {
+                sprintf(buffer, "pop");
+                add_instr(list, POP, buffer, 0);
+            }
 
             break;
         case _ARR_ACCESS: // TODO
@@ -489,7 +499,7 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
                 char java_type;
                 java_type = get_javatype(statement->left->ctype.name);
 
-                gen_expr(table, statement->left, list, true);
+                gen_expr(table, statement->left, list, false);
 
                 sprintf(buffer, "%creturn", java_type);
                 add_instr(list, RET, buffer, 0);
@@ -565,6 +575,10 @@ gen_funbody(symtable_t *table, astnode_t *fun_body, instrlist_t *list)
             // ignore
         } else {
             gen_statement(table, statement, list);
+        }
+
+        if(mode == 5 && statement->node_type == _RETURN) {
+            break;
         }
 
         statement = statement->right;

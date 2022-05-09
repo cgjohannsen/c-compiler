@@ -162,7 +162,6 @@ init_symtable()
     set_ctypename(ret_type, "int");
     set_ctypename(arg_type, "int");
 
-
     add_astchild(fun_decl, ret_type);
     add_astchild(fun_decl, ident);
     add_astchild(fun_decl, args);

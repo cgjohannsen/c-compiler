@@ -224,7 +224,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             }
  
             break;
-        case _ARITH_NEG: // TODO
+        case _ARITH_NEG: 
             gen_expr(table, lhs, list, false);
 
             java_type = get_javatype(expr->ctype.name);
@@ -236,10 +236,18 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
         case _LOG_NEG: // TODO
             gen_expr(table, lhs, list, false);
             break;
-        case _BIT_NEG: // TODO 
+        case _BIT_NEG:
             gen_expr(table, lhs, list, false);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "iconst_m1");
+            add_instr(list, ICONST, buffer, 0);
+            sprintf(buffer, "ixor");
+            add_instr(list, IXOR, buffer, 0);
+
             break;
-        case _TYPE: // TODO
+        case _TYPE:
             gen_expr(table, lhs, list, false);
 
             if(!strcmp(expr->ctype.name,"int") && !strcmp(lhs->ctype.name,"float")) {
@@ -316,7 +324,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             add_instr(list, REM, buffer, 0);
 
             break;
-        case _BIT_AND: // TODO
+        case _BIT_AND:
             gen_expr(table, lhs, list, false);
             gen_expr(table, rhs, list, false);
 
@@ -326,7 +334,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             add_instr(list, AND, buffer, 0);
 
             break;
-        case _BIT_OR: // TODO
+        case _BIT_OR:
             gen_expr(table, lhs, list, false);
             gen_expr(table, rhs, list, false);
 
@@ -801,7 +809,7 @@ gen_do(symtable_t *table, astnode_t *do_statement, instrlist_t *list)
     // gen code for condition
     gen_expr(table, do_cond->left, list, false);
 
-    sprintf(buffer, "ifeq L%d", L2);
+    sprintf(buffer, "ifeq L%d", L1);
     add_instr(list, ICONST, buffer, 0);
 }
 

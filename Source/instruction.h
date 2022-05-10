@@ -21,6 +21,7 @@ typedef enum instrtype {
     LDC,
     FCONST,
     ICONST,
+    IXOR,
     ALOAD,
     ASTORE,
     GETSTATIC,

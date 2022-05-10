@@ -1,0 +1,38 @@
+\subsection{Mode 6}
+\label{sec:mode-6}
+
+This mode corresponds to the code generator and will output the corresponding
+Java bytecode associated with the C input file.
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item Outputs Java bytecode for input file. Works for functions,
+    expressions, arrays, and other program structures (e.g. loops).
+\end{itemize}
+
+\subsubsection{Implementation Details}
+
+\textbf{Relevant Files:}
+
+\begin{itemize}
+    \item \verb|gen.c|: This file includes code for generating Java bytecode.
+    \item \verb|instruction.c|: The data structure corresponding to Java
+    bytecode instructions.
+\end{itemize}
+
+\noindent \textbf{Relevant Data Structures:}
+
+\begin{itemize}
+    \item \verb|instruction_t|: This holds the data relevant for an instruction
+    including the text and type.
+    \item \verb|instruction_list_t|: This stores a list of instructions so that
+    the proper annotations can be printed for each function before the
+    instructions are in the output. 
+\end{itemize}
+
+\noindent \textbf{Working Description:} The code generator functions the same in
+this mode as in Mode 5~\ref{sec:mode-5}. It extends this mode to allow for for,
+while, do-while loops. It does this by dropping labels in the bytecode at
+proper locations and providing branching instructions to properly implement each
+loop. It provides functionality for if-then-else statements in a similar manner.

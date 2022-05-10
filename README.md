@@ -47,3 +47,15 @@ To clean up all output files, run
 ### Mode 4
 
 - prints out global and local variable, type, and function declarations.
+
+### Mode 5
+
+- generated Java bytecode corresponding to input program -- excluding logical
+  operators, loops, and if-then-else statements
+- supports global variables, arrays, user-defined functions
+- uses smart-stack management
+
+### Mode 6
+
+- generates Java bytecode corresponding to input program
+- supports while, for, do-while loops and if-then-else statements

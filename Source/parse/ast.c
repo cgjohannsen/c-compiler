@@ -155,6 +155,10 @@ is_lvalue(astnode_t *node)
         return false;
     }
 
+    if(node->node_type == _VAR) { 
+        return true;
+    }
+
     if(node->node_type == _ARR_ACCESS) {
         return is_lvalue(node->right);
     } 

@@ -109,12 +109,6 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
             break;
     }
 
-    // if stack underflow, don't add instruction
-    if(list->stack_size < 0) {
-        list->stack_size = prev_stack_size;
-        return;
-    }
-
     if(list->stack_size > list->min_stack_size) {
         list->min_stack_size = list->stack_size;
     }

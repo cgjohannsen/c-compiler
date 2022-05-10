@@ -41,11 +41,23 @@ get_classname(char *filename)
 
 
 char
-get_javatype(char *type) 
+get_ajavatype(char *type) 
 {
     if(!strcmp(type, "char")) {
         return 'c';
     } else if(!strcmp(type, "int")) {
+        return 'i';
+    } else if(!strcmp(type, "float")) {
+        return 'f';
+    } else {
+        return 'v';
+    }
+}
+
+char
+get_javatype(char *type) 
+{
+    if(!strcmp(type, "char") || !strcmp(type, "int")) {
         return 'i';
     } else if(!strcmp(type, "float")) {
         return 'f';
@@ -115,16 +127,17 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
     switch(expr->node_type) {
         case _ITE:
             break;
-        case _ASSIGN: // TODO
+        case _ASSIGN:
 
             // will store value at top of stack in LHS
             // 4 cases to handle: is_local X is_array
 
             sym = get_localvar(table, lhs->text);
             if(sym != NULL) { // local
-                java_type = get_javatype(sym->type->ctype.name);
 
                 if(sym->var->ctype.is_array) { // local array
+                    java_type = get_ajavatype(sym->type->ctype.name);
+
                     // load array address
                     sprintf(buffer, "aload%c%d ; load from %s",  
                         (sym->idx > 3) ? ' ' : '_', sym->idx,
@@ -148,6 +161,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
                         sym->var->text);
                     add_instr(list, STORE, buffer, 0);
                 } else { // local var
+                    java_type = get_javatype(sym->type->ctype.name);
+
                     gen_expr(table, rhs, list, false);
 
                     // if not top-level, will need result for later
@@ -183,7 +198,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
                         sprintf(buffer, "dup_x2");
                         add_instr(list, DUP, buffer, 0);
                     }
-                    java_type = get_javatype(sym->type->ctype.name);
+                    java_type = get_ajavatype(sym->type->ctype.name);
 
                     // store value
                     sprintf(buffer, "%castore ; store to %s", java_type, 
@@ -205,28 +220,6 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             }
  
             break;
-        case _INCR: // TODO
-            gen_expr(table, lhs, list, false);
-
-            java_type = get_javatype(expr->ctype.name);
-
-            sprintf(buffer, "%cconst_1", java_type);
-            add_instr(list, CONST, buffer, 0);
-            sprintf(buffer, "%cadd", java_type);
-            add_instr(list, ADD, buffer, 0);
-
-            break;
-        case _DECR: // TODO
-            gen_expr(table, lhs, list, false);
-
-            java_type = get_javatype(expr->ctype.name);
-
-            sprintf(buffer, "%cconst_1", java_type);
-            add_instr(list, CONST, buffer, 0);
-            sprintf(buffer, "%csub", java_type);
-            add_instr(list, SUB, buffer, 0);
-
-            break;
         case _ARITH_NEG: // TODO
             gen_expr(table, lhs, list, false);
 
@@ -244,6 +237,15 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             break;
         case _TYPE: // TODO
             gen_expr(table, lhs, list, false);
+
+            if(!strcmp(expr->ctype.name,"int") && !strcmp(lhs->ctype.name,"float")) {
+                sprintf(buffer, "f2i", java_type);
+                add_instr(list, F2I, buffer, 0);
+            } else if(!strcmp(expr->ctype.name,"float") && !strcmp(lhs->ctype.name,"int")) {
+                sprintf(buffer, "i2f", java_type);
+                add_instr(list, I2F, buffer, 0);
+            }
+
             break;
         case _EQ:
         case _NEQ:
@@ -330,7 +332,130 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             add_instr(list, AND, buffer, 0);
 
             break;
-        case _FUN_CALL: // TODO
+        case _PRE_INCR:
+            gen_expr(table, lhs, list, false);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            if(java_type == 'i') {
+                add_instr(list, ICONST, buffer, 0);
+            } else {
+                add_instr(list, FCONST, buffer, 0);
+            }
+            sprintf(buffer, "%cadd", java_type);
+            add_instr(list, ADD, buffer, 0);
+            sprintf(buffer, "dup", java_type);
+            add_instr(list, DUP, buffer, 0);
+
+            sym = get_localvar(table, lhs->text);
+            if(sym != NULL) {
+                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, STORE, buffer, 0);
+            } else {
+                sym = get_globalvar(table, lhs->text);
+
+                sprintf(buffer, "putstatic Field %s %s %c", classname, 
+                    lhs->text, get_staticjavatype(sym->type->ctype.name));
+                add_instr(list, PUTSTATIC, buffer, 0);
+            }
+
+            break;
+        case _PRE_DECR:
+            gen_expr(table, lhs, list, false);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            if(java_type == 'i') {
+                add_instr(list, ICONST, buffer, 0);
+            } else {
+                add_instr(list, FCONST, buffer, 0);
+            }
+            sprintf(buffer, "%csub", java_type);
+            add_instr(list, SUB, buffer, 0);
+            sprintf(buffer, "dup", java_type);
+            add_instr(list, DUP, buffer, 0);
+
+            sym = get_localvar(table, lhs->text);
+            if(sym != NULL) {
+                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, STORE, buffer, 0);
+            } else {
+                sym = get_globalvar(table, lhs->text);
+
+                sprintf(buffer, "putstatic Field %s %s %c", classname, 
+                    lhs->text, get_staticjavatype(sym->type->ctype.name));
+                add_instr(list, PUTSTATIC, buffer, 0);
+            }
+
+            break;
+        case _POST_INCR:
+            gen_expr(table, lhs, list, false);
+            
+            sprintf(buffer, "dup", java_type);
+            add_instr(list, DUP, buffer, 0);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            if(java_type == 'i') {
+                add_instr(list, ICONST, buffer, 0);
+            } else {
+                add_instr(list, FCONST, buffer, 0);
+            }
+            sprintf(buffer, "%cadd", java_type);
+            add_instr(list, ADD, buffer, 0);
+
+            sym = get_localvar(table, lhs->text);
+            if(sym != NULL) {
+                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, STORE, buffer, 0);
+            } else {
+                sym = get_globalvar(table, lhs->text);
+
+                sprintf(buffer, "putstatic Field %s %s %c", classname, 
+                    lhs->text, get_staticjavatype(sym->type->ctype.name));
+                add_instr(list, PUTSTATIC, buffer, 0);
+            }
+
+            break;
+        case _POST_DECR:
+            gen_expr(table, lhs, list, false);
+
+            sprintf(buffer, "dup", java_type);
+            add_instr(list, DUP, buffer, 0);
+
+            java_type = get_javatype(expr->ctype.name);
+
+            sprintf(buffer, "%cconst_1", java_type);
+            if(java_type == 'i') {
+                add_instr(list, ICONST, buffer, 0);
+            } else {
+                add_instr(list, FCONST, buffer, 0);
+            }
+            sprintf(buffer, "%csub", java_type);
+            add_instr(list, SUB, buffer, 0);
+
+            sym = get_localvar(table, lhs->text);
+            if(sym != NULL) {
+                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                add_instr(list, STORE, buffer, 0);
+            } else {
+                sym = get_globalvar(table, lhs->text);
+
+                sprintf(buffer, "putstatic Field %s %s %c", classname, 
+                    lhs->text, get_staticjavatype(sym->type->ctype.name));
+                add_instr(list, PUTSTATIC, buffer, 0);
+            }
+
+            break;
+        case _FUN_CALL:
+    
             funsym_t *funsym;
             astnode_t *arg;
             int num_params;
@@ -363,6 +488,10 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             int instr_len = strlen(buffer);
             while(param != NULL) {
                 java_type = get_staticjavatype(param->type->ctype.name);
+                if(param->var->ctype.is_array) {
+                    buffer[instr_len] = '[';
+                    instr_len += 1;
+                }
                 buffer[instr_len] = java_type;
                 instr_len += 1;
                 param = param->next;
@@ -382,11 +511,11 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             }
 
             break;
-        case _ARR_ACCESS: // TODO
+        case _ARR_ACCESS:
             sym = get_localvar(table, expr->text);
 
             if(sym != NULL) { // local array
-                java_type = get_javatype(sym->type->ctype.name);
+                java_type = get_ajavatype(sym->type->ctype.name);
 
                 sprintf(buffer, "aload%c%d ; load from %s", sym->idx > 3 ? ' ' : '_', 
                     sym->idx, expr->text);
@@ -409,7 +538,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
                 gen_expr(table, lhs, list, false);
 
-                java_type = get_javatype(sym->type->ctype.name);
+                java_type = get_ajavatype(sym->type->ctype.name);
 
                 sprintf(buffer, "%caload ; load from %s", java_type,
                     expr->text);
@@ -424,14 +553,20 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
             if(sym != NULL) {
                 java_type = get_javatype(sym->type->ctype.name);
 
-                sprintf(buffer, "%cload%c%d ; load from %s", java_type, 
+                sprintf(buffer, "%cload%c%d ; load from %s", 
+                    sym->var->ctype.is_array ? 'a' : java_type, 
                     sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
                 add_instr(list, LOAD, buffer, 0);
             } else {
                 sym = get_globalvar(table, expr->text);
 
-                sprintf(buffer, "getstatic Field %s %s %c", classname, 
+                if(sym->var->ctype.is_array) {
+                    sprintf(buffer, "getstatic Field %s %s [%c", classname, 
                     expr->text, get_staticjavatype(sym->type->ctype.name));
+                } else {
+                    sprintf(buffer, "getstatic Field %s %s %c", classname, 
+                    expr->text, get_staticjavatype(sym->type->ctype.name));
+                }
                 add_instr(list, GETSTATIC, buffer, 0);
             }
             break;
@@ -476,6 +611,12 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             break;
         case _STR_LIT: // TODO
+            sprintf(buffer, "ldc '%s'", expr->text+1);
+            buffer[strlen(buffer)-2] = '\'';
+            buffer[strlen(buffer)-1] = '\0';
+            add_instr(list, LDC, buffer, 0);
+            sprintf(buffer, "invokevirtual Method java/lang/String toCharArray ()[C");
+            add_instr(list, INVOKESTATIC, buffer, 0);
             break;
         default: // fail
             break;
@@ -547,6 +688,17 @@ gen_localvar(symtable_t *table, astnode_t *var_decl, instrlist_t *list)
 
         sprintf(buffer, ";; local %d %s %s %d", sym->idx, var->text, filename, var->line_num);
         add_instr(list, COMMENT, buffer, 0);
+
+        if(var->ctype.is_array) { // is array -- needs extra init
+            sprintf(buffer, "ldc %d", var->arr_dim);
+            add_instr(list, LDC, buffer, 0);
+
+            sprintf(buffer, "newarray %s", var->ctype.name);
+            add_instr(list, NEWARRAY, buffer, 0);
+
+            sprintf(buffer, "astore%c%d", (sym->idx > 3) ? ' ' : '_', sym->idx);
+            add_instr(list, STORE, buffer, 0);
+        }
 
         if(var->left != NULL) { // includes initialization
             gen_expr(table, var->left, list, true);
@@ -729,8 +881,8 @@ gen_clinit(symtable_t *table)
 
         if(var->left != NULL) {
             if(var->ctype.is_array) { // global array
-                sprintf(buffer, "bipush %s", var->left->text);
-                add_instr(list, BIPUSH, buffer, 0);
+                sprintf(buffer, "ldc %s", var->left->text);
+                add_instr(list, LDC, buffer, 0);
 
                 sprintf(buffer, "newarray %s", type->text);
                 add_instr(list, NEWARRAY, buffer, 0);

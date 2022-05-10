@@ -297,13 +297,13 @@ parse_term(parser_t *parser)
             add_astchild(op, expr);
             return op;
         case DECR:
-            op = init_astnode(_DECR, parser->cur);
+            op = init_astnode(_PRE_DECR, parser->cur);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
             return op;
         case INCR:
-            op = init_astnode(_INCR, parser->cur);
+            op = init_astnode(_PRE_INCR, parser->cur);
             update_parser(parser);
             expr = parse_lvalue(parser);
             add_astchild(op, expr);
@@ -376,12 +376,12 @@ parse_term(parser_t *parser)
                 expr = parse_lvalue(parser);
 
                 if(parser->cur->tok_type == INCR) {
-                    op = init_astnode(_INCR, parser->cur);
+                    op = init_astnode(_POST_INCR, parser->cur);
                     add_astchild(op, expr);
                     update_parser(parser);
                     return op;
                 } else if(parser->cur->tok_type == DECR) {
-                    op = init_astnode(_DECR, parser->cur);
+                    op = init_astnode(_POST_DECR, parser->cur);
                     add_astchild(op, expr);
                     update_parser(parser);
                     return op;
@@ -488,7 +488,11 @@ parse_expr(parser_t *parser, int min_prec)
                 op = init_astnode(_MOD, parser->cur);
                 break;
             case INCR:
+                op = init_astnode(_POST_INCR, parser->cur);
+                break;
             case DECR:
+                op = init_astnode(_POST_DECR, parser->cur);
+                break;
             default:
                 break;
         }
@@ -528,7 +532,7 @@ parse_expr(parser_t *parser, int min_prec)
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, 2);
+                expr1 = parse_expr(parser, op_prec);
 
                 if(op2 == NULL) {
                     add_astchild(op, result);
@@ -567,6 +571,10 @@ parse_expr(parser_t *parser, int min_prec)
                 parser->status = 0;
                 exit(1);
             }
+        } else if(parser->cur->tok_type == INCR || parser->cur->tok_type == DECR) {
+            // special case for post-incr/decr
+            add_astchild(op, result);
+            update_parser(parser);
         } else { // binary operators
             update_parser(parser);
 
@@ -1090,6 +1098,7 @@ parse_vardecl(parser_t *parser)
     astnode_t *var, *var_init, *arr_dim;
     while(parser->cur->tok_type == IDENT) {
         var = init_astnode(_VAR, parser->cur);
+        set_ctypename(var, type->ctype.name);
         add_astchild(var_decl, var);
 
         update_parser(parser);

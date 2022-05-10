@@ -129,8 +129,10 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
             }
 
             break;
-        case _INCR: 
-        case _DECR: 
+        case _PRE_INCR: 
+        case _PRE_DECR: 
+        case _POST_INCR: 
+        case _POST_DECR: 
         case _ARITH_NEG: // N -> N
             typecheck_expr(table, lhs);
 

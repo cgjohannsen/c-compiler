@@ -128,6 +128,8 @@ int is_binaryop(tokentype_t);
 int is_literal(tokentype_t);
 int is_assignop(tokentype_t);
 int is_typeorqualifier(tokentype_t);
+int is_leftassociative(tokentype_t);
+int prec(tokentype_t);
 
 void print_token(token_t *);
 token_t *init_token(char *, int, int, int); 

@@ -37,6 +37,75 @@ is_typeorqualifier(tokentype_t type)
     return type == CONST || type == STRUCT || type == TYPE;
 }
 
+int
+is_leftassociative(tokentype_t type)
+{
+    switch(type) {
+        case DPIPE:
+        case DAMP:
+        case PIPE:
+        case AMP:
+        case EQ:
+        case NEQ:
+        case GT:
+        case LT:
+        case GEQ:
+        case LEQ:
+        case PLUS:
+        case MINUS:
+        case STAR:
+        case SLASH:
+        case MOD:
+        case INCR:
+        case DECR:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+int 
+prec(tokentype_t type)
+{
+    switch(type) {
+        case ASSIGN:
+        case PLUSASSIGN:
+        case MINUSASSIGN:
+        case STARASSIGN:
+        case SLASHASSIGN:
+            return 1;
+        case QUEST:
+            return 2;
+        case DPIPE:
+            return 3;
+        case DAMP:
+            return 4;
+        case PIPE:
+            return 5;
+        case AMP:
+            return 6;
+        case EQ:
+        case NEQ:
+            return 7;
+        case GT:
+        case LT:
+        case GEQ:
+        case LEQ:
+            return 8;
+        case PLUS:
+        case MINUS:
+            return 9;
+        case STAR:
+        case SLASH:
+        case MOD:
+            return 10;
+        case INCR:
+        case DECR:
+            return 11;
+        default:
+            return -1;
+    }
+}
 
 
 /**

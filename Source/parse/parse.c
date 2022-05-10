@@ -430,232 +430,161 @@ parse_term(parser_t *parser)
  * @return 
  */
 astnode_t *
-parse_expr(parser_t *parser, int prec)
+parse_expr(parser_t *parser, int min_prec)
 {
-    astnode_t *term, *op, *op2, *expr1, *expr2;
+    astnode_t *result, *op, *op2, *lhs, *rhs, *expr1, *expr2;
+    int op_prec;
 
-    term = parse_term(parser);
+    result = parse_term(parser);
 
-    switch(prec) {
-        case 1:
-            if(is_assignop(parser->cur->tok_type)) {
-                if(is_lvalue(term)) {
-                    op = init_astnode(_ASSIGN, parser->cur);
+    op_prec = prec(parser->cur->tok_type);
 
-                    switch(parser->cur->tok_type) {
-                        case ASSIGN:
-                            op2 = NULL;
-                            break;
-                        case PLUSASSIGN:
-                            op2 = init_astnode(_ADD, parser->cur);
-                            set_asttext(op2, "+");
-                            set_asttext(op, "=");
-                            break;
-                        case MINUSASSIGN:
-                            op2 = init_astnode(_SUB, parser->cur);
-                            set_asttext(op2, "-");
-                            set_asttext(op, "=");
-                            break;
-                        case STARASSIGN:
-                            op2 = init_astnode(_MULT, parser->cur);
-                            set_asttext(op2, "*");
-                            set_asttext(op, "=");
-                            break;
-                        case SLASHASSIGN:
-                            op2 = init_astnode(_DIV, parser->cur);
-                            set_asttext(op2, "/");
-                            set_asttext(op, "=");
-                            break;
-                        default:
-                            // impossible
-                            break;
-                    }
-                    update_parser(parser);
+    while(op_prec >= min_prec) {
 
-                    expr1 = parse_expr(parser, prec);
-
-                    if(op2 == NULL) {
-                        add_astchild(op, term);
-                        add_astchild(op, expr1);
-                    } else {
-                        add_astchild(op2, term);
-                        add_astchild(op2, expr1);
-                        add_astchild(op, copy_astnode(term, true));
-                        add_astchild(op, op2);
-                    }
-
-                    return op;
-                } else {
-                    print_msg(PARSER_ERR, parser->lex->filename, 
-                        parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected l-value on LHS of assignment operator");
-                    parser->status = 0;
-                    exit(1);
-                }
-            }
-        case 2:
-            if(parser->cur->tok_type == QUEST) {
-                op = init_astnode(_ITE, parser->cur);
-                update_parser(parser);
-
-                expr1 = parse_expr(parser, prec);
-
-                if(parser->cur->tok_type == COLON) {
-                    update_parser(parser);
-
-                    expr2 = parse_expr(parser, prec);
-
-                    add_astchild(op, term);
-                    add_astchild(op, expr1);
-                    add_astchild(op, expr2);
-
-                    return op;
-                } else {
-                    print_msg(PARSER_ERR, parser->lex->filename, 
-                        parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected ':'");
-                    parser->status = 0;
-                    exit(1);
-                }
-            }
-        case 3:
-            if(parser->cur->tok_type == DPIPE) {
+        switch(parser->cur->tok_type) {
+            case DPIPE:
                 op = init_astnode(_LOG_OR, parser->cur);
-                update_parser(parser);
-
-                expr1 = parse_expr(parser, prec);
-
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 4:
-            if(parser->cur->tok_type == DAMP) {
+                break;
+            case DAMP:
                 op = init_astnode(_LOG_AND, parser->cur);
-                update_parser(parser);
-
-                expr1 = parse_expr(parser, prec);
-
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 5:
-            if(parser->cur->tok_type == PIPE) {
+                break;
+            case PIPE:
                 op = init_astnode(_BIT_OR, parser->cur);
-                update_parser(parser);
-
-                expr1 = parse_expr(parser, prec);
-
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 6:
-            if(parser->cur->tok_type == AMP) {
+                break;
+            case AMP:
                 op = init_astnode(_BIT_AND, parser->cur);
-                update_parser(parser);
+                break;
+            case EQ:
+                op = init_astnode(_EQ, parser->cur);
+                break;
+            case NEQ:
+                op = init_astnode(_NEQ, parser->cur);
+                break;
+            case GT:
+                op = init_astnode(_GT, parser->cur);
+                break;
+            case LT:
+                op = init_astnode(_LT, parser->cur);
+                break;
+            case GEQ:
+                op = init_astnode(_GEQ, parser->cur);
+                break;
+            case LEQ:
+                op = init_astnode(_LEQ, parser->cur);
+                break;
+            case PLUS:
+                op = init_astnode(_ADD, parser->cur);
+                break;
+            case MINUS:
+                op = init_astnode(_SUB, parser->cur);
+                break;
+            case STAR:
+                op = init_astnode(_MULT, parser->cur);
+                break;
+            case SLASH:
+                op = init_astnode(_DIV, parser->cur);
+                break;
+            case MOD:
+                op = init_astnode(_MOD, parser->cur);
+                break;
+            case INCR:
+            case DECR:
+            default:
+                break;
+        }
 
-                expr1 = parse_expr(parser, prec);
+        // special case for assign ops
+        if(is_assignop(parser->cur->tok_type)) {
+            if(is_lvalue(result)) {
+                op = init_astnode(_ASSIGN, parser->cur);
 
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 7:
-            if(parser->cur->tok_type == EQ || parser->cur->tok_type == NEQ) {
-                if(parser->cur->tok_type == EQ) {
-                    op = init_astnode(_EQ, parser->cur);
-                } else { // NEQ
-                    op = init_astnode(_NEQ, parser->cur);
+                switch(parser->cur->tok_type) {
+                    case ASSIGN:
+                        op2 = NULL;
+                        break;
+                    case PLUSASSIGN:
+                        op2 = init_astnode(_ADD, parser->cur);
+                        set_asttext(op2, "+");
+                        set_asttext(op, "=");
+                        break;
+                    case MINUSASSIGN:
+                        op2 = init_astnode(_SUB, parser->cur);
+                        set_asttext(op2, "-");
+                        set_asttext(op, "=");
+                        break;
+                    case STARASSIGN:
+                        op2 = init_astnode(_MULT, parser->cur);
+                        set_asttext(op2, "*");
+                        set_asttext(op, "=");
+                        break;
+                    case SLASHASSIGN:
+                        op2 = init_astnode(_DIV, parser->cur);
+                        set_asttext(op2, "/");
+                        set_asttext(op, "=");
+                        break;
+                    default:
+                        // impossible
+                        break;
                 }
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec);
+                expr1 = parse_expr(parser, 2);
 
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 8:
-            if(parser->cur->tok_type == GT || parser->cur->tok_type == GEQ || 
-                parser->cur->tok_type == LT || parser->cur->tok_type == LEQ) {
-
-                if(parser->cur->tok_type == GT) {
-                    op = init_astnode(_GT, parser->cur);
-                } else if(parser->cur->tok_type == GEQ) {
-                    op = init_astnode(_GEQ, parser->cur);
-                } else if(parser->cur->tok_type == LT) {
-                    op = init_astnode(_LT, parser->cur);
-                } else { // LEQ
-                    op = init_astnode(_LEQ, parser->cur);
+                if(op2 == NULL) {
+                    add_astchild(op, result);
+                    add_astchild(op, expr1);
+                } else {
+                    add_astchild(op2, result);
+                    add_astchild(op2, expr1);
+                    add_astchild(op, copy_astnode(result, true));
+                    add_astchild(op, op2);
                 }
+            } else {
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
+                    "Expected l-value on LHS of assignment operator");
+                parser->status = 0;
+                exit(1);
+            }
+        } else if(parser->cur->tok_type == QUEST) { // special case for ternary
+            op = init_astnode(_ITE, parser->cur);
+            update_parser(parser);
+
+            expr1 = parse_expr(parser, op_prec);
+
+            if(parser->cur->tok_type == COLON) {
                 update_parser(parser);
 
-                expr1 = parse_expr(parser, prec);
+                expr2 = parse_expr(parser, op_prec);
 
-                add_astchild(op, term);
+                add_astchild(op, result);
                 add_astchild(op, expr1);
-
-                return op;
+                add_astchild(op, expr2);
+            } else {
+                print_msg(PARSER_ERR, parser->lex->filename, 
+                    parser->cur->line_num, 0, parser->cur->text, 
+                    "Expected ':'");
+                parser->status = 0;
+                exit(1);
             }
-        case 9:
-            if(parser->cur->tok_type == PLUS || parser->cur->tok_type == MINUS) {
-                if(parser->cur->tok_type == PLUS) {
-                    op = init_astnode(_ADD, parser->cur);
-                } else { // MINUS
-                    op = init_astnode(_SUB, parser->cur);
-                }
-                update_parser(parser);
+        } else { // binary operators
+            update_parser(parser);
 
-                expr1 = parse_expr(parser, prec);
-
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
+            if(is_leftassociative(parser->cur->tok_type)) {
+                rhs = parse_expr(parser, op_prec+1);
+            } else {
+                rhs = parse_expr(parser, op_prec);
             }
-        case 10:
-            if(parser->cur->tok_type == STAR || parser->cur->tok_type == SLASH ||
-                parser->cur->tok_type == MOD) {
-                if(parser->cur->tok_type == STAR) {
-                    op = init_astnode(_MULT, parser->cur);
-                } else if(parser->cur->tok_type == SLASH) {
-                    op = init_astnode(_DIV, parser->cur);
-                } else { // MOD
-                    op = init_astnode(_MOD, parser->cur);
-                }
-                update_parser(parser);
+            
+            add_astchild(op, result);
+            add_astchild(op, rhs);
+        }
 
-                expr1 = parse_expr(parser, prec);
+        result = op;
+        op_prec = prec(parser->cur->tok_type);
+    } 
 
-                add_astchild(op, term);
-                add_astchild(op, expr1);
-
-                return op;
-            }
-        case 11:
-            if(parser->cur->tok_type == INCR || parser->cur->tok_type == DECR) {
-                if(parser->cur->tok_type == INCR) {
-                    op = init_astnode(_INCR, parser->cur);
-                } else { // DECR
-                    op = init_astnode(_DECR, parser->cur);
-                }
-                update_parser(parser);
-
-                add_astchild(op, term);
-
-                return op;
-            }
-        default:
-            // no such operator with precedence > prec --> return term
-            return term;
-    }
+    return result;
 }
 
 
@@ -701,7 +630,7 @@ parse_break(parser_t *parser)
         update_parser(parser);
     } else {
         print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
-                0, parser->cur->text, "Expected ';'.");
+                0, parser->cur->text, "Expected ';'");
         parser->status = 0;
         return NULL;
     }
@@ -726,7 +655,7 @@ parse_continue(parser_t *parser)
         update_parser(parser);
     } else {
         print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
-                0, parser->cur->text, "Expected ';'.");
+                0, parser->cur->text, "Expected ';'");
         parser->status = 0;
         return NULL;
     }
@@ -1073,7 +1002,7 @@ parse_do(parser_t *parser)
                 } else {
                     print_msg(PARSER_ERR, parser->lex->filename, 
                         parser->cur->line_num, 0, parser->cur->text, 
-                        "Expected ';'.");
+                        "Expected ';'");
                     parser->status = 0;
                     return NULL;
                 }
@@ -1086,13 +1015,13 @@ parse_do(parser_t *parser)
             }
         } else {
             print_msg(PARSER_ERR, parser->lex->filename, 
-                parser->cur->line_num, 0, parser->cur->text, "Expected '('.");
+                parser->cur->line_num, 0, parser->cur->text, "Expected '('");
             parser->status = 0;
             return NULL;
         }
     } else {
         print_msg(PARSER_ERR, parser->lex->filename, parser->cur->line_num, 
-            0, parser->cur->text, "Expected while following do.");
+            0, parser->cur->text, "Expected while following do");
         parser->status = 0;
         return NULL;
     }

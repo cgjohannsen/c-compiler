@@ -36,6 +36,8 @@ typedef enum instrtype {
     F2I,
     I2F,
     I2C,
+    GOTO,
+    LABEL,
     OTHER,
     COMMENT
 } instrtype_t;
@@ -50,6 +52,7 @@ typedef struct instrlist {
     int min_stack_size;
     int stack_size;
     int num_locals;
+    int num_labels;
     int len;
     instr_t *head;
     bool has_return;

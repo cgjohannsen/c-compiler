@@ -370,6 +370,13 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
             cur = statement->left->left; // if-cond
             typecheck_expr(table, cur);
 
+            if(!is_numctype(cur)) {
+                print_msg(TYPE_ERR, cur->filename, cur->line_num, 0, "", "");
+                fprintf(stderr, "\tExpression not of numeric type for if condition (%s)\n", 
+                    cur->ctype.name);
+                exit(1);
+            }
+
             cur = statement->left->right->left; // if-body
             while(cur != NULL) {
                 typecheck_statement(table, cur, output);
@@ -384,12 +391,32 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 
             break;
         case _FOR_STATEMENT:
-            cur = statement->left->left; // for-params
-            while(cur != NULL) {
-                typecheck_expr(table, cur);
-                cur = cur->right;
+            cur = statement->left; // for-params
+
+            // initialization
+            if(cur->left != NULL) {
+                typecheck_expr(table, cur->left);
             }
-            
+
+            // loop condition
+            cur = cur->right;
+            if(cur->left != NULL) {
+                typecheck_expr(table, cur->left);
+
+                if(!is_numctype(cur->left)) {
+                    print_msg(TYPE_ERR, cur->filename, cur->line_num, 0, "", "");
+                    fprintf(stderr, "\tExpression not of numeric type for for loop condition (%s)\n", 
+                        cur->left->ctype.name);
+                    exit(1);
+                }
+            }
+
+            // iteration 
+            cur = cur->right;
+            if(cur->left != NULL) {
+                typecheck_expr(table, cur->left);
+            }
+
             cur = statement->left->right->left; // for-body
             while(cur != NULL) {
                 typecheck_statement(table, cur, output);
@@ -400,6 +427,13 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
         case _WHILE_STATEMENT:
             cur = statement->left->left; // while-cond
             typecheck_expr(table, cur);
+
+            if(!is_numctype(cur)) {
+                print_msg(TYPE_ERR, cur->filename, cur->line_num, 0, "", "");
+                fprintf(stderr, "\tExpression not of numeric type for while condition (%s)\n", 
+                    cur->ctype.name);
+                exit(1);
+            }
             
             cur = statement->left->right->left; // while-body
             while(cur != NULL) {
@@ -417,6 +451,13 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 
             cur = statement->left->right->left; // do-cond
             typecheck_expr(table, cur);
+
+            if(!is_numctype(cur)) {
+                print_msg(TYPE_ERR, cur->filename, cur->line_num, 0, "", "");
+                fprintf(stderr, "\tExpression not of numeric type for while condition (%s)\n", 
+                    cur->ctype.name);
+                exit(1);
+            }
             
             break;
         default:

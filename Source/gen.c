@@ -15,6 +15,7 @@
 char *classname, *filename;
 char buffer[2048];
 int mode;
+int loop_depth = 0;
 
 
 char *
@@ -89,7 +90,10 @@ print_instrlist(instrlist_t *list)
     cur = list->head;
 
     while(cur != NULL) {
-        fprintf(outfile, "\t\t%s\n", cur->text);
+        if(cur->type != LABEL) {
+            fprintf(outfile, "\t");
+        }
+        fprintf(outfile, "\t%s\n", cur->text);
         cur = cur->next;
     }
 }
@@ -350,8 +354,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             sym = get_localvar(table, lhs->text);
             if(sym != NULL) {
-                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
-                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                sprintf(buffer, "%cstore%c%d ; store to %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, lhs->text);
                 add_instr(list, STORE, buffer, 0);
             } else {
                 sym = get_globalvar(table, lhs->text);
@@ -380,8 +384,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             sym = get_localvar(table, lhs->text);
             if(sym != NULL) {
-                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
-                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                sprintf(buffer, "%cstore%c%d ; store to %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, lhs->text);
                 add_instr(list, STORE, buffer, 0);
             } else {
                 sym = get_globalvar(table, lhs->text);
@@ -411,8 +415,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             sym = get_localvar(table, lhs->text);
             if(sym != NULL) {
-                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
-                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                sprintf(buffer, "%cstore%c%d ; store to %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, lhs->text);
                 add_instr(list, STORE, buffer, 0);
             } else {
                 sym = get_globalvar(table, lhs->text);
@@ -442,8 +446,8 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             sym = get_localvar(table, lhs->text);
             if(sym != NULL) {
-                sprintf(buffer, "%cstore%c%d ; store in %s", java_type, 
-                    sym->idx > 3 ? ' ' : '_', sym->idx, expr->text);
+                sprintf(buffer, "%cstore%c%d ; store to %s", java_type, 
+                    sym->idx > 3 ? ' ' : '_', sym->idx, lhs->text);
                 add_instr(list, STORE, buffer, 0);
             } else {
                 sym = get_globalvar(table, lhs->text);
@@ -624,6 +628,184 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 }
 
 
+// forward declare
+void gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list);
+
+
+void
+gen_if(symtable_t *table, astnode_t *if_statement, instrlist_t *list)
+{
+    astnode_t *if_cond, *if_body, *else_body, *statement;
+    int L1, L2, L3;
+
+    L1 = list->num_labels+1;
+    L2 = list->num_labels+2;
+    L3 = list->num_labels+3;
+
+    if_cond = if_statement->left;
+    if_body = if_cond->right;
+    else_body = if_body->right;
+
+    // gen code for expression
+    gen_expr(table, if_cond->left, list, false);
+
+    // if leq 0, goto L2
+    sprintf(buffer, "ifeq L%d", L2);
+    add_instr(list, ICONST, buffer, 0);
+
+    // drop L1
+    sprintf(buffer, "L%d:", L1);
+    add_instr(list, LABEL, buffer, 0);
+
+    // then block
+    statement = if_body->left;
+    while(statement != NULL) {
+        gen_statement(table, statement, list);
+        statement = statement->right;
+    }
+
+    if(else_body != NULL) {
+        sprintf(buffer, "goto L%d", L3);
+        add_instr(list, GOTO, buffer, 0);
+    }
+
+    // drop L2
+    sprintf(buffer, "L%d:", L2);
+    add_instr(list, LABEL, buffer, 0);
+
+    // else block
+    if(else_body != NULL) {
+        statement = else_body->left;
+        while(statement != NULL) {
+            gen_statement(table, statement, list);
+            statement = statement->right;
+        }
+
+        // drop L3
+        sprintf(buffer, "L%d:", L3);
+        add_instr(list, LABEL, buffer, 0);
+    }
+}
+
+
+
+void
+gen_for(symtable_t *table, astnode_t *for_statement, instrlist_t *list)
+{
+    astnode_t *for_init, *for_cond, *for_update, *for_body, *statement;
+    int L1, L2;
+
+    L1 = list->num_labels+1;
+    L2 = list->num_labels+2;
+
+    for_init = for_statement->left;
+    for_cond = for_init->right;
+    for_update = for_cond->right;
+    for_body = for_update->right;
+
+    // gen code for init
+    gen_expr(table, for_init->left, list, false);
+
+    // drop L1
+    sprintf(buffer, "L%d:", L1);
+    add_instr(list, LABEL, buffer, 0);
+
+    // gen code for condition
+    gen_expr(table, for_cond->left, list, false);
+
+    if(for_cond->left != NULL) {
+        sprintf(buffer, "ifeq L%d", L2);
+        add_instr(list, ICONST, buffer, 0);
+    }    
+
+    // gen loop body
+    statement = for_body->left;
+    while(statement != NULL) {
+        gen_statement(table, statement, list);
+        statement = statement->right;
+    }
+
+    // gen code for update
+    gen_expr(table, for_update->left, list, false);
+
+    sprintf(buffer, "goto L%d", L1);
+    add_instr(list, GOTO, buffer, 0);
+
+    // drop L2
+    sprintf(buffer, "L%d:", L2);
+    add_instr(list, LABEL, buffer, 0);
+}
+
+
+void
+gen_while(symtable_t *table, astnode_t *while_statement, instrlist_t *list)
+{
+    astnode_t *while_cond, *while_body, *statement;
+    int L1, L2;
+
+    L1 = list->num_labels+1;
+    L2 = list->num_labels+2;
+
+    while_cond = while_statement->left;
+    while_body = while_cond->right;
+
+    // drop L1
+    sprintf(buffer, "L%d:", L1);
+    add_instr(list, LABEL, buffer, 0);
+
+    // gen code for condition
+    gen_expr(table, while_cond->left, list, false);
+
+    sprintf(buffer, "ifeq L%d", L2);
+    add_instr(list, ICONST, buffer, 0);
+
+    // gen loop body
+    statement = while_body->left;
+    while(statement != NULL) {
+        gen_statement(table, statement, list);
+        statement = statement->right;
+    }
+
+    sprintf(buffer, "goto L%d", L1);
+    add_instr(list, GOTO, buffer, 0);
+
+    // drop L2
+    sprintf(buffer, "L%d:", L2);
+    add_instr(list, LABEL, buffer, 0);
+}
+
+
+
+void
+gen_do(symtable_t *table, astnode_t *do_statement, instrlist_t *list)
+{
+    astnode_t *do_cond, *do_body, *statement;
+    int L1;
+
+    L1 = list->num_labels+1;
+
+    do_body = do_statement->right;
+    do_cond = do_body->left;
+
+    // drop L1
+    sprintf(buffer, "L%d:", L1);
+    add_instr(list, LABEL, buffer, 0);
+
+    // gen loop body
+    statement = do_body->left;
+    while(statement != NULL) {
+        gen_statement(table, statement, list);
+        statement = statement->right;
+    }
+
+    // gen code for condition
+    gen_expr(table, do_cond->left, list, false);
+
+    sprintf(buffer, "ifeq L%d", L2);
+    add_instr(list, ICONST, buffer, 0);
+}
+
+
 
 void
 gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
@@ -653,9 +835,16 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
             
             break;
         case _IF_STATEMENT:
+            gen_if(table, statement, list);
+            break;
         case _FOR_STATEMENT:
+            gen_for(table, statement, list);
+            break;
         case _WHILE_STATEMENT:
+            gen_while(table, statement, list);
+            break;
         case _DO_STATEMENT:
+            gen_do(table, statement, list);
             break;
         default:
             sprintf(buffer, ";; expression %s %d", classname, 
@@ -929,26 +1118,39 @@ gen_footer(symtable_t *table)
     gen_clinit(table);
 
     fprintf(outfile,
-        ".method <init> : ()V\n"
-            "\t.code stack 1 locals 1\n"
-                "\t\taload_0\n"
-                "\t\tinvokespecial Method java/lang/Object <init> ()V\n"
-                "\t\treturn\n"
-            "\t.end code\n"
-        ".end method\n\n"
-        ".method public static main : ([Ljava/lang/String;)V\n"
-            "\t.code stack 2 locals 2\n"
-                "\t\tinvokestatic Method %s main ()I\n"
-                "\t\tistore_1\n"
-                "\t\tgetstatic Field java/lang/System out Ljava/io/PrintStream;\n"
-                "\t\tldc 'Return code: '\n"
-                "\t\tinvokevirtual Method java/io/PrintStream print (Ljava/lang/String;)V\n"
-                "\t\tgetstatic Field java/lang/System out Ljava/io/PrintStream;\n"
-                "\t\tiload_1\n"
-                "\t\tinvokevirtual Method java/io/PrintStream println (I)V\n"
-                "\t\treturn\n"
-            "\t.end code\n"
-        ".end method\n", classname);
+            ".method <init> : ()V\n"
+                "\t.code stack 1 locals 1\n"
+                    "\t\taload_0\n"
+                    "\t\tinvokespecial Method java/lang/Object <init> ()V\n"
+                    "\t\treturn\n"
+                "\t.end code\n"
+            ".end method\n\n");
+
+    if(mode == 5) {
+        fprintf(outfile,
+            ".method public static main : ([Ljava/lang/String;)V\n"
+                "\t.code stack 2 locals 2\n"
+                    "\t\tinvokestatic Method %s main ()I\n"
+                    "\t\tistore_1\n"
+                    "\t\tgetstatic Field java/lang/System out Ljava/io/PrintStream;\n"
+                    "\t\tldc 'Return code: '\n"
+                    "\t\tinvokevirtual Method java/io/PrintStream print (Ljava/lang/String;)V\n"
+                    "\t\tgetstatic Field java/lang/System out Ljava/io/PrintStream;\n"
+                    "\t\tiload_1\n"
+                    "\t\tinvokevirtual Method java/io/PrintStream println (I)V\n"
+                    "\t\treturn\n"
+                "\t.end code\n"
+            ".end method\n", classname);
+    } else {
+        fprintf(outfile,
+            ".method public static main : ([Ljava/lang/String;)V\n"
+                "\t.code stack 1 locals 1\n"
+                    "\t\tinvokestatic Method %s main ()I\n"
+                    "\t\tpop\n"
+                    "\t\treturn\n"
+                "\t.end code\n"
+            ".end method\n", classname);
+    }
 }
 
 

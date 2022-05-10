@@ -33,33 +33,30 @@ int main(int argc, char **argv)
 
   // Extensible way to loop over CLI options
   char c;
-  while((c = getopt(argc, argv, "012345oh")) != -1) {
+  while((c = getopt(argc, argv, "0123456oh")) != -1) {
     switch(c) {
-      case '0': {
+      case '0':
         mode = 0;
         break;
-      }
-      case '1': {
+      case '1':
         mode = 1;
         break;
-      }
-      case '2': {
+      case '2':
         mode = 2;
         break;
-      }
-      case '3': {
+      case '3':
         mode = 3;
         break;
-      }
-      case '4': {
+      case '4':
         mode = 4;
         break;
-      }
-      case '5': {
+      case '5':
         mode = 5;
         break;
-      }
-      case 'o': {
+      case '6':
+        mode = 6;
+        break;
+      case 'o':
         outfile = fopen(argv[optind], "w");
         if(outfile == NULL) {
           fprintf(stderr, "Could not open output file %s, writing to stdout\n", argv[optind]);
@@ -67,18 +64,14 @@ int main(int argc, char **argv)
         }
         optind++;
         break;
-      }
-      case 'h': {
+      case 'h':
         fprintf(stderr, "%s", usage);
         exit(1);
-      }
-      case '?': {
+      case '?':
         fprintf(stderr, "\n%s", usage);
         exit(1);
-      }
-      default: {
+      default:
         exit(1); // something went wrong with getopt
-      }
     }
   }
 

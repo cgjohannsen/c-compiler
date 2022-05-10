@@ -26,6 +26,7 @@ init_instrlist()
     list->min_stack_size = 0;
     list->stack_size = 0;
     list->num_locals = 0;
+    list->num_labels = 0;
     list->len = 0;
     list->head = NULL;
     list->has_return = false;
@@ -105,6 +106,7 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
         case F2I:
         case I2F:
         case I2C:
+        case LABEL:
         default:
             break;
     }
@@ -127,6 +129,10 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
             cur = cur->next;
         }
         cur->next = new;
+    }
+
+    if(type == LABEL) {
+        list->num_labels += 1;
     }
 
     new->next = NULL;

@@ -345,7 +345,7 @@ typecheck_expr(symtable_t *table, astnode_t *expr)
 void
 typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 {
-    astnode_t *cur;
+    astnode_t *cur, *init, *cond, *update, *body, *body2;
 
     switch(statement->node_type) {
         case _BREAK:
@@ -367,7 +367,11 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
 
             break;
         case _IF_STATEMENT:
-            cur = statement->left->left; // if-cond
+            cond = statement->left;
+            body = cond->right;
+            body2 = body->right;
+
+            cur = cond->left; // if-cond
             typecheck_expr(table, cur);
 
             if(!is_numctype(cur)) {
@@ -377,16 +381,18 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
                 exit(1);
             }
 
-            cur = statement->left->right->left; // if-body
+            cur = body->left; // if-body
             while(cur != NULL) {
                 typecheck_statement(table, cur, output);
                 cur = cur->right;
-            }
+            }            
 
-            cur = statement->left->right->right->left; // else-body
-            while(cur != NULL) {
-                typecheck_statement(table, cur, output);
-                cur = cur->right;
+            if(body2 != NULL) {
+                cur = body2->left; // else-body
+                while(cur != NULL) {
+                    typecheck_statement(table, cur, output);
+                    cur = cur->right;
+                }
             }
 
             break;
@@ -417,7 +423,7 @@ typecheck_statement(symtable_t *table, astnode_t *statement, bool output)
                 typecheck_expr(table, cur->left);
             }
 
-            cur = statement->left->right->left; // for-body
+            cur = cur->right->left; // for-body
             while(cur != NULL) {
                 typecheck_statement(table, cur, output);
                 cur = cur->right;

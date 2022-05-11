@@ -24,6 +24,8 @@ init_astnode(nodetype_t asttype, token_t *tok)
     node->ctype.is_const = false;
     node->ctype.is_struct = false;
     node->arr_dim = -1;
+    node->exit_label = -1;
+    node->enter_label = -1;
 
     return node;
 }

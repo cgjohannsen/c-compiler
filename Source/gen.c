@@ -15,8 +15,7 @@
 char *classname, *filename;
 char buffer[2048];
 int mode;
-int loop_depth = 0;
-
+astnode_t *cur_loop = NULL;
 
 char *
 get_classname(char *filename)
@@ -110,6 +109,7 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
     astnode_t *lhs, *rhs, *rhs2;
     varsym_t *sym;
     char java_type;
+    int L1, L2;
 
     if(expr == NULL) {
         return;
@@ -130,6 +130,33 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
     switch(expr->node_type) {
         case _ITE:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            // if condition
+            gen_expr(table, lhs, list, false);
+
+            // if cond == 0, goto L1
+            sprintf(buffer, "ifeq L%d", L1);
+            add_instr(list, ICONST, buffer, 0);
+
+            // then expression
+            gen_expr(table, rhs, list, false);
+
+            // if then expression, skip else
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            // else expression
+            gen_expr(table, rhs2, list, false);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
             break;
         case _ASSIGN:
 
@@ -260,11 +287,166 @@ gen_expr(symtable_t *table, astnode_t *expr, instrlist_t *list, bool is_top)
 
             break;
         case _EQ:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmpeq L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
+            break;
         case _NEQ:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmpne L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
+            break;
         case _GEQ:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmpge L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
+            break;
         case _GT:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmpgt L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
+            break;
         case _LEQ:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmple L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
+            break;
         case _LT:
+            L1 = list->num_labels+1;
+            L2 = list->num_labels+2;
+            list->num_labels += 2;
+
+            gen_expr(table, lhs, list, false);
+            gen_expr(table, rhs, list, false);
+
+            sprintf(buffer, "if_icmplt L%d", L1);
+            add_instr(list, IFCMP, buffer, 0);
+
+            sprintf(buffer, "iconst_0");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "goto L%d", L2);
+            add_instr(list, GOTO, buffer, 0);
+
+            sprintf(buffer, "L%d:", L1);
+            add_instr(list, LABEL, buffer, 0);
+
+            sprintf(buffer, "iconst_1");
+            add_instr(list, ICONST, buffer, 0);
+
+            sprintf(buffer, "L%d:", L2);
+            add_instr(list, LABEL, buffer, 0);
+
             break;
         case _LOG_AND: // TODO
             gen_expr(table, lhs, list, false);
@@ -649,6 +831,7 @@ gen_if(symtable_t *table, astnode_t *if_statement, instrlist_t *list)
     L1 = list->num_labels+1;
     L2 = list->num_labels+2;
     L3 = list->num_labels+3;
+    list->num_labels += 3;
 
     if_cond = if_statement->left;
     if_body = if_cond->right;
@@ -705,6 +888,11 @@ gen_for(symtable_t *table, astnode_t *for_statement, instrlist_t *list)
 
     L1 = list->num_labels+1;
     L2 = list->num_labels+2;
+    list->num_labels += 2;
+
+    for_statement->enter_label = L1;
+    for_statement->exit_label = L2;
+    cur_loop = for_statement;
 
     for_init = for_statement->left;
     for_cond = for_init->right;
@@ -712,14 +900,14 @@ gen_for(symtable_t *table, astnode_t *for_statement, instrlist_t *list)
     for_body = for_update->right;
 
     // gen code for init
-    gen_expr(table, for_init->left, list, false);
+    gen_expr(table, for_init->left, list, true);
 
     // drop L1
     sprintf(buffer, "L%d:", L1);
     add_instr(list, LABEL, buffer, 0);
 
     // gen code for condition
-    gen_expr(table, for_cond->left, list, false);
+    gen_expr(table, for_cond->left, list, true);
 
     if(for_cond->left != NULL) {
         sprintf(buffer, "ifeq L%d", L2);
@@ -734,7 +922,7 @@ gen_for(symtable_t *table, astnode_t *for_statement, instrlist_t *list)
     }
 
     // gen code for update
-    gen_expr(table, for_update->left, list, false);
+    gen_expr(table, for_update->left, list, true);
 
     sprintf(buffer, "goto L%d", L1);
     add_instr(list, GOTO, buffer, 0);
@@ -753,6 +941,11 @@ gen_while(symtable_t *table, astnode_t *while_statement, instrlist_t *list)
 
     L1 = list->num_labels+1;
     L2 = list->num_labels+2;
+    list->num_labels += 2;
+
+    while_statement->enter_label = L1;
+    while_statement->exit_label = L2;
+    cur_loop = while_statement;
 
     while_cond = while_statement->left;
     while_body = while_cond->right;
@@ -762,7 +955,7 @@ gen_while(symtable_t *table, astnode_t *while_statement, instrlist_t *list)
     add_instr(list, LABEL, buffer, 0);
 
     // gen code for condition
-    gen_expr(table, while_cond->left, list, false);
+    gen_expr(table, while_cond->left, list, true);
 
     sprintf(buffer, "ifeq L%d", L2);
     add_instr(list, ICONST, buffer, 0);
@@ -788,9 +981,15 @@ void
 gen_do(symtable_t *table, astnode_t *do_statement, instrlist_t *list)
 {
     astnode_t *do_cond, *do_body, *statement;
-    int L1;
+    int L1, L2;
 
     L1 = list->num_labels+1;
+    L2 = list->num_labels+1;
+    list->num_labels += 2;
+
+    do_statement->enter_label = L1;
+    do_statement->exit_label = L2;
+    cur_loop = do_statement;
 
     do_body = do_statement->right;
     do_cond = do_body->left;
@@ -807,10 +1006,14 @@ gen_do(symtable_t *table, astnode_t *do_statement, instrlist_t *list)
     }
 
     // gen code for condition
-    gen_expr(table, do_cond->left, list, false);
+    gen_expr(table, do_cond->left, list, true);
 
     sprintf(buffer, "ifeq L%d", L1);
     add_instr(list, ICONST, buffer, 0);
+
+     // drop L2
+    sprintf(buffer, "L%d:", L2);
+    add_instr(list, LABEL, buffer, 0);
 }
 
 
@@ -820,7 +1023,26 @@ gen_statement(symtable_t *table, astnode_t *statement, instrlist_t *list)
 {
     switch(statement->node_type) {
         case _BREAK:
+            if(cur_loop == NULL) {
+                print_msg(GEN_ERR, statement->filename, statement->line_num, 0, "", 
+                    "Break called outside of loop");
+                exit(1);
+            }
+
+            sprintf(buffer, "goto L%d", cur_loop->exit_label);
+            add_instr(list, GOTO, buffer, 0);
+
+            break;
         case _CONTINUE:
+            if(cur_loop == NULL) {
+                print_msg(GEN_ERR, statement->filename, statement->line_num, 0, "", 
+                    "Continue called outside of loop");
+                exit(1);
+            }
+
+            sprintf(buffer, "goto L%d", cur_loop->enter_label);
+            add_instr(list, GOTO, buffer, 0);
+
             break;
         case _RETURN:
             sprintf(buffer, ";; return %s %d", filename, statement->line_num);

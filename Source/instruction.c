@@ -76,6 +76,9 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
         case ASTORE:
             list->stack_size -= 3;
             break;
+        case IFCMP:
+            list->stack_size -= 2;
+            break;
         case ADD:
         case SUB:
         case MUL:
@@ -85,6 +88,7 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
         case PUTSTATIC:
         case POP:
         case RET:
+        case LCMP:
             list->stack_size -= 1;
             break;
         case LOAD:
@@ -129,10 +133,6 @@ add_instr(instrlist_t *list, instrtype_t type, char *text, int num_params)
             cur = cur->next;
         }
         cur->next = new;
-    }
-
-    if(type == LABEL) {
-        list->num_labels += 1;
     }
 
     new->next = NULL;

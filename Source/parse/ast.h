@@ -89,6 +89,8 @@ typedef struct astnode {
     ctype_t ctype;
     char *text;
     int arr_dim;
+    int enter_label;
+    int exit_label;
 } astnode_t;
 
 astnode_t *init_astnode(nodetype_t asttype, token_t *tok);

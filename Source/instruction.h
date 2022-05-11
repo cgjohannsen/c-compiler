@@ -37,6 +37,8 @@ typedef enum instrtype {
     F2I,
     I2F,
     I2C,
+    LCMP,
+    IFCMP,
     GOTO,
     LABEL,
     OTHER,

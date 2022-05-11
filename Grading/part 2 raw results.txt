@@ -1,0 +1,1107 @@
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+inc_basic1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1a2
+        | > File inc_basic1.c Line     1 Token 306 Text inc_basic1.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_basic2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2a3
+        | > File inc_basic2.c Line     1 Token 306 Text inc_basic2.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_basic3.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 23a24
+        | > File inc_basic3.c Line     1 Token 306 Text inc_basic3.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_basic4.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 13a14
+        | > File inc_basic4.c Line     8 Token 306 Text inc_basic4.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_basic5.c in mode 2
+    Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file inc_basic5.c line 5
+        | 	Couldn't open include file nope.h, ignoring
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | File error in file nope.h
+        | 	Could not open file
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | File error in file nope.h
+        | 	Could not open file
+        ---------------------------------------------------------
+inc_basic6.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 7a8
+        | > File inc_basic6.c Line     2 Token 306 Text inc_basic6a.h
+        | 14a16
+        | > File inc_basic6.c Line     4 Token 306 Text inc_basic6b.h
+        | 28a31
+        | > File inc_basic6.c Line     8 Token 306 Text inc_basic6a.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+inc_nest1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 10a11
+        | > ..File chain2.h Line     3 Token 306 Text chain1.h
+        | 12a14
+        | > File inc_nest1.c Line     1 Token 306 Text chain2.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_nest2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 16a17
+        | > ....File chain2.h Line     3 Token 306 Text chain1.h
+        | 18a20
+        | > ..File chain3.h Line     4 Token 306 Text chain2.h
+        | 20a23
+        | > File inc_nest2.c Line     5 Token 306 Text chain3.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_nest3.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 10a11
+        | > ..File chain2.h Line     3 Token 306 Text chain1.h
+        | 12a14
+        | > File inc_nest3.c Line     2 Token 306 Text chain2.h
+        | 19a22
+        | > File inc_nest3.c Line     4 Token 306 Text chain1.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+inc_nest4.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 20a21
+        | > ........File chain2.h Line     3 Token 306 Text chain1.h
+        | 22a24
+        | > ......File chain3.h Line     4 Token 306 Text chain2.h
+        | 24a27
+        | > ....File chain4.h Line     5 Token 306 Text chain3.h
+        | 26a30
+        | > ..File chain5.h Line     4 Token 306 Text chain4.h
+        | 28a33
+        | > File inc_nest4.c Line     4 Token 306 Text chain5.h
+        | 45a51
+        | > ......File chain2.h Line     3 Token 306 Text chain1.h
+        | 47a54
+        | > ....File chain3.h Line     4 Token 306 Text chain2.h
+        | 49a57
+        | > ..File chain4.h Line     5 Token 306 Text chain3.h
+        | 51a60
+        | > File inc_nest4.c Line     8 Token 306 Text chain4.h
+        | 65a75
+        | > ....File chain2.h Line     3 Token 306 Text chain1.h
+        | 67a78
+        | > ..File chain3.h Line     4 Token 306 Text chain2.h
+        | 69a81
+        | > File inc_nest4.c Line    12 Token 306 Text chain3.h
+        | 80a93
+        | > ..File chain2.h Line     3 Token 306 Text chain1.h
+        | 82a96
+        | > File inc_nest4.c Line    16 Token 306 Text chain2.h
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file inc_nest4.c line 21
+        | 	Invalid character following include directive
+        ---------------------------------------------------------
+inc_nest5.c in mode 2
+    Implementation Comparison: [1;31mFirst error different[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file nope1.h line 1
+        |     included from nope2.h line 1
+        |     included from nope3.h line 1
+        |     included from inc_nest5.c line 2
+        | 	Couldn't open include file nope.h, ignoring
+        ---------------------------------------------------------
+
+        Given first error:
+        ---------------------------------------------------------
+        | File error in file nope.h
+        | 	Could not open file
+        ---------------------------------------------------------
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | File error in file nope.h
+        | 	Could not open file
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+inc_cycle1.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file inc_cycle1.c line 4
+        | 	Include cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file inc_cycle1.c line 4
+        | 	Include cycle detected
+        ---------------------------------------------------------
+inc_cycle2.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file inc_cycle2.h line 2
+        |     included from inc_cycle2.c line 2
+        | 	Include cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file inc_cycle2.h line 2
+        | 	Include cycle detected
+        ---------------------------------------------------------
+inc_cycle3.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file inc_cycle3d.h line 2
+        |     included from inc_cycle3c.h line 2
+        |     included from inc_cycle3b.h line 2
+        |     included from inc_cycle3a.h line 2
+        |     included from inc_cycle3.c line 3
+        | 	Include cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file inc_cycle3d.h line 2
+        | 	Include cycle detected
+        ---------------------------------------------------------
+inc_cycle4.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file loop4.h line 2
+        |     included from loop5.h line 2
+        |     included from loop1.h line 2
+        |     included from loop2.h line 2
+        |     included from loop3.h line 2
+        |     included from inc_cycle4.h line 6
+        |     included from inc_cycle4.c line 2
+        | 	Include cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file loop4.h line 2
+        | 	Include cycle detected
+        ---------------------------------------------------------
+inc_cycle5.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file loop4.h line 2
+        |     included from loop5.h line 2
+        |     included from loop1.h line 2
+        |     included from loop2.h line 2
+        |     included from loop3.h line 2
+        |     included from inc_cycle4.h line 6
+        |     included from inc_cycle4.c line 2
+        |     included from inc_cycle5.c line 17
+        | 	Include cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file loop4.h line 2
+        | 	Include cycle detected
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+def_basic1.c in mode 2
+    Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+def_basic2.c in mode 2
+    Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+def_basic3.c in mode 2
+    Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+def_basic4.c in mode 2
+    Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+def_undef1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 5,12c5,12
+        | < File def_undef1.c Line     8 Token 301 Text int
+        | < File def_undef1.c Line     8 Token 306 Text MAX
+        | < File def_undef1.c Line     8 Token  44 Text ,
+        | < File def_undef1.c Line     8 Token 306 Text MIN
+        | < File def_undef1.c Line     8 Token  59 Text ;
+        | < File def_undef1.c Line    12 Token 301 Text int
+        | < File def_undef1.c Line    12 Token 306 Text MIN
+        | < File def_undef1.c Line    12 Token  59 Text ;
+        | ---
+        | > File def_undef1.c Line     7 Token 301 Text int
+        | > File def_undef1.c Line     7 Token 306 Text MAX
+        | > File def_undef1.c Line     7 Token  44 Text ,
+        | > File def_undef1.c Line     7 Token 306 Text MIN
+        | > File def_undef1.c Line     7 Token  59 Text ;
+        | > File def_undef1.c Line    10 Token 301 Text int
+        | > File def_undef1.c Line    10 Token 306 Text MIN
+        | > File def_undef1.c Line    10 Token  59 Text ;
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+def_undef2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 15,17c15,20
+        | < File def_undef2.c Line    10 Token 402 Text struct
+        | < File def_undef2.c Line    10 Token 306 Text limits
+        | < File def_undef2.c Line    10 Token 123 Text {
+        | ---
+        | > File def_undef2.c Line     9 Token 402 Text struct
+        | > File def_undef2.c Line     9 Token 306 Text limits
+        | > File def_undef2.c Line     9 Token 123 Text {
+        | > File def_undef2.c Line    10 Token 301 Text int
+        | > File def_undef2.c Line    10 Token 306 Text INTMAX
+        | > File def_undef2.c Line    10 Token  59 Text ;
+        | 19,22c22
+        | < File def_undef2.c Line    11 Token 306 Text INTMAX
+        | < File def_undef2.c Line    11 Token  59 Text ;
+        | < File def_undef2.c Line    12 Token 301 Text int
+        | < File def_undef2.c Line    12 macro expansion
+        | ---
+        | > File def_undef2.c Line    11 macro expansion
+        | 23a24,25
+        | > File def_undef2.c Line    11 Token  59 Text ;
+        | > File def_undef2.c Line    12 Token 125 Text }
+        | 25,27c27
+        | < File def_undef2.c Line    13 Token 125 Text }
+        | < File def_undef2.c Line    13 Token  59 Text ;
+        | < File def_undef2.c Line    17 macro expansion
+        | ---
+        | > File def_undef2.c Line    16 macro expansion
+        | 29,30c29,30
+        | < File def_undef2.c Line    21 Token 306 Text INTMAX
+        | < File def_undef2.c Line    25 macro expansion
+        | ---
+        | > File def_undef2.c Line    19 Token 306 Text INTMAX
+        | > File def_undef2.c Line    23 macro expansion
+        | 32c32
+        | < File def_undef2.c Line    29 Token 306 Text INTMAX
+        | ---
+        | > File def_undef2.c Line    26 Token 306 Text INTMAX
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+def_undef3.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1c1
+        | < File def_undef3.c Line    68 macro expansion
+        | ---
+        | > File def_undef3.c Line    58 macro expansion
+        | 3c3
+        | < File def_undef3.c Line    69 macro expansion
+        | ---
+        | > File def_undef3.c Line    59 macro expansion
+        | 5c5
+        | < File def_undef3.c Line    70 macro expansion
+        | ---
+        | > File def_undef3.c Line    60 macro expansion
+        | 7,8c7,8
+        | < File def_undef3.c Line    71 Token 306 Text SEMI
+        | < File def_undef3.c Line    72 macro expansion
+        | ---
+        | > File def_undef3.c Line    61 Token 306 Text SEMI
+        | > File def_undef3.c Line    62 macro expansion
+        | 10c10
+        | < File def_undef3.c Line    73 macro expansion
+        | ---
+        | > File def_undef3.c Line    63 macro expansion
+        | 12c12
+        | < File def_undef3.c Line    74 macro expansion
+        | ---
+        | > File def_undef3.c Line    64 macro expansion
+        | 14c14
+        | < File def_undef3.c Line    75 macro expansion
+        | ---
+        | > File def_undef3.c Line    65 macro expansion
+        | 16,17c16,17
+        | < File def_undef3.c Line    76 Token 306 Text LBRACE
+        | < File def_undef3.c Line    77 macro expansion
+        | ---
+        | > File def_undef3.c Line    66 Token 306 Text LBRACE
+        | > File def_undef3.c Line    67 macro expansion
+        | 19c19
+        | < File def_undef3.c Line    78 macro expansion
+        | ---
+        | > File def_undef3.c Line    68 macro expansion
+        | 21c21
+        | < File def_undef3.c Line    79 macro expansion
+        | ---
+        | > File def_undef3.c Line    69 macro expansion
+        | 23,25c23,25
+        | < File def_undef3.c Line    80 Token 306 Text ASSIGN
+        | < File def_undef3.c Line    81 Token 306 Text PLUS
+        | < File def_undef3.c Line    82 macro expansion
+        | ---
+        | > File def_undef3.c Line    70 Token 306 Text ASSIGN
+        | > File def_undef3.c Line    71 Token 306 Text PLUS
+        | > File def_undef3.c Line    72 macro expansion
+        | 27c27
+        | < File def_undef3.c Line    83 macro expansion
+        | ---
+        | > File def_undef3.c Line    73 macro expansion
+        | 29,30c29,30
+        | < File def_undef3.c Line    84 Token 306 Text SLASH
+        | < File def_undef3.c Line    85 macro expansion
+        | ---
+        | > File def_undef3.c Line    74 Token 306 Text SLASH
+        | > File def_undef3.c Line    75 macro expansion
+        | 32c32
+        | < File def_undef3.c Line    86 macro expansion
+        | ---
+        | > File def_undef3.c Line    76 macro expansion
+        | 34c34
+        | < File def_undef3.c Line    87 macro expansion
+        | ---
+        | > File def_undef3.c Line    77 macro expansion
+        | 36c36
+        | < File def_undef3.c Line    88 macro expansion
+        | ---
+        | > File def_undef3.c Line    78 macro expansion
+        | 38c38
+        | < File def_undef3.c Line    89 macro expansion
+        | ---
+        | > File def_undef3.c Line    79 macro expansion
+        | 40c40
+        | < File def_undef3.c Line    90 macro expansion
+        | ---
+        | > File def_undef3.c Line    80 macro expansion
+        | 42c42
+        | < File def_undef3.c Line    91 macro expansion
+        | ---
+        | > File def_undef3.c Line    81 macro expansion
+        | 44c44
+        | < File def_undef3.c Line    92 macro expansion
+        | ---
+        | > File def_undef3.c Line    82 macro expansion
+        | 46c46
+        | < File def_undef3.c Line    93 macro expansion
+        | ---
+        | > File def_undef3.c Line    83 macro expansion
+        | 48c48
+        | < File def_undef3.c Line    94 macro expansion
+        | ---
+        | > File def_undef3.c Line    84 macro expansion
+        | 50c50
+        | < File def_undef3.c Line    95 macro expansion
+        | ---
+        | > File def_undef3.c Line    85 macro expansion
+        | 52c52
+        | < File def_undef3.c Line    96 macro expansion
+        | ---
+        | > File def_undef3.c Line    86 macro expansion
+        | 54c54
+        | < File def_undef3.c Line    97 macro expansion
+        | ---
+        | > File def_undef3.c Line    87 macro expansion
+        | 56,57c56,57
+        | < File def_undef3.c Line    98 Token 306 Text EQ
+        | < File def_undef3.c Line    99 macro expansion
+        | ---
+        | > File def_undef3.c Line    88 Token 306 Text EQ
+        | > File def_undef3.c Line    89 macro expansion
+        | 59c59
+        | < File def_undef3.c Line   100 macro expansion
+        | ---
+        | > File def_undef3.c Line    90 macro expansion
+        | 61c61
+        | < File def_undef3.c Line   101 macro expansion
+        | ---
+        | > File def_undef3.c Line    91 macro expansion
+        | 63c63
+        | < File def_undef3.c Line   102 macro expansion
+        | ---
+        | > File def_undef3.c Line    92 macro expansion
+        | 65,66c65,66
+        | < File def_undef3.c Line   103 Token 306 Text DECR
+        | < File def_undef3.c Line   104 macro expansion
+        | ---
+        | > File def_undef3.c Line    93 Token 306 Text DECR
+        | > File def_undef3.c Line    94 macro expansion
+        | 68c68
+        | < File def_undef3.c Line   105 macro expansion
+        | ---
+        | > File def_undef3.c Line    95 macro expansion
+        | 70,71c70,71
+        | < File def_undef3.c Line   106 Token 306 Text PLUSASSIGN
+        | < File def_undef3.c Line   107 macro expansion
+        | ---
+        | > File def_undef3.c Line    96 Token 306 Text PLUSASSIGN
+        | > File def_undef3.c Line    97 macro expansion
+        | 73c73
+        | < File def_undef3.c Line   108 macro expansion
+        | ---
+        | > File def_undef3.c Line    98 macro expansion
+        | 75c75
+        | < File def_undef3.c Line   109 macro expansion
+        | ---
+        | > File def_undef3.c Line    99 macro expansion
+        | 77c77
+        | < File def_undef3.c Line   110 macro expansion
+        | ---
+        | > File def_undef3.c Line   100 macro expansion
+        | 79c79
+        | < File def_undef3.c Line   111 macro expansion
+        | ---
+        | > File def_undef3.c Line   101 macro expansion
+        | 81c81
+        | < File def_undef3.c Line   112 macro expansion
+        | ---
+        | > File def_undef3.c Line   102 macro expansion
+        | 83c83
+        | < File def_undef3.c Line   113 macro expansion
+        | ---
+        | > File def_undef3.c Line   103 macro expansion
+        | 85,87c85,87
+        | < File def_undef3.c Line   114 Token 306 Text DO
+        | < File def_undef3.c Line   115 Token 306 Text IF
+        | < File def_undef3.c Line   116 macro expansion
+        | ---
+        | > File def_undef3.c Line   104 Token 306 Text DO
+        | > File def_undef3.c Line   105 Token 306 Text IF
+        | > File def_undef3.c Line   106 macro expansion
+        | 89c89
+        | < File def_undef3.c Line   117 macro expansion
+        | ---
+        | > File def_undef3.c Line   107 macro expansion
+        | 91c91
+        | < File def_undef3.c Line   118 macro expansion
+        | ---
+        | > File def_undef3.c Line   108 macro expansion
+        | 93c93
+        | < File def_undef3.c Line   119 macro expansion
+        | ---
+        | > File def_undef3.c Line   109 macro expansion
+        | 95c95
+        | < File def_undef3.c Line   120 macro expansion
+        | ---
+        | > File def_undef3.c Line   110 macro expansion
+        | 97c97
+        | < File def_undef3.c Line   121 macro expansion
+        | ---
+        | > File def_undef3.c Line   111 macro expansion
+        | 99c99
+        | < File def_undef3.c Line   122 macro expansion
+        | ---
+        | > File def_undef3.c Line   112 macro expansion
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+def_nested1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 13,14d12
+        | < File def_nested1.c Line     5 Token  93 Text ]
+        | < File def_nested1.c Line     5 Token  59 Text ;
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+def_nested2.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Lexer error in file def_nested2.c line 5
+        | 	Ignoring unexpected symbol: \
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+def_nested3.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 48,109d47
+        | < ..Macro TAIL Token  45 Text -
+        | < ..Macro TAIL Token 303 Text 1
+        | < File def_nested3.c Line    30 macro expansion
+        | < ..Macro STOP macro expansion
+        | < ....Macro START Token 303 Text 100
+        | < ..Macro STOP Token  43 Text +
+        | < ..Macro STOP macro expansion
+        | < ....Macro DELTA Token 303 Text 32
+        | < File def_nested3.c Line    31 macro expansion
+        | < ..Macro START Token 303 Text 100
+        | < File def_nested3.c Line    32 macro expansion
+        | < ..Macro DELTA Token 303 Text 32
+        | < File def_nested3.c Line    39 macro expansion
+        | < ..Macro A Token 303 Text 10
+        | < File def_nested3.c Line    39 macro expansion
+        | < ..Macro C Token  40 Text (
+        | < ..Macro C Token 306 Text B
+        | < ..Macro C Token  43 Text +
+        | < ..Macro C Token 303 Text 1
+        | < ..Macro C Token  41 Text )
+        | < File def_nested3.c Line    39 macro expansion
+        | < ..Macro E Token  40 Text (
+        | < ..Macro E Token 306 Text D
+        | < ..Macro E Token  43 Text +
+        | < ..Macro E Token 303 Text 1
+        | < ..Macro E Token  41 Text )
+        | < File def_nested3.c Line    44 macro expansion
+        | < ..Macro A Token 303 Text 10
+        | < File def_nested3.c Line    44 macro expansion
+        | < ..Macro C Token  40 Text (
+        | < ..Macro C macro expansion
+        | < ....Macro B Token  40 Text (
+        | < ....Macro B macro expansion
+        | < ......Macro A Token 303 Text 10
+        | < ....Macro B Token  43 Text +
+        | < ....Macro B Token 303 Text 1
+        | < ....Macro B Token  41 Text )
+        | < ..Macro C Token  43 Text +
+        | < ..Macro C Token 303 Text 1
+        | < ..Macro C Token  41 Text )
+        | < File def_nested3.c Line    44 macro expansion
+        | < ..Macro E Token  40 Text (
+        | < ..Macro E macro expansion
+        | < ....Macro D Token  40 Text (
+        | < ....Macro D macro expansion
+        | < ......Macro C Token  40 Text (
+        | < ......Macro C macro expansion
+        | < ........Macro B Token  40 Text (
+        | < ........Macro B macro expansion
+        | < ..........Macro A Token 303 Text 10
+        | < ........Macro B Token  43 Text +
+        | < ........Macro B Token 303 Text 1
+        | < ........Macro B Token  41 Text )
+        | < ......Macro C Token  43 Text +
+        | < ......Macro C Token 303 Text 1
+        | < ......Macro C Token  41 Text )
+        | < ....Macro D Token  43 Text +
+        | < ....Macro D Token 303 Text 1
+        | < ....Macro D Token  41 Text )
+        | < ..Macro E Token  43 Text +
+        | < ..Macro E Token 303 Text 1
+        | < ..Macro E Token  41 Text )
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+def_nested4.c in mode 2
+    Implementation Comparison: [1;32mOutput OK;  no errors[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+def_cycle1.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in macro GNU
+        |     included from def_cycle1.c line 10
+        | 	Macro substitution cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | error, macro expansion cycle detected
+        ---------------------------------------------------------
+def_cycle2.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in macro LOOPA
+        |     included from def_cycle2.c line 4
+        | 	Macro substitution cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | error, macro expansion cycle detected
+        ---------------------------------------------------------
+def_cycle3.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in macro BAR
+        |     expanded from macro FOO
+        |     included from def_cycle3.c line 11
+        | 	Macro substitution cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | error, macro expansion cycle detected
+        ---------------------------------------------------------
+def_cycle4.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in macro Z
+        |     expanded from macro Y
+        |     expanded from macro X
+        |     expanded from macro W
+        |     expanded from macro V
+        |     expanded from macro S
+        |     expanded from macro F
+        |     expanded from macro D
+        |     expanded from macro I
+        |     expanded from macro T
+        |     expanded from macro A
+        |     included from def_cycle4.c line 25
+        | 	Macro substitution cycle
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | error, macro expansion cycle detected
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+if_woe1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 10c10
+        | < File if_woe1.c Line    24 Token  43 Text +
+        | ---
+        | > File if_woe1.c Line    17 Token  43 Text +
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+if_woe2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,10c1,10
+        | < File if_woe2.c Line    12 Token 306 Text this
+        | < File if_woe2.c Line    12 Token 306 Text is
+        | < File if_woe2.c Line    12 Token 306 Text fine
+        | < File if_woe2.c Line    17 Token 306 Text these
+        | < File if_woe2.c Line    18 Token 306 Text tokens
+        | < File if_woe2.c Line    19 Token 306 Text are
+        | < File if_woe2.c Line    20 Token 306 Text all
+        | < File if_woe2.c Line    21 Token 305 Text "good"
+        | < File if_woe2.c Line    21 Token  46 Text .
+        | < File if_woe2.c Line    26 Token  43 Text +
+        | ---
+        | > File if_woe2.c Line     5 Token 306 Text this
+        | > File if_woe2.c Line     5 Token 306 Text is
+        | > File if_woe2.c Line     5 Token 306 Text fine
+        | > File if_woe2.c Line    10 Token 306 Text these
+        | > File if_woe2.c Line    11 Token 306 Text tokens
+        | > File if_woe2.c Line    12 Token 306 Text are
+        | > File if_woe2.c Line    13 Token 306 Text all
+        | > File if_woe2.c Line    14 Token 305 Text "good"
+        | > File if_woe2.c Line    14 Token  46 Text .
+        | > File if_woe2.c Line    19 Token  43 Text +
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+if_we1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,27c2,27
+        | < File if_we1.c Line    16 Token 303 Text 2
+        | < File if_we1.c Line    17 Token 303 Text 3
+        | < File if_we1.c Line    18 Token 303 Text 4
+        | < File if_we1.c Line    22 Token 303 Text 5
+        | < File if_we1.c Line    22 Token  44 Text ,
+        | < File if_we1.c Line    22 Token 303 Text 6
+        | < File if_we1.c Line    22 Token  44 Text ,
+        | < File if_we1.c Line    22 Token 303 Text 7
+        | < File if_we1.c Line    22 Token  44 Text ,
+        | < File if_we1.c Line    22 Token 303 Text 8
+        | < File if_we1.c Line    22 Token  59 Text ;
+        | < File if_we1.c Line    31 Token 303 Text 9
+        | < File if_we1.c Line    37 Token 303 Text 10
+        | < File if_we1.c Line    37 Token  59 Text ;
+        | < File if_we1.c Line    38 Token 303 Text 11
+        | < File if_we1.c Line    38 Token  59 Text ;
+        | < File if_we1.c Line    42 Token 303 Text 12
+        | < File if_we1.c Line    42 Token  59 Text ;
+        | < File if_we1.c Line    44 Token 303 Text 13
+        | < File if_we1.c Line    44 Token  59 Text ;
+        | < File if_we1.c Line    48 Token 303 Text 14
+        | < File if_we1.c Line    48 Token  59 Text ;
+        | < File if_we1.c Line    49 Token 303 Text 15
+        | < File if_we1.c Line    49 Token  59 Text ;
+        | < File if_we1.c Line    56 Token 303 Text 16
+        | < File if_we1.c Line    56 Token  59 Text ;
+        | ---
+        | > File if_we1.c Line     9 Token 303 Text 2
+        | > File if_we1.c Line    10 Token 303 Text 3
+        | > File if_we1.c Line    11 Token 303 Text 4
+        | > File if_we1.c Line    15 Token 303 Text 5
+        | > File if_we1.c Line    15 Token  44 Text ,
+        | > File if_we1.c Line    15 Token 303 Text 6
+        | > File if_we1.c Line    15 Token  44 Text ,
+        | > File if_we1.c Line    15 Token 303 Text 7
+        | > File if_we1.c Line    15 Token  44 Text ,
+        | > File if_we1.c Line    15 Token 303 Text 8
+        | > File if_we1.c Line    15 Token  59 Text ;
+        | > File if_we1.c Line    17 Token 303 Text 9
+        | > File if_we1.c Line    20 Token 303 Text 10
+        | > File if_we1.c Line    20 Token  59 Text ;
+        | > File if_we1.c Line    21 Token 303 Text 11
+        | > File if_we1.c Line    21 Token  59 Text ;
+        | > File if_we1.c Line    25 Token 303 Text 12
+        | > File if_we1.c Line    25 Token  59 Text ;
+        | > File if_we1.c Line    27 Token 303 Text 13
+        | > File if_we1.c Line    27 Token  59 Text ;
+        | > File if_we1.c Line    31 Token 303 Text 14
+        | > File if_we1.c Line    31 Token  59 Text ;
+        | > File if_we1.c Line    32 Token 303 Text 15
+        | > File if_we1.c Line    32 Token  59 Text ;
+        | > File if_we1.c Line    34 Token 303 Text 16
+        | > File if_we1.c Line    34 Token  59 Text ;
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+if_we2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,5c2,5
+        | < File if_we2.c Line    15 Token 303 Text 2
+        | < File if_we2.c Line    19 Token 303 Text 3
+        | < File if_we2.c Line    24 Token 303 Text 4
+        | < File if_we2.c Line    25 Token 303 Text 5
+        | ---
+        | > File if_we2.c Line     8 Token 303 Text 2
+        | > File if_we2.c Line    12 Token 303 Text 3
+        | > File if_we2.c Line    14 Token 303 Text 4
+        | > File if_we2.c Line    15 Token 303 Text 5
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+ifn_woe1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,10c1,10
+        | < File ifn_woe1.c Line    12 Token 306 Text this
+        | < File ifn_woe1.c Line    12 Token 306 Text is
+        | < File ifn_woe1.c Line    12 Token 306 Text fine
+        | < File ifn_woe1.c Line    16 Token 306 Text these
+        | < File ifn_woe1.c Line    17 Token 306 Text tokens
+        | < File ifn_woe1.c Line    18 Token 306 Text are
+        | < File ifn_woe1.c Line    19 Token 306 Text all
+        | < File ifn_woe1.c Line    20 Token 305 Text "good"
+        | < File ifn_woe1.c Line    20 Token  46 Text .
+        | < File ifn_woe1.c Line    24 Token  43 Text +
+        | ---
+        | > File ifn_woe1.c Line     5 Token 306 Text this
+        | > File ifn_woe1.c Line     5 Token 306 Text is
+        | > File ifn_woe1.c Line     5 Token 306 Text fine
+        | > File ifn_woe1.c Line     9 Token 306 Text these
+        | > File ifn_woe1.c Line    10 Token 306 Text tokens
+        | > File ifn_woe1.c Line    11 Token 306 Text are
+        | > File ifn_woe1.c Line    12 Token 306 Text all
+        | > File ifn_woe1.c Line    13 Token 305 Text "good"
+        | > File ifn_woe1.c Line    13 Token  46 Text .
+        | > File ifn_woe1.c Line    17 Token  43 Text +
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+ifn_woe2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 10c10
+        | < File ifn_woe2.c Line    24 Token  43 Text +
+        | ---
+        | > File ifn_woe2.c Line    17 Token  43 Text +
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+ifn_we1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,27c1,27
+        | < File ifn_we1.c Line    10 Token 303 Text 1
+        | < File ifn_we1.c Line    17 Token 303 Text 2
+        | < File ifn_we1.c Line    18 Token 303 Text 3
+        | < File ifn_we1.c Line    19 Token 303 Text 4
+        | < File ifn_we1.c Line    23 Token 303 Text 5
+        | < File ifn_we1.c Line    23 Token  44 Text ,
+        | < File ifn_we1.c Line    23 Token 303 Text 6
+        | < File ifn_we1.c Line    23 Token  44 Text ,
+        | < File ifn_we1.c Line    23 Token 303 Text 7
+        | < File ifn_we1.c Line    23 Token  44 Text ,
+        | < File ifn_we1.c Line    23 Token 303 Text 8
+        | < File ifn_we1.c Line    23 Token  59 Text ;
+        | < File ifn_we1.c Line    32 Token 303 Text 9
+        | < File ifn_we1.c Line    38 Token 303 Text 10
+        | < File ifn_we1.c Line    38 Token  59 Text ;
+        | < File ifn_we1.c Line    39 Token 303 Text 11
+        | < File ifn_we1.c Line    39 Token  59 Text ;
+        | < File ifn_we1.c Line    43 Token 303 Text 12
+        | < File ifn_we1.c Line    43 Token  59 Text ;
+        | < File ifn_we1.c Line    45 Token 303 Text 13
+        | < File ifn_we1.c Line    45 Token  59 Text ;
+        | < File ifn_we1.c Line    49 Token 303 Text 14
+        | < File ifn_we1.c Line    49 Token  59 Text ;
+        | < File ifn_we1.c Line    50 Token 303 Text 15
+        | < File ifn_we1.c Line    50 Token  59 Text ;
+        | < File ifn_we1.c Line    57 Token 303 Text 16
+        | < File ifn_we1.c Line    57 Token  59 Text ;
+        | ---
+        | > File ifn_we1.c Line     7 Token 303 Text 1
+        | > File ifn_we1.c Line    10 Token 303 Text 2
+        | > File ifn_we1.c Line    11 Token 303 Text 3
+        | > File ifn_we1.c Line    12 Token 303 Text 4
+        | > File ifn_we1.c Line    16 Token 303 Text 5
+        | > File ifn_we1.c Line    16 Token  44 Text ,
+        | > File ifn_we1.c Line    16 Token 303 Text 6
+        | > File ifn_we1.c Line    16 Token  44 Text ,
+        | > File ifn_we1.c Line    16 Token 303 Text 7
+        | > File ifn_we1.c Line    16 Token  44 Text ,
+        | > File ifn_we1.c Line    16 Token 303 Text 8
+        | > File ifn_we1.c Line    16 Token  59 Text ;
+        | > File ifn_we1.c Line    18 Token 303 Text 9
+        | > File ifn_we1.c Line    21 Token 303 Text 10
+        | > File ifn_we1.c Line    21 Token  59 Text ;
+        | > File ifn_we1.c Line    22 Token 303 Text 11
+        | > File ifn_we1.c Line    22 Token  59 Text ;
+        | > File ifn_we1.c Line    26 Token 303 Text 12
+        | > File ifn_we1.c Line    26 Token  59 Text ;
+        | > File ifn_we1.c Line    28 Token 303 Text 13
+        | > File ifn_we1.c Line    28 Token  59 Text ;
+        | > File ifn_we1.c Line    32 Token 303 Text 14
+        | > File ifn_we1.c Line    32 Token  59 Text ;
+        | > File ifn_we1.c Line    33 Token 303 Text 15
+        | > File ifn_we1.c Line    33 Token  59 Text ;
+        | > File ifn_we1.c Line    35 Token 303 Text 16
+        | > File ifn_we1.c Line    35 Token  59 Text ;
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+ifn_we2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 2,5c2,5
+        | < File ifn_we2.c Line    11 Token 303 Text 2
+        | < File ifn_we2.c Line    19 Token 303 Text 3
+        | < File ifn_we2.c Line    22 Token 303 Text 4
+        | < File ifn_we2.c Line    23 Token 303 Text 5
+        | ---
+        | > File ifn_we2.c Line     7 Token 303 Text 2
+        | > File ifn_we2.c Line     9 Token 303 Text 3
+        | > File ifn_we2.c Line    12 Token 303 Text 4
+        | > File ifn_we2.c Line    13 Token 303 Text 5
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+if_nested1.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,2c1,2
+        | < File if_nested1.c Line    10 Token 303 Text 6
+        | < File if_nested1.c Line    10 Token 306 Text CORRECT
+        | ---
+        | > File if_nested1.c Line     7 Token 303 Text 6
+        | > File if_nested1.c Line     7 Token 306 Text CORRECT
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file if_nested1.c line 9
+        | 	#ifdef not closed
+        ---------------------------------------------------------
+if_nested2.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 1,2c1,2
+        | < File if_nested2.c Line    24 Token 303 Text 6
+        | < File if_nested2.c Line    24 Token 306 Text CORRECT
+        | ---
+        | > File if_nested2.c Line     5 Token 303 Text 3
+        | > File if_nested2.c Line     5 Token 306 Text NOPE
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file if_nested2.c line 7
+        | 	#else without #if
+        ---------------------------------------------------------
+if_nested3.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 3,8c3,6
+        | < File if_nested3.c Line    11 Token 303 Text 3
+        | < File if_nested3.c Line    12 Token 303 Text 4
+        | < File if_nested3.c Line    14 Token 303 Text 5
+        | < File if_nested3.c Line    15 Token 303 Text 6
+        | < File if_nested3.c Line    24 Token 303 Text 7
+        | < File if_nested3.c Line    25 Token 303 Text 8
+        | ---
+        | > File if_nested3.c Line     7 Token 303 Text 3
+        | > File if_nested3.c Line     8 Token 303 Text 4
+        | > File if_nested3.c Line    10 Token 303 Text 5
+        | > File if_nested3.c Line    11 Token 303 Text 6
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file if_nested3.c line 12
+        | 	#endif without #if
+        ---------------------------------------------------------
+if_nested4.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 5,8c5,7
+        | < File if_nested4.c Line    11 Token 303 Text 5
+        | < File if_nested4.c Line    12 Token 303 Text 6
+        | < File if_nested4.c Line    22 Token 303 Text 7
+        | < File if_nested4.c Line    23 Token 303 Text 8
+        | ---
+        | > File if_nested4.c Line     8 Token 303 Text 5
+        | > File if_nested4.c Line     9 Token 303 Text 6
+        | > File if_nested4.c Line    10 Token 306 Text nope
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file if_nested4.c line 11
+        | 	#endif without #if
+        ---------------------------------------------------------
+if_nested5.c in mode 2
+    Implementation Comparison: [1;31mOutput  is  different[0;39m
+        | 7,11d6
+        | < File if_nested5.c Line    19 Token 303 Text 7
+        | < File if_nested5.c Line    23 Token 303 Text 8
+        | < File if_nested5.c Line    25 Token 303 Text 9
+        | < File if_nested5.c Line    29 Token 303 Text 10
+        | < File if_nested5.c Line    31 Token 303 Text 11
+        First 10 lines of error stream (should be empty):
+        ---------------------------------------------------------
+        | Preprocesseor in file if_nested5.c line 17
+        | 	Invalid character in preprocess directive
+        ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+if_error1.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file if_error1.c line 6
+        | 	#endif without #if, ignoring
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file if_error1.c line 3
+        | 	#endif without #if
+        ---------------------------------------------------------
+if_error2.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file if_error2.c line 6
+        | 	second #else (first on line 4), ignoring
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        ---------------------------------------------------------
+if_error3.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file if_error3.c line 8
+        | 	#else without #if, ignoring
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file if_error3.c line 5
+        | 	#else without #if
+        ---------------------------------------------------------
+if_error4.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file if_error4.c line 6
+        | 	#else without #if, ignoring
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file if_error4.c line 6
+        | 	#else without #if
+        ---------------------------------------------------------
+if_error5.c in mode 2
+    Implementation Comparison: [1;31mDid not find error(s)[0;39m
+        Expected first error:
+        ---------------------------------------------------------
+        | Preprocessor error in file if_error5.c line 2
+        | 	#endif without #if, ignoring
+        ---------------------------------------------------------
+
+        First 10 lines of error stream:
+        ---------------------------------------------------------
+        | Preprocesseor in file if_error5.c line 2
+        | 	#endif without #if
+        ---------------------------------------------------------

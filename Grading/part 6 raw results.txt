@@ -1,0 +1,2343 @@
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+expr_fcall1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_fcall2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_fcall3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+[1;31m    No test outputs; check with another script[0;39m
+expr_fcall4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_fcall5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+expr_io1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_io2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m on input expr_io2.input1
+    [1;32moutput matches[0;39m on input expr_io2.input2
+    [1;32moutput matches[0;39m on input expr_io2.input3
+    [1;32moutput matches[0;39m on input expr_io2.input4
+    [1;32moutput matches[0;39m on input expr_io2.input5
+expr_io3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_io4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m on input expr_io4.input1
+    [1;32moutput matches[0;39m on input expr_io4.input2
+    [1;32moutput matches[0;39m on input expr_io4.input3
+    [1;32moutput matches[0;39m on input expr_io4.input4
+    [1;32moutput matches[0;39m on input expr_io4.input5
+expr_io5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+expr_var1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_var2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class expr_var2
+Caused by: java.lang.VerifyError: (class: expr_var2, method: write signature: (II)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Hello
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+expr_var3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class expr_var3
+Caused by: java.lang.VerifyError: (class: expr_var3, method: test signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | OK
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+expr_var4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+expr_var5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class expr_var5
+Caused by: java.lang.VerifyError: (class: expr_var5, method: test signature: (III)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | OK
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+expr_var1.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_var2.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_var3.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_var4.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_var5.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+tc_do1.c       :  [1;36mFirst error messages match lines[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_do1.c line 6
+		  |  	do-while condition has non-numeric type const char[]
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_do1.c line 6
+		  |  	Expression not of numeric type for while condition (char)
+		  --------------------------------------------------------
+tc_do2.c       :  [1;36mFirst error messages match lines[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_do2.c line 11
+		  |  	do-while condition has non-numeric type void
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_do2.c line 11
+		  |  	Expression not of numeric type for while condition (void)
+		  --------------------------------------------------------
+tc_for1.c      :  [1;31mMissing error message[0;39m
+tc_for2.c      :  [1;36mFirst error messages match lines[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_for2.c line 9
+		  |  	for condition has non-numeric type void
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_for2.c line 9
+		  |  	Expression not of numeric type for for loop condition (void)
+		  --------------------------------------------------------
+tc_if1.c       :  [1;31mMissing error message[0;39m
+tc_if2.c       :  [1;36mFirst error messages match lines[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_if2.c line 9
+		  |  	if condition has non-numeric type void
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_if2.c line 9
+		  |  	Expression not of numeric type for if condition (void)
+		  --------------------------------------------------------
+tc_wh1.c       :  [1;31mMissing error message[0;39m
+tc_wh2.c       :  [1;36mFirst error messages match lines[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_wh2.c line 9
+		  |  	while condition has non-numeric type void
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Type checking error in file tc_wh2.c line 9
+		  |  	Expression not of numeric type for while condition (void)
+		  --------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+tc_do1.c
+[1;36m    First error messages match lines[0;39m
+		Expected error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_do1.c line 6
+		|  	do-while condition has non-numeric type const char[]
+		--------------------------------------------------------
+		Student's error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_do1.c line 6
+		|  	Expression not of numeric type for while condition (char)
+		--------------------------------------------------------
+tc_do2.c
+[1;36m    First error messages match lines[0;39m
+		Expected error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_do2.c line 11
+		|  	do-while condition has non-numeric type void
+		--------------------------------------------------------
+		Student's error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_do2.c line 11
+		|  	Expression not of numeric type for while condition (void)
+		--------------------------------------------------------
+tc_for1.c
+[1;31m    Missing error message[0;39m
+tc_for2.c
+[1;36m    First error messages match lines[0;39m
+		Expected error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_for2.c line 9
+		|  	for condition has non-numeric type void
+		--------------------------------------------------------
+		Student's error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_for2.c line 9
+		|  	Expression not of numeric type for for loop condition (void)
+		--------------------------------------------------------
+tc_if1.c
+[1;31m    Missing error message[0;39m
+tc_if2.c
+[1;36m    First error messages match lines[0;39m
+		Expected error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_if2.c line 9
+		|  	if condition has non-numeric type void
+		--------------------------------------------------------
+		Student's error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_if2.c line 9
+		|  	Expression not of numeric type for if condition (void)
+		--------------------------------------------------------
+tc_wh1.c
+[1;31m    Missing error message[0;39m
+tc_wh2.c
+[1;36m    First error messages match lines[0;39m
+		Expected error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_wh2.c line 9
+		|  	while condition has non-numeric type void
+		--------------------------------------------------------
+		Student's error stream
+		--------------------------------------------------------
+		|  Type checking error in file tc_wh2.c line 9
+		|  	Expression not of numeric type for while condition (void)
+		--------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ifthen1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthen2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthen3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthen4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ifthen4
+Caused by: java.lang.VerifyError: (class: ifthen4, method: test signature: (II)V) Illegal target of jump or branch
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Yes
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ifthen5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ifthen5
+Caused by: java.lang.VerifyError: (class: ifthen5, method: test signature: (IIII)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Yes
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ifthenelse1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthenelse2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthenelse3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthenelse4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ifthenelse5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ifthenelse5
+Caused by: java.lang.VerifyError: (class: ifthenelse5, method: test signature: (II)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Z
+         | Y
+         | X
+         | X
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+while1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+while2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+while3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+while4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class while4
+Caused by: java.lang.VerifyError: (class: while4, method: triangle signature: (I)V) Illegal target of jump or branch
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ###
+         | ##
+         | #
+         | #####
+         | ####
+         | ###
+         | ##
+         | #
+         | #######
+         | ######
+         | #####
+         | ####
+         | ###
+         | ##
+         | #
+         | ###########
+         | ##########
+         | #########
+         | ########
+         | #######
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+while5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | while5.j:81:5: error: Expected LABEL_DEF, '.annotationdefault', '.attribute', '.bootstrapmethods', '.catch', '.code', '.constantvalue', '.deprecated', '.enclosing', '.end', '.exceptions', '.innerclasses', '.linenumbertable', '.localvariabletable', '.localvariabletypetable', '.methodparameters', '.module', '.modulemainclass', '.modulepackages', '.nesthost', '.nestmembers', '.noimplicitstackmap', '.record', '.runtime', '.signature', '.sourcedebugextension', '.sourcefile', '.stack', '.stackmaptable', '.synthetic', 'aaload', 'aastore', 'aconst_null', 'aload', 'aload_0', 'aload_1', 'aload_2', 'aload_3', 'anewarray', 'areturn', 'arraylength', 'astore', 'astore_0', 'astore_1', 'astore_2', 'astore_3', 'athrow', 'baload', 'bastore', 'bipush', 'caload', 'castore', 'checkcast', 'd2f', 'd2i', 'd2l', 'dadd', 'daload', 'dastore', 'dcmpg', 'dcmpl', 'dconst_0', 'dconst_1', 'ddiv', 'dload', 'dload_0', 'dload_1', 'dload_2', 'dload_3', 'dmul', 'dneg', 'drem', 'dreturn', 'dstore', 'dstore_0', 'dstore_1', 'dstore_2', 'dstore_3', 'dsub', 'dup', 'dup2', 'dup2_x1', 'dup2_x2', 'dup_x1', 'dup_x2', 'f2d', 'f2i', 'f2l', 'fadd', 'faload', 'fastore', 'fcmpg', 'fcmpl', 'fconst_0', 'fconst_1', 'fconst_2', 'fdiv', 'fload', 'fload_0', 'fload_1', 'fload_2', 'fload_3', 'fmul', 'fneg', 'frem', 'freturn', 'fstore', 'fstore_0', 'fstore_1', 'fstore_2', 'fstore_3', 'fsub', 'getfield', 'getstatic', 'goto', 'goto_w', 'i2b', 'i2c', 'i2d', 'i2f', 'i2l', 'i2s', 'iadd', 'iaload', 'iand', 'iastore', 'iconst_0', 'iconst_1', 'iconst_2', 'iconst_3', 'iconst_4', 'iconst_5', 'iconst_m1', 'idiv', 'if_acmpeq', 'if_acmpne', 'if_icmpeq', 'if_icmpge', 'if_icmpgt', 'if_icmple', 'if_icmplt', 'if_icmpne', 'ifeq', 'ifge', 'ifgt', 'ifle', 'iflt', 'ifne', 'ifnonnull', 'ifnull', 'iinc', 'iload', 'iload_0', 'iload_1', 'iload_2', 'iload_3', 'imul', 'ineg', 'instanceof', 'invokedynamic', 'invokeinterface', 'invokespecial', 'invokestatic', 'invokevirtual', 'ior', 'irem', 'ireturn', 'ishl', 'ishr', 'istore', 'istore_0', 'istore_1', 'istore_2', 'istore_3', 'isub', 'iushr', 'ixor', 'jsr', 'jsr_w', 'l2d', 'l2f', 'l2i', 'ladd', 'laload', 'land', 'lastore', 'lcmp', 'lconst_0', 'lconst_1', 'ldc', 'ldc2_w', 'ldc_w', 'ldiv', 'lload', 'lload_0', 'lload_1', 'lload_2', 'lload_3', 'lmul', 'lneg', 'lookupswitch', 'lor', 'lrem', 'lreturn', 'lshl', 'lshr', 'lstore', 'lstore_0', 'lstore_1', 'lstore_2', 'lstore_3', 'lsub', 'lushr', 'lxor', 'monitorenter', 'monitorexit', 'multianewarray', 'new', 'newarray', 'nop', 'pop', 'pop2', 'putfield', 'putstatic', 'ret', 'return', 'saload', 'sastore', 'sipush', 'swap', 'tableswitch', or 'wide'.
+        |     vreturn
+        |     ^~~~~~~ 
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+while1.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+while2.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+while3.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+while4.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+while5.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static readint : ()I
+		  |   .code stack 7 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mistore_1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33minvokestatic Method libc getchar ()I[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mif_icmpeq L6[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mgoto L7[0;39m
+		  |     [1;33mL6:[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mL7:[0;39m
+		  |     [1;33mifeq L4[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mireturn[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method while5 update (II)I[0;39m
+		  |     [1;33mistore_1[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33m?iconst_1[0;39m
+		  | [1;33m?ifeq LB[0;39m
+		  | [1;33mgetchar[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33m?istore_0[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33m?10[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33mif.* LC[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33mireturn[0;39m
+		  | [1;33mLC:[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33mupdate[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_1[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LA[0;39m
+		  ----------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+ifthen1.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthen2.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthen3.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthen4.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthen5.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthenelse1.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthenelse2.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthenelse3.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthenelse4.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ifthenelse5.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static test : (II)V
+		  |   .code stack 5 locals 3
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 88[0;39m
+		  |     [1;33mistore_2[0;39m
+		  |     [1;33mgoto L3[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mifeq L5[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 89[0;39m
+		  |     [1;33mistore_2[0;39m
+		  |     [1;33mgoto L6[0;39m
+		  |     [1;33mL5:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 90[0;39m
+		  |     [1;33mistore_2[0;39m
+		  |     [1;33mL6:[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_2[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload_0[0;39m
+		  | [1;33mifeq LA[0;39m
+		  | [1;33m88[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_2[0;39m
+		  | [1;33m?iload_2[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33mLA:[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33mifeq LC[0;39m
+		  | [1;33m89[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_2[0;39m
+		  | [1;33m?iload_2[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33mLC:[0;39m
+		  | [1;33m90[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_2[0;39m
+		  | [1;33m?iload_2[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+dowhile1.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 3 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33minvokestatic Method libc getchar ()I[0;39m
+		  |     [1;33mldc 47[0;39m
+		  |     [1;33misub[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method dowhile1 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33miconst_1[0;39m
+		  | [1;33misub[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_0[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33m35[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+dowhile2.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33miconst_1[0;39m
+		  | [1;33misub[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_0[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33m32[0;39m
+		  | [1;33miadd[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+dowhile3.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 3 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 32[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method dowhile3 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_0[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgetchar[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_1[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33m32[0;39m
+		  | [1;33mif_icmpgt LA[0;39m
+		  ----------------------------------------------------
+dowhile4.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33m48[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_1[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33miadd[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33mpop[0;39m
+		  | [1;33mLB:[0;39m
+		  | [1;33m35[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33miconst_1[0;39m
+		  | [1;33misub[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_1[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33mifne LB[0;39m
+		  | [1;33m10[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33miconst_1[0;39m
+		  | [1;33misub[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_0[0;39m
+		  | [1;33m?iload_0[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+dowhile5.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static writeint : (I)V
+		  |   .code stack 3 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33m10[0;39m
+		  | [1;33mirem[0;39m
+		  | [1;33m48[0;39m
+		  | [1;33miadd[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33mpop[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33m10[0;39m
+		  | [1;33midiv[0;39m
+		  | [1;33mistore_0[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+        Test  2:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static readint : ()I
+		  |   .code stack 3 locals 3
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mistore_1[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mistore_2[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33mgetchar[0;39m
+		  | [1;33mistore[0;39m
+		  | [1;33m10[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mif_icmpne LB[0;39m
+		  | [1;33m0[0;39m
+		  | [1;33mistore[0;39m
+		  | [1;33mgoto LC[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+for0.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for0
+Caused by: java.lang.VerifyError: (class: for0, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for1
+Caused by: java.lang.VerifyError: (class: for1, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         | B
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for2
+Caused by: java.lang.VerifyError: (class: for2, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | F
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for3
+Caused by: java.lang.VerifyError: (class: for3, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | F
+         | E
+         | D
+         | C
+         | B
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for4
+Caused by: java.lang.VerifyError: (class: for4, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for5
+Caused by: java.lang.VerifyError: (class: for5, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         | B
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for6.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for6
+Caused by: java.lang.VerifyError: (class: for6, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | F
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+for7.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class for7
+Caused by: java.lang.VerifyError: (class: for7, method: myput signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | F
+         | E
+         | D
+         | C
+         | B
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ternary1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ternary2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ternary3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ternary4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+ternary5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+break1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | break1.j:29:3: error: Duplicate label definition
+        |   L1:
+        |   ^~~ 
+        | break1.j:25:3: note: Previous definition here:
+        |   L1:
+        |   ^~~ 
+break2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+break3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | break3.j:32:3: error: Duplicate label definition
+        |   L1:
+        |   ^~~ 
+        | break3.j:28:3: note: Previous definition here:
+        |   L1:
+        |   ^~~ 
+break4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+break5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+break1.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 4 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 65[0;39m
+		  |     [1;33minvokestatic Method break1 myput (I)V[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method break1 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33m66[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33m?67[0;39m
+		  | [1;33m?myput[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mifne LA[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+break2.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+break3.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 4 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method break3 myput (I)V[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method break3 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mLA:[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33m5[0;39m
+		  | [1;33midiv[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore[0;39m
+		  | [1;33m?iload[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33m?iload[0;39m
+		  | [1;33mifne LC[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33m1[0;39m
+		  | [1;33miadd[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore[0;39m
+		  | [1;33m?iload[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33m?iload[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mifne LA[0;39m
+		  | [1;33mLC:[0;39m
+		  ----------------------------------------------------
+break4.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+break5.c       :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;33m#4[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 7 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33misub[0;39m
+		  |     [1;33miconst_5[0;39m
+		  |     [1;33midiv[0;39m
+		  |     [1;33mistore_1[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mifeq L4[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33mgoto L2[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method break5 myput (I)V[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33misub[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method break5 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33midiv[0;39m
+		  | [1;33m?dup[0;39m
+		  | [1;33mistore_1[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33m?iload_1[0;39m
+		  | [1;33mifne LA[0;39m
+		  | [1;33miload_0[0;39m
+		  | [1;33mmyput[0;39m
+		  ----------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+continue1.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 3 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method continue1 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mmyput[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mLB:[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+continue2.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+continue3.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;33m#4[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 3 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mifeq L1[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method continue3 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload_0[0;39m
+		  | [1;33mifne LC[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mLC:[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33mifne LA[0;39m
+		  ----------------------------------------------------
+continue4.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;33m#4[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 6 locals 2
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33misub[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33miconst_5[0;39m
+		  |     [1;33midiv[0;39m
+		  |     [1;33mistore_1[0;39m
+		  |     [1;33miload_1[0;39m
+		  |     [1;33mifeq L4[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method continue4 myput (I)V[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method continue4 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload_0[0;39m
+		  | [1;33mifne LA[0;39m
+		  | [1;33miload_1[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mgoto LA[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+continue5.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static main : ()I
+		  |   .code stack 6 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method continue5 myput (I)V[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33minvokestatic Method continue5 myput (I)V[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33misub[0;39m
+		  |     [1;33mistore_0[0;39m
+		  |     [1;33mgoto L1[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mireturn[0;39m
+		  |   .end code
+		  | .end method
+		  | .method public static main : ([Ljava/lang/String
+		  |   .code stack 1 locals 1
+		  |     [1;33minvokestatic Method continue5 main ()I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mgoto LC[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33mmyput[0;39m
+		  | [1;33mLC:[0;39m
+		  | [1;33miload[0;39m
+		  | [1;33m1[0;39m
+		  | [1;33misub[0;39m
+		  ----------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+continue1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | continue1.j:28:3: error: Duplicate label definition
+        |   L1:
+        |   ^~~ 
+        | continue1.j:24:3: note: Previous definition here:
+        |   L1:
+        |   ^~~ 
+continue2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+continue3.cRunning tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+compare_eq1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_eq2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_eq2
+Caused by: java.lang.VerifyError: (class: compare_eq2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | =N
+         | =N
+         | =Y
+         | =N
+         | =N
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+compare_ge1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_ge2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_ge2
+Caused by: java.lang.VerifyError: (class: compare_ge2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | >=N
+         | >=N
+         | >=Y
+         | >=Y
+         | >=Y
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+compare_gt1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_gt2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_gt2
+Caused by: java.lang.VerifyError: (class: compare_gt2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | >N
+         | >N
+         | >N
+         | >Y
+         | >Y
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+compare_le1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_le2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_le2
+Caused by: java.lang.VerifyError: (class: compare_le2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | <=Y
+         | <=Y
+         | <=Y
+         | <=N
+         | <=N
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+compare_lt1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_lt2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_lt2
+Caused by: java.lang.VerifyError: (class: compare_lt2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | <Y
+         | <Y
+         | <N
+         | <N
+         | <N
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+compare_ne1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+compare_ne2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class compare_ne2
+Caused by: java.lang.VerifyError: (class: compare_ne2, method: comp signature: (F)V) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | !=Y
+         | !=Y
+         | !=N
+         | !=Y
+         | !=Y
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+compare_eq1.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static comp : (I)V
+		  |   .code stack 4 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 61[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mldc 42[0;39m
+		  |     [1;33mif_icmpeq L4[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mgoto L5[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mL5:[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 89[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mgoto L3[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 78[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload_0[0;39m
+		  | [1;33m42[0;39m
+		  | [1;33mif_icmpeq LA[0;39m
+		  | [1;33m78[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33mLA:[0;39m
+		  | [1;33m89[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+compare_eq2.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static comp : (F)V
+		  |   .code stack 4 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 61[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mfload_0[0;39m
+		  |     [1;33mldc 42.000000[0;39m
+		  |     [1;33mif_icmpeq L4[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mgoto L5[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mL5:[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 89[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mgoto L3[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 78[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33mfload_0[0;39m
+		  | [1;33m42[0;39m
+		  | [1;33mfcmp.[0;39m
+		  | [1;33mifeq LA[0;39m
+		  | [1;33m78[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33mLA:[0;39m
+		  | [1;33m89[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+compare_ge1.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;31mFAILED[0;39m
+
+		  Student's method
+		  ----------------------------------------------------
+		  | .method public static comp : (I)V
+		  |   .code stack 4 locals 1
+		  |     [1;33m[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 62[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 61[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33miload_0[0;39m
+		  |     [1;33mldc 42[0;39m
+		  |     [1;33mif_icmpge L4[0;39m
+		  |     [1;33miconst_0[0;39m
+		  |     [1;33mgoto L5[0;39m
+		  |     [1;33mL4:[0;39m
+		  |     [1;33miconst_1[0;39m
+		  |     [1;33mL5:[0;39m
+		  |     [1;33mifeq L2[0;39m
+		  |     [1;33mL1:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 89[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mgoto L3[0;39m
+		  |     [1;33mL2:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 78[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33mL3:[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mldc 10[0;39m
+		  |     [1;33minvokestatic Method libc putchar (I)I[0;39m
+		  |     [1;33mpop[0;39m
+		  |     [1;33m[0;39m
+		  |     [1;33mreturn[0;39m
+		  |   .end code
+		  | .end method
+		  ----------------------------------------------------
+
+		  One possible expected sequence
+		  ----------------------------------------------------
+		  | [1;33miload_0[0;39m
+		  | [1;33m42[0;39m
+		  | [1;33mif_icmpge LA[0;39m
+		  | [1;33m78[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mgoto LB[0;39m
+		  | [1;33mLA:[0;39m
+		  | [1;33m89[0;39m
+		  | [1;33mputchar[0;39m
+		  | [1;33m?pop[0;39m
+		  | [1;33mLB:[0;39m
+		  ----------------------------------------------------
+compare_ge2.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;33m#2[0;39m  Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_andornot1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         | DE
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | DE
+         ---------------------------------------------------------
+ss_andornot2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | A
+         | DE
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | DE
+         ---------------------------------------------------------
+ss_andornot3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | EFG
+         | IJK
+         | MNO
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABC
+         | EFG
+         | IJK
+         | MNO
+         ---------------------------------------------------------
+ss_andornot4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | EFG
+         | IJK
+         | MNO
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABC
+         | EFG
+         | IJK
+         | MNO
+         ---------------------------------------------------------
+ss_andornot5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ACD
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCDE
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_comp1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ABC
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCD
+         ---------------------------------------------------------
+ss_comp2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ACD
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCD
+         ---------------------------------------------------------
+ss_comp3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AE
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ADEG
+         ---------------------------------------------------------
+ss_comp4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | DE
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABC
+         | DEF
+         ---------------------------------------------------------
+ss_comp5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | EFH
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABC
+         | EFGH
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_bool1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_bool1
+Caused by: java.lang.VerifyError: (class: ss_bool1, method: show signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Af
+         | CDt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_bool2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_bool2
+Caused by: java.lang.VerifyError: (class: ss_bool2, method: show signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ABf
+         | Ct
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_bool3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_bool3
+Caused by: java.lang.VerifyError: (class: ss_bool3, method: show signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | At
+         | Bf
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_bool4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_bool4
+Caused by: java.lang.VerifyError: (class: ss_bool4, method: show signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Af
+         | CDt
+         | EFf
+         | Gt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_bool5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_bool5
+Caused by: java.lang.VerifyError: (class: ss_bool5, method: show signature: (I)V) Falling off the end of the code
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Af
+         | Bt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_ite1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | AB
+         | EFG
+         | IJKt
+         | MNOt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCt
+         | EFG
+         | IJKt
+         | MNOt
+         ---------------------------------------------------------
+ss_ite2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ABt
+         | EFGt
+         | IJK
+         | MNOt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCt
+         | EFGt
+         | IJK
+         | MNOt
+         ---------------------------------------------------------
+ss_ite3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Af
+         | DEt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABf
+         | DEt
+         ---------------------------------------------------------
+ss_ite4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | At
+         | DEf
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABf
+         | DEf
+         ---------------------------------------------------------
+ss_ite5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ABf
+         | DEt
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         | ABCf
+         | DEFt
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_while1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_while1
+Caused by: java.lang.VerifyError: (class: ss_while1, method: show signature: (II)V) Inconsistent stack height 1 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | 0,1,2,3,4,5,6,7,8,9
+         | <,=,>
+         | A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+         | a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_while2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | ss_while2.j:16:3: error: Duplicate label definition
+        |   L1:
+        |   ^~~ 
+        | ss_while2.j:12:3: note: Previous definition here:
+        |   L1:
+        |   ^~~ 
+ss_while3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_while3
+Caused by: java.lang.VerifyError: (class: ss_while3, method: show signature: (II)V) Inconsistent stack height 1 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | H,e
+         | l
+         | o, 
+         | w,o
+         | r,l
+         | d,!
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_while4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;31m    Target code assembly failed:[0;39m
+        | ss_while4.j:18:3: error: Duplicate label definition
+        |   L1:
+        |   ^~~ 
+        | ss_while4.j:14:3: note: Previous definition here:
+        |   L1:
+        |   ^~~ 
+ss_while5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_while5
+Caused by: java.lang.VerifyError: (class: ss_while5, method: triangle signature: (I)V) Inconsistent stack height 2 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ###
+         | ##
+         | #
+         | #######
+         | ######
+         | #####
+         | ####
+         | ###
+         | ##
+         | #
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+ss_for1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_for1
+Caused by: java.lang.VerifyError: (class: ss_for1, method: show signature: (II)V) Inconsistent stack height 1 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+         | <, =, >
+         | A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+         | a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_for2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_for2
+Caused by: java.lang.VerifyError: (class: ss_for2, method: show signature: (II)V) Inconsistent stack height 1 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | H, e
+         | l
+         | o,  
+         | w, o
+         | r, l
+         | d, !
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_for3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_for3
+Caused by: java.lang.VerifyError: (class: ss_for3, method: triangle signature: (I)V) Inconsistent stack height 2 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | -#-#-#
+         | -#-#
+         | -#
+         | -
+         | -#-#-#-#-#-#-#
+         | -#-#-#-#-#-#
+         | -#-#-#-#-#
+         | -#-#-#-#
+         | -#-#-#
+         | -#-#
+         | -#
+         | -
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_for4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_for4
+Caused by: java.lang.VerifyError: (class: ss_for4, method: show signature: (III)V) Inconsistent stack height 2 != 0
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ,A,B,C,D,E,F
+         | ,9,8,7,6,5,4,3,2,1,0
+         | ,a,c,e
+         | ,z,x,v
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+ss_for5.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class ss_for5
+Caused by: java.lang.VerifyError: (class: ss_for5, method: main signature: ()I) Inconsistent stack height 3 != 2
+[1;31moutput differs[0;39m on input ss_for5.input1
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ,H,e,l,l,o,
+         | w,o,r,l,d,!
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+    Error: Unable to initialize main class ss_for5
+Caused by: java.lang.VerifyError: (class: ss_for5, method: main signature: ()I) Inconsistent stack height 3 != 2
+[1;31moutput differs[0;39m on input ss_for5.input2
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | ,A,
+         | w,h,o,l,e,
+         | b,u,n,c,h,
+         | o,f,
+         | w,o,r,d,s,
+         | a,n,d,
+         | r,a,n,d,o,m,
+         | s,p,a,c,e,s
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------

@@ -1,0 +1,705 @@
+.class public user
+.super java/lang/Object
+
+.field public static x I
+
+.method public static func1 : (I)V
+	.code stack 0 locals 1
+		;; parameter 0 a user.c 4
+		;; return user.c 6
+		return
+	.end code
+.end method
+
+.method public static func2 : ()V
+	.code stack 1 locals 1
+		;; local 0 b user.c 11
+		;; expression user 12
+		iload_0 ; load from b
+		putstatic Field user x I
+		;; return user.c 13
+		return
+	.end code
+.end method
+
+.method public static func3 : (IICF)V
+	.code stack 4 locals 6
+		;; parameter 0 a user.c 16
+		;; parameter 1 b user.c 16
+		;; parameter 2 c user.c 16
+		;; parameter 3 f user.c 16
+		;; local 4 d user.c 18
+		;; local 5 e user.c 18
+		;; expression user 19
+		iload_0 ; load from a
+		iload_1 ; load from b
+		iload_2 ; load from c
+		fload_3 ; load from f
+		iadd
+		iadd
+		iadd
+		putstatic Field user x I
+		;; return user.c 20
+		return
+	.end code
+.end method
+
+.method public static func4 : ()I
+	.code stack 4 locals 0
+		;; expression user 25
+		iconst_1
+		iconst_2
+		bipush 51
+		ldc 4.000000
+		invokestatic Method user func3 (IICF)V
+		;; return user.c 26
+		iconst_5
+		ireturn
+	.end code
+.end method
+
+; Special methods
+
+.method <clinit> : ()V
+	.code stack 0 locals 0
+	.end code
+.end method
+
+.method <init> : ()V
+	.code stack 1 locals 1
+		aload_0
+		invokespecial Method java/lang/Object <init> ()V
+		return
+	.end code
+.end method
+
+.method public static main : ([Ljava/lang/String;)V
+	.code stack 2 locals 2
+		invokestatic Method user main ()I
+		istore_1
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		ldc 'Return code: '
+		invokevirtual Method java/io/PrintStream print (Ljava/lang/String;)V
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		iload_1
+		invokevirtual Method java/io/PrintStream println (I)V
+		return
+	.end code
+.end method
+		;; parameter 0 a user.c 4
+		;; return user.c 6
+		;; local 0 b user.c 11
+		;; expression user 12
+		;; return user.c 13
+		;; parameter 0 a user.c 16
+		;; parameter 1 b user.c 16
+		;; parameter 2 c user.c 16
+		;; parameter 3 f user.c 16
+		;; local 4 d user.c 18
+		;; local 5 e user.c 18
+		;; expression user 19
+		;; return user.c 20
+		;; expression user 25
+		;; return user.c 26
+.method public static func1 : (I)V
+.end method
+.method public static func2 : ()V
+.end method
+.method public static func3 : (IICF)V
+.end method
+.method public static func4 : ()I
+.end method
+; Special methods
+.method <clinit> : ()V
+.end method
+.method <init> : ()V
+.end method
+.method public static main : ([Ljava/lang/String;)V
+.end method
+	.code stack 0 locals 1
+	.end code
+	.code stack 1 locals 1
+	.end code
+	.code stack 4 locals 6
+	.end code
+	.code stack 4 locals 0
+	.end code
+	.code stack 0 locals 0
+	.end code
+	.code stack 1 locals 1
+	.end code
+	.code stack 2 locals 2
+		ldc 'Return code: '
+	.end code
+.class public minimal
+.super java/lang/Object
+
+.method public static main : ()I
+	.code stack 1 locals 0
+		;; return minimal.c 3
+		iconst_0
+		ireturn
+	.end code
+.end method
+
+; Special methods
+
+.method <init> : ()V
+	.code stack 1 locals 1
+		aload_0
+		invokespecial Method java/lang/Object <init> ()V
+		return
+	.end code
+.end method
+
+.method public static main : ([Ljava/lang/String;)V
+	.code stack 2 locals 2
+		invokestatic Method minimal main ()I
+		istore_1
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		ldc 'Return code: '
+		invokevirtual Method java/io/PrintStream print (Ljava/lang/String;)V
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		iload_1
+		invokevirtual Method java/io/PrintStream println (I)V
+		return
+	.end code
+.end method
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+
+fcall1.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class fcall1
+Caused by: java.lang.VerifyError: (class: fcall1, method: func2 signature: (III)F) Expecting to find float on stack
+[1;31moutput differs[0;39m on input fcall1.input1
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Hi
+         | Return code: 97
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+    Error: Unable to initialize main class fcall1
+Caused by: java.lang.VerifyError: (class: fcall1, method: func2 signature: (III)F) Expecting to find float on stack
+[1;31moutput differs[0;39m on input fcall1.input2
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | Hi
+         | Return code: 82
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+fcall2.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+fcall3.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    Error: Unable to initialize main class fcall3
+Caused by: java.lang.VerifyError: (class: fcall3, method: print signature: (F)I) Illegal type in constant pool
+[1;31moutput differs[0;39m
+         Expected output (first 20 lines):
+         ---------------------------------------------------------
+         | 6.2
+         | Return code: 10
+         ---------------------------------------------------------
+
+         Given output (first 20 lines):
+         ---------------------------------------------------------
+         ---------------------------------------------------------
+fcall4.c
+[1;32m    No compile errors[0;39m, running assembler
+[1;32m    Target code assembles[0;39m, running tests
+    [1;32moutput matches[0;39m
+.class public fcall1
+.super java/lang/Object
+
+.method public static func1 : (II)V
+	.code stack 1 locals 2
+		;; parameter 0 a fcall1.c 105
+		;; parameter 1 b fcall1.c 105
+		;; expression fcall1 107
+		iconst_3
+		istore_0 ; store to a
+		;; expression fcall1 108
+		iconst_4
+		istore_1 ; store to b
+		;; return fcall1.c 109
+		return
+	.end code
+.end method
+
+.method public static func2 : (III)F
+	.code stack 2 locals 4
+		;; parameter 0 a fcall1.c 112
+		;; parameter 1 b fcall1.c 112
+		;; parameter 2 c fcall1.c 112
+		;; local 3 f fcall1.c 114
+		;; expression fcall1 115
+		iload_0 ; load from a
+		fstore_3 ; store to f
+		;; expression fcall1 116
+		fload_3 ; load from f
+		iload_1 ; load from b
+		fdiv
+		fstore_3 ; store to f
+		;; return fcall1.c 117
+		fload_3 ; load from f
+		freturn
+	.end code
+.end method
+
+.method public static lower : (I)I
+	.code stack 2 locals 1
+		;; parameter 0 a fcall1.c 120
+		;; return fcall1.c 122
+		iload_0 ; load from a
+		ldc 32
+		iadd
+		ireturn
+	.end code
+.end method
+
+.method public static main : ()I
+	.code stack 6 locals 1
+		;; local 0 i fcall1.c 127
+		;; expression fcall1 128
+		iconst_1
+		iconst_2
+		invokestatic Method fcall1 func1 (II)V
+		;; expression fcall1 130
+		iconst_0
+		istore_0 ; store to i
+		;; expression fcall1 131
+		iload_0 ; load from i
+		iload_0 ; load from i
+		invokestatic Method fcall1 func1 (II)V
+		;; expression fcall1 133
+		iload_0 ; load from i
+		iconst_1
+		iadd
+		iload_0 ; load from i
+		iconst_2
+		imul
+		invokestatic Method fcall1 func1 (II)V
+		;; expression fcall1 136
+		iconst_3
+		iconst_4
+		iconst_5
+		invokestatic Method fcall1 func2 (III)F
+		pop
+		;; expression fcall1 138
+		ldc 72
+		invokestatic Method libc putchar (I)I
+		ldc 105
+		invokestatic Method libc putchar (I)I
+		ldc 10
+		invokestatic Method libc putchar (I)I
+		invokestatic Method fcall1 func2 (III)F
+		pop
+		;; return fcall1.c 140
+		invokestatic Method libc getchar ()I
+		invokestatic Method fcall1 lower (I)I
+		ireturn
+	.end code
+.end method
+
+; Special methods
+
+.method <init> : ()V
+	.code stack 1 locals 1
+		aload_0
+		invokespecial Method java/lang/Object <init> ()V
+		return
+	.end code
+.end method
+
+.method public static main : ([Ljava/lang/String;)V
+	.code stack 2 locals 2
+		invokestatic Method fcall1 main ()I
+		istore_1
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		ldc 'Return code: '
+		invokevirtual Method java/io/PrintStream print (Ljava/lang/String;)V
+		getstatic Field java/lang/System out Ljava/io/PrintStream;
+		iload_1
+		invokevirtual Method java/io/PrintStream println (I)V
+		return
+	.end code
+.end method
+File error in file expr_literal.c
+	Could not open file
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+expr_literal1.c:  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_literal2.c:  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_literal3.c:  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+expr_locals1.c :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  7:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  8:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_locals2.c :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  7:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  8:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+expr_g1.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+expr_g2.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+ops_binary1.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  7:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  8:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  9:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test 10:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test 11:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ops_binary2.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  7:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  8:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  9:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test 10:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ops_binary3.c  :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  7:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  8:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  9:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+ops_unary1.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ops_unary2.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+ops_unary3.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+wr_init1.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_init2.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_init3.c     :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+wr_assign1.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_assign2.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_assign3.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+wr_assign4.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+wr_update1.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_update2.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+wr_update3.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+wr_incdec1.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;32m#3[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_incdec2.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;33m#3[0;39m  [1;32m#4[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;32m#3[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_incdec3.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;32m#3[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+wr_incdec4.c   :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;33m#1[0;39m  [1;33m#2[0;39m  [1;32m#3[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+        Test  6:  [1;33m#1[0;39m  [1;32m#2[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+A_init1.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+A_init2.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+A_init3.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  4:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  5:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+A_read1.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+A_read2.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+A_read3.c      :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  2:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+        Test  3:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+Running tests using compiler:
+  | My C compiler
+  | 	Author: Chris Johannsen
+  | 	Email: cgjohann@iastate.edu
+  | 	Version: 0.5
+  | 	Date: 2-9-2022
+ 
+noreturn1.c    :  [1;32mNo compile errors[0;39m
+        Test  1:  [1;32m#1[0;39m  [1;32mPASSED[0;39m
+noreturn2.c    :  [1;33mFirst error message lines different[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Code generation error in file noreturn2.c line 7
+		  |  	Missing return in non-void function thing
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Code generation error in file noreturn2.c line 6
+		  |  	Missing return in non-void function thing
+		  --------------------------------------------------------
+noreturn3.c    :  [1;33mFirst error message lines different[0;39m
+		  Expected error stream
+		  --------------------------------------------------------
+		  |  Code generation error in file noreturn3.c line 7
+		  |  	Missing return in non-void function thing
+		  --------------------------------------------------------
+		  Student's error stream
+		  --------------------------------------------------------
+		  |  Code generation error in file noreturn3.c line 6
+		  |  	Missing return in non-void function thing
+		  --------------------------------------------------------
+Error in standard input line 1: end of input file before expected .class
+File error in file clini_arr.c
+	Could not open file
+V <clinit> (  )
+{
+    clinit_arr.A = new int[44]
+    clinit_arr.C = new char[1000]
+    clinit_arr.x = new float[3]
+    ;
+    ; Requested stack size 4
+    ; Required  stack size 1
+    ; 0 items remaining on the stack
+    ;
+}
+
+V <clinit> (  )
+{
+    clinit_var.T = 116
+    clinit_var.count = 37
+    clinit_var.pi = 3
+    ;
+    ; Requested stack size 1
+    ; Required  stack size 1
+    ; 0 items remaining on the stack
+    ;
+}
+
+V <clinit> (  )
+{
+    clinit_var.T = 116
+    clinit_var.count = 37
+    clinit_var.pi = 3
+    ;
+    ; Requested stack size 1
+    ; Required  stack size 1
+    ; 0 items remaining on the stack
+    ;
+}
+
+V <clinit> (  )
+{
+    clinit_both.T = 116
+    clinit_both.C = new char[1000]
+    clinit_both.count = 37
+    clinit_both.A = new int[44]
+    clinit_both.pi = 3
+    clinit_both.x = new float[3]
+    ;
+    ; Requested stack size 4
+    ; Required  stack size 1
+    ; 0 items remaining on the stack
+    ;
+}
+
+V has_extra (  )
+{
+    ;; return dead1.c 6
+    ;
+    ; Requested stack size 0
+    ; Required  stack size 0
+    ; 0 items remaining on the stack
+    ;
+}
+
+I has_extra (  )
+{
+    ;; return dead2.c 11
+    ireturn 2
+    ;
+    ; Requested stack size 1
+    ; Required  stack size 1
+    ; 0 items remaining on the stack
+    ;
+}
+
